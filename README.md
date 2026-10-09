@@ -48,6 +48,7 @@ Ubicados en `aplicacion_tres_d/aplicacion_tres_d/`:
 3. **Sistema Óseo (`sistema_oseo.py`)**: Esqueleto axial y apendicular equino (cráneo, columna vertebral, costillas, escápula, caña, cuartilla, tejuelo y hueso navicular).
 4. **Sistema Muscular (`sistema_muscular.py`)**: Grupos musculares superficiales y profundos (masetero, braquiocefálico, dorsal ancho, glúteos, aparato recíproco y tendones flexores).
 5. **Órganos Internos (`sistema_organosinternos.py`)**: Aparato digestivo completo (estómago con margo plicatus, ciego de gran volumen, flexura pélvica, colon mayor y menor), hígado sin vesícula, bazo, tráquea, pulmones y riñones acorazonados.
+6. **Cavidades torácica, abdominal e inguinal (`cavidades_equinas.py`)**: 58 estructuras independientes generadas en Blender por script reproducible, con selección por clic (y clic repetido para llegar a estructuras profundas) y ficha anatómica desde PostgreSQL o JSON. Documentación en [`cavidades/docs/MODELOS_README.md`](aplicacion_tres_d/aplicacion_tres_d/cavidades/docs/MODELOS_README.md); esquema en `db/cavidades_schema.sql` y datos en `db/cavidades_fichas.sql`.
 
 ---
 
