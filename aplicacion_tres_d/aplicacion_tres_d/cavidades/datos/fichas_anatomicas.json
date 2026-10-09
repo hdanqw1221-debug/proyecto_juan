@@ -1,0 +1,1280 @@
+[
+  {
+    "ficha_id": "TOR_PULMON",
+    "nombre": "Pulmones",
+    "nombre_latino": "Pulmo dexter et sinister",
+    "cavidad": "toracica",
+    "sistema": "respiratorio",
+    "objetos": [
+      "TOR_PULMON_DER",
+      "TOR_PULMON_IZQ"
+    ],
+    "descripcion": "Órganos de intercambio gaseoso alojados en las cavidades pleurales derecha e izquierda. En el caballo las fisuras interlobulares son poco marcadas. El pulmón izquierdo tiene lóbulos craneal y caudal, separados solo por la escotadura cardíaca; el derecho tiene lóbulos craneal, caudal y accesorio. No existe lóbulo medio diferenciado.",
+    "topografia": "Ocupan cada hemitórax desde la abertura torácica craneal hasta el diafragma. El lóbulo accesorio del pulmón derecho se aloja en el receso mediastínico, entre el mediastino caudal y el pliegue de la vena cava caudal.",
+    "proyeccion_superficial": "Campo de auscultación triangular: borde craneal en la línea tricipital, dorsal en la musculatura epiaxial y caudoventral en una línea curva que pasa por el EIC 16 a la altura de la tuberosidad coxal, el EIC 11 a la altura de la punta del hombro y el EIC 6 a la altura del olécranon.",
+    "relaciones": "Medialmente, el mediastino, el corazón (escotadura cardíaca más amplia a la izquierda, entre las costillas 3.ª y 6.ª), la tráquea y los bronquios principales. Caudal al borde basal queda el receso costodiafragmático, ocupado solo por pleura. Caudalmente, el diafragma.",
+    "medios_de_fijacion": "Raíz pulmonar (bronquio principal y vasos pulmonares) y ligamento pulmonar hacia el mediastino.",
+    "irrigacion_drenaje": "Circulación funcional por arterias y venas pulmonares; circulación nutricia por ramas bronquiales de la arteria broncoesofágica (rama de la aorta torácica).",
+    "dimensiones": "Llenan cada hemitórax; su volumen varía con la fase respiratoria. El modelo representa la espiración.",
+    "consideraciones_clinicas": "Pleuroneumonía (derrame frecuentemente bilateral por el mediastino fenestrado), asma equina (antes obstrucción recurrente de las vías aéreas), hemorragia pulmonar inducida por el ejercicio (afecta los campos caudodorsales) y neumotórax bilateral.",
+    "exploracion": "Auscultación y percusión en el campo pulmonar; ecografía torácica; radiografía; endoscopia y lavado broncoalveolar.",
+    "referencias": [
+      "Dyce, Sack & Wensing 2018",
+      "Budras, Sack & Röck 2012",
+      "Reed, Bayly & Sellon (ed. reciente)"
+    ],
+    "pendiente_validacion": true,
+    "campos_pendientes": [
+      "medios_de_fijacion",
+      "irrigacion_drenaje"
+    ],
+    "sexo_aplicable": "ambos"
+  },
+  {
+    "ficha_id": "TOR_CORAZON",
+    "nombre": "Corazón",
+    "nombre_latino": "Cor",
+    "cavidad": "toracica",
+    "sistema": "cardiovascular",
+    "objetos": [
+      "TOR_CORAZON"
+    ],
+    "descripcion": "Órgano muscular hueco que impulsa la sangre a la circulación pulmonar y sistémica. Tiene forma de cono con la base dorsocraneal, donde se sitúan las aurículas y emergen los grandes vasos, y el ápice ventral. En el caballo pueden oírse cuatro ruidos cardíacos.",
+    "topografia": "En el mediastino medio, entre la 3.ª y la 6.ª costilla (craneocaudalmente entre la 2.ª y la 6.ª), con alrededor del 60 % de su masa a la izquierda del plano medio. El eje base-ápice es oblicuo: base a media altura del tórax, ápice cerca del esternón a nivel de la 5.ª-6.ª costilla, a pocos centímetros del diafragma.",
+    "proyeccion_superficial": "Focos de auscultación izquierdos: pulmonar en el EIC 3, aórtico en el EIC 4 (ventral a la punta del hombro) y mitral en el EIC 5 (cerca de la línea del codo). Derecho: tricúspide en los EIC 3-4.",
+    "relaciones": "Envuelto por el pericardio; contacta con la pared costal izquierda a través de la escotadura cardíaca del pulmón (ventana de auscultación y ecocardiografía). Dorsalmente, la tráquea en su bifurcación, el esófago y la aorta.",
+    "medios_de_fijacion": "Grandes vasos de la base y pericardio, fijado al esternón por el ligamento esternopericárdico.",
+    "irrigacion_drenaje": "Arterias coronarias derecha e izquierda (primeras ramas de la aorta); drenaje venoso al seno coronario y al atrio derecho.",
+    "dimensiones": "Peso aproximado del 0,7-1 % del peso corporal (≈3,5-5 kg en un caballo de 500 kg); mayor en caballos de carrera entrenados.",
+    "consideraciones_clinicas": "Fibrilación auricular (arritmia patológica más frecuente), bloqueo auriculoventricular de 2.º grado fisiológico en reposo, insuficiencias valvulares (mitral, aórtica) y pericarditis (rara). El caballo no posee os cordis (presente en bovinos).",
+    "exploracion": "Auscultación en los focos descritos; electrocardiografía; ecocardiografía a través de la ventana cardíaca izquierda y derecha.",
+    "referencias": [
+      "Dyce, Sack & Wensing 2018",
+      "Getty 1975",
+      "Reed, Bayly & Sellon (ed. reciente)"
+    ],
+    "pendiente_validacion": true,
+    "campos_pendientes": [
+      "irrigacion_drenaje"
+    ],
+    "sexo_aplicable": "ambos"
+  },
+  {
+    "ficha_id": "TOR_PERICARDIO",
+    "nombre": "Pericardio",
+    "nombre_latino": "Pericardium",
+    "cavidad": "toracica",
+    "sistema": "cardiovascular",
+    "objetos": [
+      "TOR_PERICARDIO"
+    ],
+    "descripcion": "Saco fibroseroso que envuelve el corazón. Consta de una capa fibrosa externa y de una serosa con hoja parietal y visceral (epicardio), entre las que queda la cavidad pericárdica con una pequeña cantidad de líquido que facilita el movimiento cardíaco.",
+    "topografia": "Rodea el corazón en el mediastino medio, entre la 3.ª y la 6.ª costilla, y se continúa en la base con la adventicia de los grandes vasos.",
+    "proyeccion_superficial": "Coincide con la del corazón: área cardíaca entre la 3.ª y la 6.ª costilla, más amplia en el lado izquierdo.",
+    "relaciones": "Por fuera, la pleura mediastínica y los pulmones (escotadura cardíaca); ventralmente, el esternón; caudalmente, el diafragma, del que lo separan pocos centímetros.",
+    "medios_de_fijacion": "Ligamento esternopericárdico, que lo fija al esternón, y continuidad con la adventicia de los grandes vasos.",
+    "irrigacion_drenaje": "Ramas pericardiofrénicas y pericárdicas de vasos torácicos vecinos.",
+    "dimensiones": "Delgado. En el modelo se representa como una envoltura translúcida separada 1,2 cm del corazón, oculta por defecto.",
+    "consideraciones_clinicas": "Pericarditis (rara en el caballo): derrame pericárdico, ruidos cardíacos apagados y signos de insuficiencia cardíaca derecha. La pericardiocentesis se realiza con guía ecográfica.",
+    "exploracion": "Ecocardiografía (detección de derrame); auscultación.",
+    "referencias": [
+      "Dyce, Sack & Wensing 2018",
+      "Reed, Bayly & Sellon (ed. reciente)"
+    ],
+    "pendiente_validacion": true,
+    "campos_pendientes": [
+      "irrigacion_drenaje",
+      "consideraciones_clinicas"
+    ],
+    "sexo_aplicable": "ambos"
+  },
+  {
+    "ficha_id": "TOR_TRAQUEA",
+    "nombre": "Tráquea y bronquios principales",
+    "nombre_latino": "Trachea; bronchus principalis dexter et sinister",
+    "cavidad": "toracica",
+    "sistema": "respiratorio",
+    "objetos": [
+      "TOR_TRAQUEA"
+    ],
+    "descripcion": "Tubo respiratorio sostenido por unos 48-60 cartílagos en forma de C abiertos dorsalmente. Entra en el tórax por la abertura torácica craneal y se divide en los bronquios principales derecho e izquierdo. El caballo no tiene bronquio traqueal, a diferencia de rumiantes y cerdo.",
+    "topografia": "Porción torácica en el mediastino craneal, ventral a la columna; la bifurcación queda dorsal a la base del corazón, aproximadamente a nivel del EIC 5.",
+    "proyeccion_superficial": "Bifurcación a la altura del EIC 5, por encima de la base cardíaca.",
+    "relaciones": "Dorsalmente, el esófago; a la izquierda, el arco aórtico; ventralmente, la base del corazón y los grandes vasos. Los bronquios penetran en los pulmones por el hilio.",
+    "medios_de_fijacion": "Tejido conectivo mediastínico; continuidad con la laringe y la porción cervical.",
+    "irrigacion_drenaje": "Ramas de la arteria broncoesofágica en su porción terminal y bronquial.",
+    "dimensiones": "Diámetro de ≈5-6 cm. En el modelo los anillos cartilaginosos se representan como una modulación sutil del radio.",
+    "consideraciones_clinicas": "Vía de acceso para endoscopia, lavado traqueal y aspirado transtraqueal. El colapso traqueal es raro en el caballo.",
+    "exploracion": "Endoscopia, aspirado transtraqueal, radiografía y auscultación traqueal.",
+    "referencias": [
+      "Dyce, Sack & Wensing 2018",
+      "Budras, Sack & Röck 2012"
+    ],
+    "pendiente_validacion": true,
+    "campos_pendientes": [
+      "irrigacion_drenaje"
+    ],
+    "sexo_aplicable": "ambos"
+  },
+  {
+    "ficha_id": "TOR_ESOFAGO",
+    "nombre": "Esófago (porción torácica)",
+    "nombre_latino": "Oesophagus, pars thoracica",
+    "cavidad": "toracica",
+    "sistema": "digestivo",
+    "objetos": [
+      "TOR_ESOFAGO"
+    ],
+    "descripcion": "Tubo muscular que conduce el alimento de la faringe al estómago. Su musculatura es estriada en los dos tercios craneales y lisa en el tercio caudal. La desembocadura en el estómago es oblicua y está guardada por un esfínter cardial muy potente.",
+    "topografia": "En el cuello va a la izquierda de la tráquea; en el tórax se sitúa dorsal a ella, pasa a la derecha del arco aórtico y continúa por el mediastino dorsal hasta el hiato esofágico del diafragma, abierto en el pilar derecho a nivel de los EIC 13-14 (porción dorsal). En el modelo se incluye el corto trayecto abdominal hasta el cardias.",
+    "proyeccion_superficial": "Hiato esofágico en los EIC 13-14, en la porción dorsal del diafragma.",
+    "relaciones": "Ventralmente, la tráquea y la base del corazón; a la izquierda, la aorta; acompañado por los troncos vagales. Caudal al hiato, la impresión esofágica del hígado y el cardias.",
+    "medios_de_fijacion": "Tejido conectivo mediastínico; paso por el hiato esofágico.",
+    "irrigacion_drenaje": "Rama esofágica de la arteria broncoesofágica.",
+    "dimensiones": "Longitud total de ≈1,2-1,5 m.",
+    "consideraciones_clinicas": "Obstrucción esofágica («choke», más frecuente en la porción cervical), estenosis y megaesófago. El esfínter cardial y el ángulo oblicuo de entrada hacen excepcional el vómito.",
+    "exploracion": "Endoscopia; paso de sonda nasogástrica; radiografía de contraste.",
+    "referencias": [
+      "Dyce, Sack & Wensing 2018",
+      "Auer & Stick, Equine Surgery (ed. reciente)"
+    ],
+    "pendiente_validacion": true,
+    "campos_pendientes": [
+      "irrigacion_drenaje"
+    ],
+    "sexo_aplicable": "ambos"
+  },
+  {
+    "ficha_id": "TOR_AORTA",
+    "nombre": "Aorta torácica",
+    "nombre_latino": "Aorta thoracica",
+    "cavidad": "toracica",
+    "sistema": "cardiovascular",
+    "objetos": [
+      "TOR_AORTA"
+    ],
+    "descripcion": "Arteria principal de la circulación sistémica. Nace del ventrículo izquierdo, forma el arco aórtico a la izquierda y continúa como aorta descendente. En el caballo da un único tronco braquiocefálico, del que también nace la subclavia izquierda.",
+    "topografia": "Arco aórtico a la izquierda, dorsal a la base del corazón; la porción descendente corre ventral a las vértebras torácicas, ligeramente a la izquierda, hasta el hiato aórtico, situado entre los pilares del diafragma (≈T18-L1).",
+    "proyeccion_superficial": "Foco aórtico en el EIC 4 izquierdo, ventral a la punta del hombro.",
+    "relaciones": "A la derecha del arco pasa el esófago; ventralmente, la tráquea en su bifurcación; dorsalmente, los cuerpos vertebrales. Se continúa con la aorta abdominal.",
+    "medios_de_fijacion": "Tejido conectivo del mediastino dorsal; paso por el hiato aórtico.",
+    "irrigacion_drenaje": "Ramas: tronco braquiocefálico, arterias intercostales dorsales y arteria broncoesofágica.",
+    "dimensiones": "No aplica",
+    "consideraciones_clinicas": "Rotura de la raíz aórtica, descrita en sementales durante la monta.",
+    "exploracion": "Ecocardiografía de la raíz aórtica; auscultación del foco aórtico.",
+    "referencias": [
+      "Dyce, Sack & Wensing 2018",
+      "Getty 1975"
+    ],
+    "pendiente_validacion": false,
+    "sexo_aplicable": "ambos"
+  },
+  {
+    "ficha_id": "TOR_VENA_CAVA_CRANEAL",
+    "nombre": "Vena cava craneal",
+    "nombre_latino": "Vena cava cranialis",
+    "cavidad": "toracica",
+    "sistema": "cardiovascular",
+    "objetos": [
+      "TOR_VENA_CAVA_CRANEAL"
+    ],
+    "descripcion": "Gran vena que recoge la sangre de la cabeza, el cuello, los miembros torácicos y la pared torácica craneal y la conduce al atrio derecho. Es la vía de retorno venoso de la mitad craneal del cuerpo.",
+    "topografia": "Se forma a la entrada del tórax por la confluencia de las venas yugulares y de las venas axilares o subclavias; recorre el mediastino craneal, ventral a la tráquea, hasta el atrio derecho.",
+    "proyeccion_superficial": "Mediastino craneal, a la altura de las primeras costillas.",
+    "relaciones": "Dorsalmente, la tráquea; a la izquierda, el tronco braquiocefálico; caudalmente, el atrio derecho. Recibe también la vena ácigos derecha antes de llegar al atrio.",
+    "medios_de_fijacion": "Tejido conectivo del mediastino craneal.",
+    "irrigacion_drenaje": "Drena al atrio derecho.",
+    "dimensiones": "Gran calibre; en el modelo, radio de 2,2 cm.",
+    "consideraciones_clinicas": "La trombosis o tromboflebitis yugular, frecuente tras la cateterización, afecta a sus afluentes.",
+    "exploracion": "Ecografía de las venas yugulares; ecocardiografía del atrio derecho.",
+    "referencias": [
+      "Dyce, Sack & Wensing 2018",
+      "Budras, Sack & Röck 2012"
+    ],
+    "pendiente_validacion": true,
+    "campos_pendientes": [
+      "consideraciones_clinicas",
+      "relaciones"
+    ],
+    "sexo_aplicable": "ambos"
+  },
+  {
+    "ficha_id": "TOR_VENA_CAVA_CAUDAL",
+    "nombre": "Vena cava caudal (porción torácica)",
+    "nombre_latino": "Vena cava caudalis, pars thoracica",
+    "cavidad": "toracica",
+    "sistema": "cardiovascular",
+    "objetos": [
+      "TOR_VENA_CAVA_CAUDAL"
+    ],
+    "descripcion": "Tramo torácico de la gran vena que retorna la sangre de la mitad caudal del cuerpo al corazón. Es corto y discurre dentro del pliegue de la vena cava (plica venae cavae).",
+    "topografia": "Atraviesa el foramen de la vena cava en el centro tendinoso del diafragma, a la derecha del plano medio, y corre dentro del pliegue de la vena cava hasta el atrio derecho.",
+    "proyeccion_superficial": "Foramen de la vena cava en el centro tendinoso, a la derecha; en el modelo, x ≈ 1,18 m (cerca del EIC 9).",
+    "relaciones": "El lóbulo accesorio del pulmón derecho se aloja en el receso mediastínico, junto a ella. Caudalmente se continúa con la porción abdominal, alojada en el surco del borde dorsal del hígado.",
+    "medios_de_fijacion": "Pliegue de la vena cava y anillo del foramen diafragmático.",
+    "irrigacion_drenaje": "Drena al atrio derecho.",
+    "dimensiones": "No aplica",
+    "consideraciones_clinicas": "Referencia anatómica en la ecografía y en la cirugía del diafragma (hernia diafragmática).",
+    "exploracion": "Ecografía transtorácica derecha.",
+    "referencias": [
+      "Dyce, Sack & Wensing 2018",
+      "Getty 1975"
+    ],
+    "pendiente_validacion": true,
+    "campos_pendientes": [
+      "proyeccion_superficial",
+      "consideraciones_clinicas"
+    ],
+    "sexo_aplicable": "ambos"
+  },
+  {
+    "ficha_id": "TOR_DIAFRAGMA",
+    "nombre": "Diafragma",
+    "nombre_latino": "Diaphragma",
+    "cavidad": "toracica",
+    "sistema": "limites",
+    "objetos": [
+      "TOR_DIAFRAGMA"
+    ],
+    "descripcion": "Tabique musculotendinoso que separa la cavidad torácica de la abdominal y es el principal músculo inspiratorio. Tiene forma de cúpula muy convexa hacia craneal. Consta de una porción muscular (esternal, costal y lumbar) y de un centro tendinoso. Por su gran cúpula, buena parte del tórax óseo caudal contiene vísceras abdominales (abdomen intratorácico).",
+    "topografia": "El vértice de la cúpula llega, en espiración, a nivel del EIC 6 en el tercio ventral-medio del tórax. La inserción periférica es muy oblicua: ventralmente en el xifoides y los cartílagos costales caudales (≈8.º) y dorsalmente en las últimas costillas y en las vértebras lumbares craneales mediante los pilares (el derecho mucho mayor).",
+    "proyeccion_superficial": "Vértice en el EIC 6; línea de inserción desde el xifoides (≈costilla 8) hasta la última costilla dorsalmente.",
+    "relaciones": "Craneal: pulmones (con el receso costodiafragmático), pericardio y corazón. Caudal: hígado, estómago, bazo y flexuras esternal y diafragmática del colon. Aberturas: hiato aórtico (dorsal, entre los pilares), hiato esofágico (en el pilar derecho) y foramen de la vena cava (centro tendinoso, a la derecha).",
+    "medios_de_fijacion": "Inserciones en el xifoides, los cartílagos y costillas caudales y las vértebras lumbares por los pilares.",
+    "irrigacion_drenaje": "Inervación motora por el nervio frénico (C5-C7). Irrigación por arterias frénicas e intercostales.",
+    "dimensiones": "Lámina delgada; en el modelo, 1 cm de grosor.",
+    "consideraciones_clinicas": "Hernia diafragmática (congénita o traumática) y aleteo diafragmático sincrónico («thumps») por alteraciones electrolíticas.",
+    "exploracion": "Ecografía y radiografía torácicas; laparoscopia.",
+    "referencias": [
+      "Dyce, Sack & Wensing 2018",
+      "Nickel, Schummer & Seiferle",
+      "NAV 2017"
+    ],
+    "pendiente_validacion": true,
+    "campos_pendientes": [
+      "irrigacion_drenaje"
+    ],
+    "sexo_aplicable": "ambos"
+  },
+  {
+    "ficha_id": "TOR_MEDIASTINO",
+    "nombre": "Mediastino",
+    "nombre_latino": "Mediastinum",
+    "cavidad": "toracica",
+    "sistema": "limites",
+    "objetos": [
+      "TOR_MEDIASTINO"
+    ],
+    "descripcion": "Septo medio del tórax formado por las dos pleuras mediastínicas, que separa las cavidades pleurales derecha e izquierda y contiene las vísceras torácicas no pulmonares.",
+    "topografia": "Se extiende desde la abertura torácica craneal hasta el diafragma, en el plano medio, desplazado por el corazón hacia la izquierda en su porción media.",
+    "proyeccion_superficial": "No aplica",
+    "relaciones": "Contiene el corazón y el pericardio, la tráquea terminal, el esófago, la aorta, las venas cavas, el conducto torácico, el timo (vestigial en el adulto), los nervios frénicos y vagos y los linfonodos mediastínicos.",
+    "medios_de_fijacion": "Continuidad con la pleura parietal costal y diafragmática.",
+    "irrigacion_drenaje": "Linfonodos mediastínicos craneales, medios y caudales.",
+    "dimensiones": "En el caballo, el mediastino caudal es delgado y a menudo fenestrado o incompleto.",
+    "consideraciones_clinicas": "La fenestración caudal explica que el neumotórax y los derrames pleurales sean con frecuencia bilaterales, dato importante en la pleuroneumonía.",
+    "exploracion": "Ecografía y radiografía torácicas; toracocentesis bilateral.",
+    "referencias": [
+      "Dyce, Sack & Wensing 2018",
+      "Reed, Bayly & Sellon (ed. reciente)"
+    ],
+    "pendiente_validacion": false,
+    "sexo_aplicable": "ambos"
+  },
+  {
+    "ficha_id": "ABD_ESTOMAGO",
+    "nombre": "Estómago",
+    "nombre_latino": "Ventriculus (gaster)",
+    "cavidad": "abdominal",
+    "sistema": "digestivo",
+    "objetos": [
+      "ABD_ESTOMAGO"
+    ],
+    "descripcion": "Estómago simple, de capacidad pequeña en proporción al tamaño del animal. Partes: saco ciego (saccus caecus), cardias, cuerpo, porción pilórica (antro y canal) y píloro. Su mucosa tiene una región no glandular (escamosa, esofágica), que incluye el saco ciego, separada de la glandular (cardial, fúndica propia y pilórica) por el margo plicatus.",
+    "topografia": "Casi completamente dentro de la jaula costal, a la izquierda y dorsal; no contacta con la pared ventral cuando está vacío. El píloro se proyecta a la derecha.",
+    "proyeccion_superficial": "Entre los EIC 9 y 15 izquierdos.",
+    "relaciones": "La curvatura mayor contacta con el bazo y el diafragma; la curvatura menor, con el hígado. El esófago desemboca oblicuamente en el cardias.",
+    "medios_de_fijacion": "Omento menor hacia el hígado; ligamento gastroesplénico; ligamento gastrofrénico.",
+    "irrigacion_drenaje": "Ramas del tronco celíaco (arterias gástricas izquierda y derecha y gastroepiploicas).",
+    "dimensiones": "Capacidad de ≈8-15 L. En el modelo el radio se reduce un 10 % por razones de empaquetado.",
+    "consideraciones_clinicas": "El esfínter cardial y el ángulo oblicuo de entrada hacen excepcional el vómito (riesgo de rotura gástrica). Síndrome de úlcera gástrica equina (lesiones escamosas junto al margo plicatus) e impactación gástrica.",
+    "exploracion": "Gastroscopia (endoscopio de ≥3 m); ecografía en los EIC 10-15 izquierdos; sondaje nasogástrico.",
+    "referencias": [
+      "Dyce, Sack & Wensing 2018",
+      "Reed, Bayly & Sellon (ed. reciente)"
+    ],
+    "pendiente_validacion": true,
+    "campos_pendientes": [
+      "medios_de_fijacion",
+      "irrigacion_drenaje"
+    ],
+    "sexo_aplicable": "ambos"
+  },
+  {
+    "ficha_id": "ABD_DUODENO",
+    "nombre": "Duodeno",
+    "nombre_latino": "Duodenum",
+    "cavidad": "abdominal",
+    "sistema": "digestivo",
+    "objetos": [
+      "ABD_DUODENO"
+    ],
+    "descripcion": "Primer segmento del intestino delgado. Tiene una porción craneal con ampolla y flexura sigmoidea, una descendente, la flexura caudal, una porción transversa y una ascendente. Recibe en la papila duodenal mayor el conducto colédoco y el conducto pancreático, y en la papila menor, situada enfrente, el conducto pancreático accesorio.",
+    "topografia": "La porción craneal contacta con el hígado; la descendente va a la derecha; la flexura caudal rodea la base del ciego; la porción transversa cruza de derecha a izquierda caudal a la raíz del mesenterio, y la ascendente se une al colon descendente.",
+    "proyeccion_superficial": "Lado derecho, dorsal, desde el píloro (jaula costal) hasta la región sublumbar.",
+    "relaciones": "Hígado, riñón derecho, base del ciego y páncreas, que se aloja en el asa duodenal. La papila duodenal mayor está a ≈10-15 cm del píloro, dentro de un divertículo.",
+    "medios_de_fijacion": "Mesoduodeno corto; pliegue duodenocólico entre la porción ascendente y el colon descendente (referencia quirúrgica).",
+    "irrigacion_drenaje": "Arterias pancreaticoduodenales (de los troncos celíaco y mesentérico craneal).",
+    "dimensiones": "Longitud de ≈1 m.",
+    "consideraciones_clinicas": "Duodenitis-yeyunitis proximal (enteritis anterior): reflujo gástrico abundante y dolor cólico.",
+    "exploracion": "Ecografía transabdominal derecha; duodenoscopia proximal.",
+    "referencias": [
+      "Dyce, Sack & Wensing 2018",
+      "Auer & Stick, Equine Surgery (ed. reciente)"
+    ],
+    "pendiente_validacion": true,
+    "campos_pendientes": [
+      "irrigacion_drenaje"
+    ],
+    "sexo_aplicable": "ambos"
+  },
+  {
+    "ficha_id": "ABD_YEYUNO",
+    "nombre": "Yeyuno",
+    "nombre_latino": "Jejunum",
+    "cavidad": "abdominal",
+    "sistema": "digestivo",
+    "objetos": [
+      "ABD_YEYUNO"
+    ],
+    "descripcion": "Segmento más largo del intestino delgado, suspendido por un mesenterio largo que le da gran movilidad. Sus asas cambian de posición con la motilidad y el llenado.",
+    "topografia": "Ocupa sobre todo el cuadrante dorsal izquierdo del abdomen, entremezclado con el colon descendente.",
+    "proyeccion_superficial": "Flanco izquierdo, dorsal.",
+    "relaciones": "Colon descendente, colon dorsal izquierdo, bazo y riñón izquierdo. Se continúa cranealmente con el duodeno y caudalmente con el íleon.",
+    "medios_de_fijacion": "Mesenterio de hasta ≈50 cm de longitud, con su raíz en torno a la arteria mesentérica craneal.",
+    "irrigacion_drenaje": "Arterias yeyunales, ramas de la arteria mesentérica craneal.",
+    "dimensiones": "Longitud real de ≈17-28 m. El modelo lo representa esquemáticamente con unos 6 m en asas en capas.",
+    "consideraciones_clinicas": "Lipoma pedunculado estrangulante, vólvulo, atrapamiento en el foramen epiploico y hernia inguinal.",
+    "exploracion": "Ecografía transabdominal (asas distendidas y sin motilidad en lesiones estrangulantes); palpación rectal de asas distendidas.",
+    "referencias": [
+      "Dyce, Sack & Wensing 2018",
+      "Auer & Stick, Equine Surgery (ed. reciente)"
+    ],
+    "pendiente_validacion": false,
+    "sexo_aplicable": "ambos"
+  },
+  {
+    "ficha_id": "ABD_ILEON",
+    "nombre": "Íleon",
+    "nombre_latino": "Ileum",
+    "cavidad": "abdominal",
+    "sistema": "digestivo",
+    "objetos": [
+      "ABD_ILEON"
+    ],
+    "descripcion": "Segmento terminal del intestino delgado, de pared muscular gruesa, que desemboca en el ciego por el ostium ileal (papila ileal).",
+    "topografia": "Desde el final del yeyuno hasta la curvatura menor de la base del ciego, en el lado derecho y dorsal del abdomen.",
+    "proyeccion_superficial": "Flanco derecho, dorsal, en la región de la base del ciego.",
+    "relaciones": "Unido a la tenia dorsal del ciego por el pliegue ileocecal; base del ciego e inicio del colon ventral derecho.",
+    "medios_de_fijacion": "Pliegue ileocecal y porción terminal del mesenterio.",
+    "irrigacion_drenaje": "Arterias ileales, ramas de la arteria mesentérica craneal.",
+    "dimensiones": "Longitud de ≈0,5-0,7 m. En el modelo se acorta por la disposición esquemática del yeyuno.",
+    "consideraciones_clinicas": "Impactación ileal, intususcepción ileocecal e hipertrofia muscular; Anoplocephala perfoliata en la unión ileocecal.",
+    "exploracion": "Ecografía (intususcepción en diana); palpación rectal en casos de impactación.",
+    "referencias": [
+      "Dyce, Sack & Wensing 2018",
+      "Auer & Stick, Equine Surgery (ed. reciente)"
+    ],
+    "pendiente_validacion": true,
+    "campos_pendientes": [
+      "irrigacion_drenaje"
+    ],
+    "sexo_aplicable": "ambos"
+  },
+  {
+    "ficha_id": "ABD_CIEGO",
+    "nombre": "Ciego",
+    "nombre_latino": "Caecum",
+    "cavidad": "abdominal",
+    "sistema": "digestivo",
+    "objetos": [
+      "ABD_CIEGO"
+    ],
+    "descripcion": "Gran cámara de fermentación microbiana en forma de coma, donde se producen ácidos grasos volátiles. Tiene base, cuerpo y ápice, y cuatro tenias (dorsal, ventral, medial y lateral) que forman haustras o saculaciones. En la curvatura menor de la base se abren el ostium ileal y el orificio cecocólico.",
+    "topografia": "Base dorsal en el flanco derecho (fosa paralumbar derecha, alcanza la región sublumbar); el cuerpo desciende cranioventralmente a lo largo de la pared ventral derecha; el ápice se apoya en el suelo abdominal cerca del cartílago xifoides.",
+    "proyeccion_superficial": "Fosa paralumbar derecha (base) y pared ventral derecha hasta el xifoides (ápice).",
+    "relaciones": "Íleon, colon ventral derecho (orificio cecocólico), colon dorsal derecho y duodeno (flexura caudal alrededor de la base).",
+    "medios_de_fijacion": "La base está fija a la pared dorsal; pliegue cecocólico hacia el colon ventral derecho y pliegue ileocecal.",
+    "irrigacion_drenaje": "Arterias cecales, ramas de la arteria ileocólica (de la mesentérica craneal).",
+    "dimensiones": "Longitud de ≈1-1,25 m; capacidad de ≈25-35 L. En el modelo el radio se reduce un 15 % por razones de empaquetado.",
+    "consideraciones_clinicas": "Impactación cecal, tiflitis, perforación (asociada a las tenias), intususcepción cecocecal o cecocólica y timpanismo (trocarización en el flanco derecho).",
+    "exploracion": "Palpación rectal de la tenia ventral y de la base; ecografía del flanco derecho; trocarización.",
+    "referencias": [
+      "Dyce, Sack & Wensing 2018",
+      "Budras, Sack & Röck 2012",
+      "Auer & Stick, Equine Surgery (ed. reciente)"
+    ],
+    "pendiente_validacion": true,
+    "campos_pendientes": [
+      "irrigacion_drenaje"
+    ],
+    "sexo_aplicable": "ambos"
+  },
+  {
+    "ficha_id": "ABD_COLON_VENTRAL_DER",
+    "nombre": "Colon ventral derecho",
+    "nombre_latino": "Colon ventrale dextrum",
+    "cavidad": "abdominal",
+    "sistema": "digestivo",
+    "objetos": [
+      "ABD_COLON_VENTRAL_DER"
+    ],
+    "descripcion": "Primer segmento del colon mayor (colon ascendente). Comienza en el orificio cecocólico y presenta cuatro tenias y saculaciones marcadas. Forma, con el resto del colon mayor, una doble U o herradura doblada.",
+    "topografia": "Desde la base del ciego discurre cranioventralmente por el lado derecho, sobre el suelo abdominal, hasta la flexura esternal, caudal al xifoides.",
+    "proyeccion_superficial": "Cuadrante ventral derecho de la pared abdominal.",
+    "relaciones": "Medialmente, el cuerpo del ciego; dorsalmente, el colon dorsal derecho; cranealmente, la flexura esternal.",
+    "medios_de_fijacion": "Pliegue cecocólico hacia el ciego y mesocolon corto hacia el colon dorsal derecho; libre respecto de la pared.",
+    "irrigacion_drenaje": "Rama cólica de la arteria ileocólica (de la mesentérica craneal).",
+    "dimensiones": "El colon mayor mide ≈3-3,7 m y contiene ≈50-60 L. En el modelo el radio se reduce un 15 %.",
+    "consideraciones_clinicas": "Impactaciones y desplazamientos del colon; vólvulo del colon mayor cuando la movilidad del colon izquierdo arrastra al derecho.",
+    "exploracion": "Ecografía de la pared ventral derecha; laparotomía exploratoria.",
+    "referencias": [
+      "Dyce, Sack & Wensing 2018",
+      "Auer & Stick, Equine Surgery (ed. reciente)"
+    ],
+    "pendiente_validacion": true,
+    "campos_pendientes": [
+      "irrigacion_drenaje",
+      "medios_de_fijacion"
+    ],
+    "sexo_aplicable": "ambos"
+  },
+  {
+    "ficha_id": "ABD_FLEXURA_ESTERNAL",
+    "nombre": "Flexura esternal",
+    "nombre_latino": "Flexura sternalis",
+    "cavidad": "abdominal",
+    "sistema": "digestivo",
+    "objetos": [
+      "ABD_FLEXURA_ESTERNAL"
+    ],
+    "descripcion": "Codo del colon mayor que une el colon ventral derecho con el colon ventral izquierdo, cruzando el plano medio de derecha a izquierda. Conserva las tenias y saculaciones de los colones ventrales. Con la flexura diafragmática forma el extremo craneal de la doble U del colon mayor (herradura doblada).",
+    "topografia": "Sobre el suelo abdominal, caudal al cartílago xifoides, dentro del abdomen intratorácico.",
+    "proyeccion_superficial": "Región xifoidea, pared ventral.",
+    "relaciones": "Cranealmente, el diafragma y el hígado; dorsalmente, la flexura diafragmática; caudalmente, el ápice del ciego.",
+    "medios_de_fijacion": "No tiene fijación directa a la pared; se mantiene por continuidad con los colones ventrales.",
+    "irrigacion_drenaje": "Ramas de las arterias cólicas (de la mesentérica craneal).",
+    "dimensiones": "Diámetro similar al de los colones ventrales.",
+    "consideraciones_clinicas": "Participa en los desplazamientos y en el vólvulo del colon mayor; se identifica durante la laparotomía ventral media.",
+    "exploracion": "Ecografía ventral; laparotomía ventral media. No es accesible por palpación rectal en el adulto.",
+    "referencias": [
+      "Dyce, Sack & Wensing 2018",
+      "Budras, Sack & Röck 2012"
+    ],
+    "pendiente_validacion": true,
+    "campos_pendientes": [
+      "irrigacion_drenaje",
+      "exploracion"
+    ],
+    "sexo_aplicable": "ambos"
+  },
+  {
+    "ficha_id": "ABD_COLON_VENTRAL_IZQ",
+    "nombre": "Colon ventral izquierdo",
+    "nombre_latino": "Colon ventrale sinistrum",
+    "cavidad": "abdominal",
+    "sistema": "digestivo",
+    "objetos": [
+      "ABD_COLON_VENTRAL_IZQ"
+    ],
+    "descripcion": "Segmento del colon mayor con cuatro tenias y saculaciones, que discurre caudalmente por el lado izquierdo desde la flexura esternal hasta la flexura pélvica.",
+    "topografia": "Lado izquierdo, sobre el suelo abdominal, desde la región xifoidea hasta la entrada de la pelvis.",
+    "proyeccion_superficial": "Cuadrante ventral izquierdo.",
+    "relaciones": "Dorsalmente, el colon dorsal izquierdo (sin saculaciones); medialmente, el ciego; lateralmente, la pared abdominal izquierda y el bazo cranealmente.",
+    "medios_de_fijacion": "Libre: solo lo une al colon dorsal izquierdo un mesocolon corto, lo que explica los desplazamientos y vólvulos.",
+    "irrigacion_drenaje": "Rama cólica de la arteria ileocólica (de la mesentérica craneal).",
+    "dimensiones": "En el modelo el radio se reduce un 15 %.",
+    "consideraciones_clinicas": "Desplazamiento dorsal izquierdo con atrapamiento nefroesplénico, desplazamiento dorsal derecho y vólvulo del colon mayor.",
+    "exploracion": "Palpación rectal; ecografía del flanco izquierdo (espacio nefroesplénico).",
+    "referencias": [
+      "Dyce, Sack & Wensing 2018",
+      "Auer & Stick, Equine Surgery (ed. reciente)"
+    ],
+    "pendiente_validacion": true,
+    "campos_pendientes": [
+      "irrigacion_drenaje"
+    ],
+    "sexo_aplicable": "ambos"
+  },
+  {
+    "ficha_id": "ABD_FLEXURA_PELVICA",
+    "nombre": "Flexura pélvica",
+    "nombre_latino": "Flexura pelvina",
+    "cavidad": "abdominal",
+    "sistema": "digestivo",
+    "objetos": [
+      "ABD_FLEXURA_PELVICA"
+    ],
+    "descripcion": "Codo caudal del colon mayor que une el colon ventral izquierdo con el colon dorsal izquierdo. En ella el diámetro del colon se reduce bruscamente y queda una sola tenia, sin saculaciones. Su posición varía con el llenado y puede desplazarse cranealmente.",
+    "topografia": "Caudal, a la entrada de la cavidad pélvica, en el lado izquierdo.",
+    "proyeccion_superficial": "No accesible desde la superficie; se alcanza por palpación rectal.",
+    "relaciones": "Vejiga urinaria y cavidad pélvica caudalmente; colon descendente dorsalmente. Es la porción del colon mayor más accesible por vía rectal.",
+    "medios_de_fijacion": "Libre, sin fijación a la pared; muy móvil.",
+    "irrigacion_drenaje": "Anastomosis entre las ramas cólicas de la arteria mesentérica craneal.",
+    "dimensiones": "Diámetro de ≈8-9 cm en el estrechamiento.",
+    "consideraciones_clinicas": "Sitio más frecuente de impactación del colon por el estrechamiento brusco de la luz; sitio habitual de enterotomía para vaciar el colon.",
+    "exploracion": "Palpación rectal; exteriorización en la laparotomía para la enterotomía.",
+    "referencias": [
+      "Dyce, Sack & Wensing 2018",
+      "Budras, Sack & Röck 2012",
+      "Auer & Stick, Equine Surgery (ed. reciente)"
+    ],
+    "pendiente_validacion": true,
+    "campos_pendientes": [
+      "irrigacion_drenaje",
+      "descripcion"
+    ],
+    "sexo_aplicable": "ambos"
+  },
+  {
+    "ficha_id": "ABD_COLON_DORSAL_IZQ",
+    "nombre": "Colon dorsal izquierdo",
+    "nombre_latino": "Colon dorsale sinistrum",
+    "cavidad": "abdominal",
+    "sistema": "digestivo",
+    "objetos": [
+      "ABD_COLON_DORSAL_IZQ"
+    ],
+    "descripcion": "Segmento del colon mayor de diámetro reducido, con una sola tenia y sin saculaciones, que discurre cranealmente desde la flexura pélvica hasta la flexura diafragmática. Tras la flexura pélvica el colon pasa de ser saculado a liso.",
+    "topografia": "Lado izquierdo, dorsal al colon ventral izquierdo.",
+    "proyeccion_superficial": "Flanco izquierdo, en su tercio medio y ventral.",
+    "relaciones": "Ventralmente, el colon ventral izquierdo; dorsalmente, el yeyuno y el colon descendente; cranealmente, el estómago y el bazo.",
+    "medios_de_fijacion": "Libre: solo lo une al colon ventral izquierdo un mesocolon corto.",
+    "irrigacion_drenaje": "Arteria cólica derecha y su anastomosis con la rama cólica (de la mesentérica craneal).",
+    "dimensiones": "Diámetro menor que el de los colones ventrales; aumenta hacia craneal.",
+    "consideraciones_clinicas": "Participa en el desplazamiento dorsal izquierdo con atrapamiento nefroesplénico y en el vólvulo del colon mayor. Su movilidad permite que gire sobre su eje junto con el colon ventral izquierdo.",
+    "exploracion": "Palpación rectal; ecografía.",
+    "referencias": [
+      "Dyce, Sack & Wensing 2018",
+      "Auer & Stick, Equine Surgery (ed. reciente)"
+    ],
+    "pendiente_validacion": true,
+    "campos_pendientes": [
+      "irrigacion_drenaje"
+    ],
+    "sexo_aplicable": "ambos"
+  },
+  {
+    "ficha_id": "ABD_FLEXURA_DIAFRAGMATICA",
+    "nombre": "Flexura diafragmática",
+    "nombre_latino": "Flexura diaphragmatica",
+    "cavidad": "abdominal",
+    "sistema": "digestivo",
+    "objetos": [
+      "ABD_FLEXURA_DIAFRAGMATICA"
+    ],
+    "descripcion": "Codo craneal de la porción dorsal del colon mayor, que une el colon dorsal izquierdo con el colon dorsal derecho cruzando el plano medio. Con la flexura esternal forma el extremo craneal de la doble U del colon mayor, que queda dentro del arco costal.",
+    "topografia": "Dentro del abdomen intratorácico, caudal al diafragma y al hígado, dorsal a la flexura esternal.",
+    "proyeccion_superficial": "Región del arco costal, ventral.",
+    "relaciones": "Cranealmente, el diafragma y el hígado; ventralmente, la flexura esternal; caudalmente, el estómago a la izquierda.",
+    "medios_de_fijacion": "Continuidad con los colones dorsales; sin fijación propia a la pared.",
+    "irrigacion_drenaje": "Ramas de las arterias cólicas (de la mesentérica craneal).",
+    "dimensiones": "En el modelo, el radio se reduce un 15 % por razones de empaquetado.",
+    "consideraciones_clinicas": "Participa en las torsiones y en los desplazamientos del colon mayor; difícil de exteriorizar en la cirugía por su posición craneal.",
+    "exploracion": "Laparotomía ventral media; ecografía.",
+    "referencias": [
+      "Dyce, Sack & Wensing 2018",
+      "Budras, Sack & Röck 2012"
+    ],
+    "pendiente_validacion": true,
+    "campos_pendientes": [
+      "irrigacion_drenaje",
+      "consideraciones_clinicas"
+    ],
+    "sexo_aplicable": "ambos"
+  },
+  {
+    "ficha_id": "ABD_COLON_DORSAL_DER",
+    "nombre": "Colon dorsal derecho",
+    "nombre_latino": "Colon dorsale dextrum",
+    "cavidad": "abdominal",
+    "sistema": "digestivo",
+    "objetos": [
+      "ABD_COLON_DORSAL_DER"
+    ],
+    "descripcion": "Último segmento del colon mayor, con tres tenias. Se dilata en la ampolla del colon, de diámetro muy grande, y se estrecha en embudo hacia el colon transverso.",
+    "topografia": "Lado derecho, dorsal al colon ventral derecho, desde la flexura diafragmática hasta el colon transverso, medial a la base del ciego.",
+    "proyeccion_superficial": "Lado derecho, dentro y caudal al arco costal.",
+    "relaciones": "Ventralmente, el colon ventral derecho; dorsalmente, el duodeno, el páncreas y el hígado; caudalmente, la base del ciego.",
+    "medios_de_fijacion": "Junto con la base del ciego, es la única porción fija del colon mayor: adherido a la pared dorsal y al pliegue cecocólico.",
+    "irrigacion_drenaje": "Arteria cólica derecha (de la mesentérica craneal).",
+    "dimensiones": "La ampolla del colon alcanza el mayor diámetro del colon. En el modelo el radio se reduce un 15 %.",
+    "consideraciones_clinicas": "Colitis dorsal derecha por antiinflamatorios no esteroideos; enterolitos en la transición hacia el colon transverso.",
+    "exploracion": "Ecografía del lado derecho (engrosamiento de la pared en la colitis); laparotomía.",
+    "referencias": [
+      "Dyce, Sack & Wensing 2018",
+      "Reed, Bayly & Sellon (ed. reciente)"
+    ],
+    "pendiente_validacion": true,
+    "campos_pendientes": [
+      "irrigacion_drenaje"
+    ],
+    "sexo_aplicable": "ambos"
+  },
+  {
+    "ficha_id": "ABD_COLON_TRANSVERSO",
+    "nombre": "Colon transverso",
+    "nombre_latino": "Colon transversum",
+    "cavidad": "abdominal",
+    "sistema": "digestivo",
+    "objetos": [
+      "ABD_COLON_TRANSVERSO"
+    ],
+    "descripcion": "Segmento corto que une el colon dorsal derecho con el colon descendente, cruzando de derecha a izquierda. Su luz es estrecha. Marca el final del colon mayor (ascendente) y el comienzo del colon menor.",
+    "topografia": "Cruza de derecha a izquierda craneal a la arteria mesentérica craneal, fijo a la pared dorsal del abdomen. Se sitúa dorsal, a la altura de la raíz del mesenterio y del páncreas.",
+    "proyeccion_superficial": "No aplica",
+    "relaciones": "Caudalmente, la raíz del mesenterio con la arteria mesentérica craneal; cranealmente, el páncreas y el hígado.",
+    "medios_de_fijacion": "Fijo a la pared dorsal.",
+    "irrigacion_drenaje": "Arteria cólica media (de la mesentérica craneal).",
+    "dimensiones": "Corto, de diámetro reducido. Contrasta con la ampolla del colon que lo precede, estrechada en embudo.",
+    "consideraciones_clinicas": "Estrechez donde se alojan los enterolitos, causa de obstrucción del intestino grueso. La obstrucción por enterolitos causa cólico con distensión del colon mayor proximal.",
+    "exploracion": "Radiografía abdominal (enterolitos); laparotomía.",
+    "referencias": [
+      "Dyce, Sack & Wensing 2018",
+      "Auer & Stick, Equine Surgery (ed. reciente)"
+    ],
+    "pendiente_validacion": true,
+    "campos_pendientes": [
+      "irrigacion_drenaje",
+      "topografia",
+      "consideraciones_clinicas"
+    ],
+    "sexo_aplicable": "ambos"
+  },
+  {
+    "ficha_id": "ABD_COLON_DESCENDENTE",
+    "nombre": "Colon descendente (colon menor)",
+    "nombre_latino": "Colon descendens",
+    "cavidad": "abdominal",
+    "sistema": "digestivo",
+    "objetos": [
+      "ABD_COLON_DESCENDENTE"
+    ],
+    "descripcion": "Segmento del intestino grueso con dos tenias y saculaciones marcadas, en cuyo interior se forman las bolas fecales. Se continúa con el recto en la entrada de la pelvis. Absorbe agua y da a las heces su forma de bolas.",
+    "topografia": "Cuadrante dorsal izquierdo del abdomen, entremezclado con el yeyuno.",
+    "proyeccion_superficial": "Flanco izquierdo, dorsal.",
+    "relaciones": "Yeyuno, colon dorsal izquierdo y riñón izquierdo; unido a la porción ascendente del duodeno por el pliegue duodenocólico. Caudalmente se continúa con el recto en la entrada de la pelvis.",
+    "medios_de_fijacion": "Mesocolon largo, que le da movilidad.",
+    "irrigacion_drenaje": "Arteria cólica izquierda (de la mesentérica caudal).",
+    "dimensiones": "Longitud real de ≈3-3,5 m; en el modelo se representa esquemáticamente con unos 2,5 m.",
+    "consideraciones_clinicas": "Impactación, fecalitos y lipomas estrangulantes.",
+    "exploracion": "Palpación rectal (bolas fecales, asas impactadas); ecografía. Las bolas fecales permiten identificarlo en la palpación.",
+    "referencias": [
+      "Dyce, Sack & Wensing 2018",
+      "Auer & Stick, Equine Surgery (ed. reciente)"
+    ],
+    "pendiente_validacion": true,
+    "campos_pendientes": [
+      "irrigacion_drenaje",
+      "descripcion"
+    ],
+    "sexo_aplicable": "ambos"
+  },
+  {
+    "ficha_id": "ABD_HIGADO",
+    "nombre": "Hígado",
+    "nombre_latino": "Hepar",
+    "cavidad": "abdominal",
+    "sistema": "digestivo",
+    "objetos": [
+      "ABD_HIGADO"
+    ],
+    "descripcion": "Glándula anexa más voluminosa del aparato digestivo. Lóbulos: lateral izquierdo, medial izquierdo, cuadrado, derecho y caudado con proceso caudado, que lleva la impresión renal del riñón derecho. El caballo no tiene vesícula biliar: el conducto colédoco desemboca con el pancreático en la papila duodenal mayor.",
+    "topografia": "Totalmente intratorácico, aplicado contra la cara abdominal del diafragma, más a la derecha. En caballos viejos el lóbulo derecho se atrofia y el órgano se desplaza a la izquierda.",
+    "proyeccion_superficial": "Derecha: EIC 10-16 en su tercio medio. Izquierda: EIC 6-9, ventral. Son las ventanas ecográficas.",
+    "relaciones": "Cranealmente, el diafragma; caudalmente, el estómago, el duodeno, el riñón derecho (impresión renal) y el colon. La vena cava caudal se aloja en el surco de su borde dorsal.",
+    "medios_de_fijacion": "Ligamentos coronario, triangulares derecho e izquierdo, falciforme con ligamento redondo y hepatorrenal; omento menor hacia el estómago y el duodeno.",
+    "irrigacion_drenaje": "Doble aporte por la arteria hepática (del tronco celíaco) y la vena porta; drenaje por las venas hepáticas a la vena cava caudal.",
+    "dimensiones": "Peso de ≈1-1,5 % del peso corporal en el adulto (≈5 kg).",
+    "consideraciones_clinicas": "Encefalopatía hepática, colelitiasis, hepatitis sérica (enfermedad de Theiler) e intoxicación por alcaloides pirrolizidínicos.",
+    "exploracion": "Ecografía en los EIC 10-16 derechos y 6-9 izquierdos; biopsia hepática habitualmente en el lado derecho (EIC 12-14).",
+    "referencias": [
+      "Dyce, Sack & Wensing 2018",
+      "Budras, Sack & Röck 2012",
+      "Reed, Bayly & Sellon (ed. reciente)"
+    ],
+    "pendiente_validacion": true,
+    "campos_pendientes": [
+      "irrigacion_drenaje"
+    ],
+    "sexo_aplicable": "ambos"
+  },
+  {
+    "ficha_id": "ABD_BAZO",
+    "nombre": "Bazo",
+    "nombre_latino": "Lien (splen)",
+    "cavidad": "abdominal",
+    "sistema": "linfatico",
+    "objetos": [
+      "ABD_BAZO"
+    ],
+    "descripcion": "Órgano linfático y hematopoyético de forma falciforme, aplicado contra la pared abdominal izquierda. Es un gran reservorio de eritrocitos: su contracción durante el ejercicio eleva el hematocrito.",
+    "topografia": "Base dorsal ancha bajo las tres últimas costillas izquierdas y el flanco; el extremo ventral se dirige cranioventralmente a lo largo de la pared izquierda.",
+    "proyeccion_superficial": "Lado izquierdo, EIC 10-17 (ventana ecográfica).",
+    "relaciones": "Curvatura mayor del estómago, riñón izquierdo (con el que forma el espacio nefroesplénico), diafragma y colon izquierdo.",
+    "medios_de_fijacion": "Ligamentos nefroesplénico (hacia el riñón izquierdo), gastroesplénico y frenicoesplénico.",
+    "irrigacion_drenaje": "Arteria esplénica (del tronco celíaco); vena esplénica hacia la vena porta.",
+    "dimensiones": "Varía mucho con el estado de contracción.",
+    "consideraciones_clinicas": "Atrapamiento nefroesplénico del colon izquierdo. Su borde caudal es palpable por vía rectal.",
+    "exploracion": "Palpación rectal del borde caudal; ecografía en los EIC 10-17 izquierdos.",
+    "referencias": [
+      "Dyce, Sack & Wensing 2018",
+      "Reed, Bayly & Sellon (ed. reciente)"
+    ],
+    "pendiente_validacion": true,
+    "campos_pendientes": [
+      "irrigacion_drenaje"
+    ],
+    "sexo_aplicable": "ambos"
+  },
+  {
+    "ficha_id": "ABD_PANCREAS",
+    "nombre": "Páncreas",
+    "nombre_latino": "Pancreas",
+    "cavidad": "abdominal",
+    "sistema": "digestivo",
+    "objetos": [
+      "ABD_PANCREAS"
+    ],
+    "descripcion": "Glándula anexa de forma triangular, con lóbulo derecho, cuerpo y lóbulo izquierdo, de función exocrina y endocrina. La vena porta atraviesa el anillo pancreático (anulus pancreatis). Su porción exocrina secreta enzimas digestivas y los islotes endocrinos, insulina y glucagón.",
+    "topografia": "Dorsal, en la región de las costillas 16-17, dentro del asa duodenal. Su cuerpo queda ventral a la aorta y a la vena cava caudal.",
+    "proyeccion_superficial": "No aplica",
+    "relaciones": "Duodeno (lóbulo derecho en la concavidad del asa), hígado, vena porta, riñón derecho y colon transverso.",
+    "medios_de_fijacion": "Mesoduodeno y peritoneo de la pared dorsal.",
+    "irrigacion_drenaje": "El conducto pancreático desemboca en la papila duodenal mayor y el accesorio en la papila menor. Irrigación por arterias pancreaticoduodenales y ramas esplénicas.",
+    "dimensiones": "Glándula aplanada; en el modelo, el lóbulo derecho es el más voluminoso.",
+    "consideraciones_clinicas": "Pancreatitis (rara en el caballo).",
+    "exploracion": "Analítica sanguínea (enzimas pancreáticas); ecografía limitada por su posición profunda.",
+    "referencias": [
+      "Dyce, Sack & Wensing 2018",
+      "Budras, Sack & Röck 2012"
+    ],
+    "pendiente_validacion": true,
+    "campos_pendientes": [
+      "medios_de_fijacion",
+      "irrigacion_drenaje",
+      "descripcion",
+      "topografia"
+    ],
+    "sexo_aplicable": "ambos"
+  },
+  {
+    "ficha_id": "ABD_RINON_DER",
+    "nombre": "Riñón derecho",
+    "nombre_latino": "Ren dexter",
+    "cavidad": "abdominal",
+    "sistema": "urinario",
+    "objetos": [
+      "ABD_RINON_DER"
+    ],
+    "descripcion": "Riñón retroperitoneal de forma cordiforme (como un corazón de naipe). La pelvis renal tiene recesos terminales y glándulas mucosas, por lo que la orina equina es normalmente mucoide y turbia.",
+    "topografia": "Bajo los extremos dorsales de las dos o tres últimas costillas y la apófisis transversa de L1; es más craneal que el izquierdo.",
+    "proyeccion_superficial": "Últimos espacios intercostales derechos y región sublumbar craneal.",
+    "relaciones": "En contacto con el proceso caudado del hígado (impresión renal); glándula adrenal derecha craneomedial; duodeno descendente y base del ciego ventralmente.",
+    "medios_de_fijacion": "Posición retroperitoneal, fijado por la fascia y la grasa perirrenal.",
+    "irrigacion_drenaje": "Arteria y vena renales (de la aorta y hacia la vena cava caudal); uréter desde el hilio.",
+    "dimensiones": "≈15 cm.",
+    "consideraciones_clinicas": "No es palpable por vía rectal. Nefrolitos y enfermedad renal.",
+    "exploracion": "Ecografía transcutánea por los últimos EIC derechos; biopsia ecoguiada.",
+    "referencias": [
+      "Dyce, Sack & Wensing 2018",
+      "Budras, Sack & Röck 2012"
+    ],
+    "pendiente_validacion": true,
+    "campos_pendientes": [
+      "irrigacion_drenaje",
+      "consideraciones_clinicas"
+    ],
+    "sexo_aplicable": "ambos"
+  },
+  {
+    "ficha_id": "ABD_RINON_IZQ",
+    "nombre": "Riñón izquierdo",
+    "nombre_latino": "Ren sinister",
+    "cavidad": "abdominal",
+    "sistema": "urinario",
+    "objetos": [
+      "ABD_RINON_IZQ"
+    ],
+    "descripcion": "Riñón retroperitoneal de forma reniforme (de habichuela), más largo y estrecho que el derecho. La pelvis renal tiene recesos terminales y glándulas mucosas. Como el derecho, filtra la sangre y produce la orina.",
+    "topografia": "Desde la 18.ª costilla hasta L2-L3; más caudal que el derecho.",
+    "proyeccion_superficial": "Región sublumbar izquierda, caudal a la última costilla.",
+    "relaciones": "Forma con el bazo el espacio nefroesplénico; glándula adrenal izquierda craneomedial; colon descendente y yeyuno ventralmente.",
+    "medios_de_fijacion": "Retroperitoneal; ligamento nefroesplénico hacia el bazo.",
+    "irrigacion_drenaje": "Arteria y vena renales (de la aorta y hacia la vena cava caudal); uréter desde el hilio.",
+    "dimensiones": "Más largo y estrecho que el derecho.",
+    "consideraciones_clinicas": "Su polo caudal es palpable por vía rectal. Referencia en el atrapamiento nefroesplénico del colon izquierdo. En el atrapamiento nefroesplénico el colon queda suspendido sobre el ligamento nefroesplénico, entre el riñón y el bazo.",
+    "exploracion": "Palpación rectal del polo caudal; ecografía del flanco izquierdo.",
+    "referencias": [
+      "Dyce, Sack & Wensing 2018",
+      "Budras, Sack & Röck 2012"
+    ],
+    "pendiente_validacion": true,
+    "campos_pendientes": [
+      "irrigacion_drenaje"
+    ],
+    "sexo_aplicable": "ambos"
+  },
+  {
+    "ficha_id": "ABD_ADRENAL",
+    "nombre": "Glándulas adrenales",
+    "nombre_latino": "Glandula adrenalis dextra et sinistra",
+    "cavidad": "abdominal",
+    "sistema": "endocrino",
+    "objetos": [
+      "ABD_ADRENAL_DER",
+      "ABD_ADRENAL_IZQ"
+    ],
+    "descripcion": "Glándulas endocrinas pares y alargadas, con corteza (corticosteroides) y médula (catecolaminas). Participan en la respuesta al estrés y en el equilibrio hidroelectrolítico.",
+    "topografia": "Craneomediales a cada riñón, en el espacio retroperitoneal, próximas a la aorta (izquierda) y a la vena cava caudal (derecha).",
+    "proyeccion_superficial": "No aplica",
+    "relaciones": "Riñón correspondiente, aorta, vena cava caudal; la derecha, en contacto con el hígado. Su posición retroperitoneal profunda las hace difíciles de explorar.",
+    "medios_de_fijacion": "Tejido retroperitoneal y grasa perirrenal.",
+    "irrigacion_drenaje": "Arterias adrenales de la aorta y de vasos vecinos; venas adrenales hacia la vena cava caudal.",
+    "dimensiones": "Alargadas; en el modelo, elipsoides de 8 × 3 × 2 cm.",
+    "consideraciones_clinicas": "Feocromocitoma (raro). No deben confundirse con la disfunción de la pars intermedia hipofisaria, de origen hipofisario.",
+    "exploracion": "Ecografía (difícil); hallazgo en la necropsia. La función se valora mejor con pruebas hormonales que con imagen.",
+    "referencias": [
+      "Dyce, Sack & Wensing 2018",
+      "Getty 1975"
+    ],
+    "pendiente_validacion": true,
+    "campos_pendientes": [
+      "topografia",
+      "relaciones",
+      "irrigacion_drenaje",
+      "consideraciones_clinicas",
+      "descripcion",
+      "exploracion"
+    ],
+    "sexo_aplicable": "ambos"
+  },
+  {
+    "ficha_id": "ABD_URETER",
+    "nombre": "Uréteres",
+    "nombre_latino": "Ureter dexter et sinister",
+    "cavidad": "abdominal",
+    "sistema": "urinario",
+    "objetos": [
+      "ABD_URETER_DER",
+      "ABD_URETER_IZQ"
+    ],
+    "descripcion": "Conductos pares que llevan la orina desde la pelvis renal hasta la vejiga urinaria. En su porción proximal tienen glándulas mucosas. La desembocadura oblicua en la vejiga actúa como válvula que impide el reflujo de orina.",
+    "topografia": "Retroperitoneales, a lo largo del techo del abdomen; entran en la cavidad pélvica y desembocan oblicuamente en la cara dorsal del cuello vesical. En su trayecto lumbar discurren junto a la aorta y la vena cava caudal.",
+    "proyeccion_superficial": "No aplica",
+    "relaciones": "En el macho, el conducto deferente cruza dorsal al uréter en el pliegue genital antes de formar su ampolla.",
+    "medios_de_fijacion": "Peritoneo parietal dorsal (retroperitoneales).",
+    "irrigacion_drenaje": "Ramas de los vasos renales, testiculares u ováricos y prostáticos o vaginales.",
+    "dimensiones": "Longitud de ≈70 cm. En el modelo, radio de 6 mm.",
+    "consideraciones_clinicas": "Uréter ectópico (incontinencia en potrancas) y ureterolitos.",
+    "exploracion": "Palpación rectal del uréter dilatado; ecografía transrectal; cistoscopia de los orificios ureterales.",
+    "referencias": [
+      "Dyce, Sack & Wensing 2018",
+      "Reed, Bayly & Sellon (ed. reciente)"
+    ],
+    "pendiente_validacion": true,
+    "campos_pendientes": [
+      "irrigacion_drenaje",
+      "exploracion",
+      "descripcion",
+      "topografia"
+    ],
+    "sexo_aplicable": "ambos"
+  },
+  {
+    "ficha_id": "ABD_AORTA",
+    "nombre": "Aorta abdominal",
+    "nombre_latino": "Aorta abdominalis",
+    "cavidad": "abdominal",
+    "sistema": "cardiovascular",
+    "objetos": [
+      "ABD_AORTA"
+    ],
+    "descripcion": "Continuación de la aorta torácica tras atravesar el hiato aórtico. Irriga las vísceras abdominales, la pared y la pelvis. Su principal rama visceral es la arteria mesentérica craneal, que irriga casi todo el intestino.",
+    "topografia": "Ventral a las vértebras lumbares, ligeramente a la izquierda; termina a nivel de ≈L5-L6 dividiéndose en las arterias ilíacas externas e internas. Entra en el abdomen por el hiato aórtico, entre los pilares del diafragma (≈T18-L1).",
+    "proyeccion_superficial": "No aplica",
+    "relaciones": "A su derecha y algo ventral, la vena cava caudal; ventralmente, la raíz del mesenterio, el páncreas y los riñones a ambos lados.",
+    "medios_de_fijacion": "Retroperitoneal, adherida a la musculatura sublumbar.",
+    "irrigacion_drenaje": "Ramas: tronco celíaco (≈T18-L1), arteria mesentérica craneal (≈L1), arterias renales, testiculares u ováricas, arteria mesentérica caudal e ilíacas.",
+    "dimensiones": "No aplica",
+    "consideraciones_clinicas": "La trombosis aortoilíaca causa claudicación del miembro pelviano durante el ejercicio.",
+    "exploracion": "Palpación rectal del pulso aórtico y de las ilíacas; ecografía transrectal.",
+    "referencias": [
+      "Dyce, Sack & Wensing 2018",
+      "Getty 1975"
+    ],
+    "pendiente_validacion": true,
+    "campos_pendientes": [
+      "consideraciones_clinicas",
+      "exploracion"
+    ],
+    "sexo_aplicable": "ambos"
+  },
+  {
+    "ficha_id": "ABD_VENA_CAVA_CAUDAL",
+    "nombre": "Vena cava caudal (porción abdominal)",
+    "nombre_latino": "Vena cava caudalis, pars abdominalis",
+    "cavidad": "abdominal",
+    "sistema": "cardiovascular",
+    "objetos": [
+      "ABD_VENA_CAVA_CAUDAL"
+    ],
+    "descripcion": "Gran vena que recoge la sangre de los miembros pelvianos, la pelvis, los riñones y el hígado y la conduce al tórax a través del diafragma. Su porción craneal queda incluida en el borde dorsal del hígado.",
+    "topografia": "Dorsal y a la derecha de la aorta en la región lumbar; cranealmente se aloja en el surco del borde dorsal del hígado antes de atravesar el foramen de la vena cava del diafragma.",
+    "proyeccion_superficial": "No aplica",
+    "relaciones": "Aorta (a la izquierda), riñón y adrenal derechos, páncreas y hígado (surco de la vena cava).",
+    "medios_de_fijacion": "Retroperitoneal; incluida en el parénquima hepático en su porción craneal.",
+    "irrigacion_drenaje": "Recibe las venas ilíacas comunes, renales, testiculares u ováricas y hepáticas.",
+    "dimensiones": "Gran calibre; en el modelo, radio de 2,2 cm.",
+    "consideraciones_clinicas": "Referencia en la ecografía hepática derecha y en la cirugía del hígado.",
+    "exploracion": "Ecografía transabdominal derecha. Su colapso o distensión orienta sobre la volemia.",
+    "referencias": [
+      "Dyce, Sack & Wensing 2018",
+      "Getty 1975"
+    ],
+    "pendiente_validacion": true,
+    "campos_pendientes": [
+      "irrigacion_drenaje",
+      "consideraciones_clinicas",
+      "exploracion"
+    ],
+    "sexo_aplicable": "ambos"
+  },
+  {
+    "ficha_id": "ABD_A_MESENTERICA_CRANEAL",
+    "nombre": "Arteria mesentérica craneal",
+    "nombre_latino": "Arteria mesenterica cranialis",
+    "cavidad": "abdominal",
+    "sistema": "cardiovascular",
+    "objetos": [
+      "ABD_A_MESENTERICA_CRANEAL"
+    ],
+    "descripcion": "Rama visceral impar de la aorta abdominal que irriga la mayor parte del intestino del caballo. Sus ramas principales son las arterias yeyunales, la ileocólica y las cólicas derecha y media.",
+    "topografia": "Nace de la cara ventral de la aorta a nivel de ≈L1 y desciende en la raíz del mesenterio; el colon transverso cruza cranealmente a ella. Es una referencia para situar la raíz del mesenterio y el colon transverso.",
+    "proyeccion_superficial": "No aplica",
+    "relaciones": "Raíz del mesenterio, colon transverso (craneal), páncreas y porción transversa del duodeno.",
+    "medios_de_fijacion": "Raíz del mesenterio.",
+    "irrigacion_drenaje": "Irriga el yeyuno, el íleon, el ciego, el colon ascendente (colon mayor) y el colon transverso.",
+    "dimensiones": "Tronco corto y grueso; en el modelo, radio de 1-1,2 cm.",
+    "consideraciones_clinicas": "Arteritis verminosa por larvas de Strongylus vulgaris, causa de cólico tromboembólico.",
+    "exploracion": "Palpación rectal de la raíz del mesenterio (engrosamiento en la arteritis); ecografía Doppler.",
+    "referencias": [
+      "Dyce, Sack & Wensing 2018",
+      "Reed, Bayly & Sellon (ed. reciente)"
+    ],
+    "pendiente_validacion": true,
+    "campos_pendientes": [
+      "exploracion",
+      "descripcion"
+    ],
+    "sexo_aplicable": "ambos"
+  },
+  {
+    "ficha_id": "PEL_RECTO",
+    "nombre": "Recto",
+    "nombre_latino": "Rectum",
+    "cavidad": "pelvica",
+    "sistema": "digestivo",
+    "objetos": [
+      "PEL_RECTO"
+    ],
+    "descripcion": "Porción terminal del intestino grueso, continuación del colon descendente. Tiene una parte peritoneal craneal y una parte retroperitoneal caudal (ampolla rectal). Almacena temporalmente las heces antes de la defecación.",
+    "topografia": "En la cavidad pélvica, dorsal a la vejiga urinaria y a los órganos genitales.",
+    "proyeccion_superficial": "No aplica",
+    "relaciones": "Cranealmente, el colon descendente; ventralmente, la vejiga y, en el macho, las ampollas de los conductos deferentes; dorsalmente, el sacro. Lateralmente, las paredes de la pelvis.",
+    "medios_de_fijacion": "Mesorrecto en la parte peritoneal; tejido conectivo pélvico en la retroperitoneal.",
+    "irrigacion_drenaje": "Arteria rectal craneal (de la mesentérica caudal) y rectales media y caudal.",
+    "dimensiones": "Longitud de ≈30 cm.",
+    "consideraciones_clinicas": "Vía de la palpación rectal. Desgarros rectales, más frecuentes en la pared dorsal.",
+    "exploracion": "Palpación rectal; ecografía transrectal. La exploración debe hacerse con lubricación abundante y sujeción adecuada para evitar desgarros.",
+    "referencias": [
+      "Dyce, Sack & Wensing 2018",
+      "Auer & Stick, Equine Surgery (ed. reciente)"
+    ],
+    "pendiente_validacion": true,
+    "campos_pendientes": [
+      "medios_de_fijacion",
+      "irrigacion_drenaje",
+      "exploracion"
+    ],
+    "sexo_aplicable": "ambos"
+  },
+  {
+    "ficha_id": "PEL_VEJIGA",
+    "nombre": "Vejiga urinaria",
+    "nombre_latino": "Vesica urinaria",
+    "cavidad": "pelvica",
+    "sistema": "urinario",
+    "objetos": [
+      "PEL_VEJIGA"
+    ],
+    "descripcion": "Órgano hueco que almacena la orina. Los uréteres desembocan oblicuamente en la cara dorsal de su cuello. Consta de vértice, cuerpo y cuello, que se continúa con la uretra.",
+    "topografia": "Pélvica cuando está vacía; con la repleción se proyecta hacia la cavidad abdominal. En el modelo se representa moderadamente llena, en la entrada de la pelvis.",
+    "proyeccion_superficial": "No aplica",
+    "relaciones": "Dorsalmente, el recto y, en el macho, las ampollas de los conductos deferentes; cranealmente, la flexura pélvica del colon.",
+    "medios_de_fijacion": "Ligamentos vesicales medio y laterales.",
+    "irrigacion_drenaje": "Arterias vesicales (de las ramas de la ilíaca interna).",
+    "dimensiones": "Variable según el llenado.",
+    "consideraciones_clinicas": "Urolitos de carbonato cálcico; rotura vesical neonatal (uroperitoneo, más frecuente en potros machos).",
+    "exploracion": "Palpación rectal; ecografía transrectal; cistoscopia. Su grado de llenado se valora fácilmente por vía rectal.",
+    "referencias": [
+      "Dyce, Sack & Wensing 2018",
+      "Reed, Bayly & Sellon (ed. reciente)"
+    ],
+    "pendiente_validacion": true,
+    "campos_pendientes": [
+      "medios_de_fijacion",
+      "irrigacion_drenaje",
+      "descripcion"
+    ],
+    "sexo_aplicable": "ambos"
+  },
+  {
+    "ficha_id": "ING_ANILLO_PROFUNDO",
+    "nombre": "Anillo inguinal profundo y anillo vaginal",
+    "nombre_latino": "Anulus inguinalis profundus; anulus vaginalis",
+    "cavidad": "inguinal",
+    "sistema": "limites",
+    "objetos": [
+      "ING_ANILLO_PROFUNDO_IZQ",
+      "ING_ANILLO_PROFUNDO_DER"
+    ],
+    "descripcion": "Abertura interna del conducto inguinal hacia la cavidad abdominal. En el macho, el anillo vaginal es la abertura del proceso vaginal del peritoneo, situada dentro del anillo profundo.",
+    "topografia": "Pared abdominal ventral caudal, delimitado por el borde caudal del músculo oblicuo interno del abdomen y el ligamento inguinal.",
+    "proyeccion_superficial": "Craneolateral al borde del pubis, a cada lado.",
+    "relaciones": "Por él pasan el cordón espermático (conducto deferente, arteria testicular, plexo pampiniforme) dentro de la túnica vaginal; el músculo cremáster queda fuera de esta.",
+    "medios_de_fijacion": "Forma parte de la pared abdominal.",
+    "irrigacion_drenaje": "No aplica",
+    "dimensiones": "En el semental, el anillo vaginal admite uno o dos dedos en la palpación.",
+    "consideraciones_clinicas": "Hernia inguinal indirecta a través del anillo vaginal (sementales tras la monta o el ejercicio) y evisceración tras la castración a través del anillo vaginal.",
+    "exploracion": "Palpación rectal del anillo vaginal, craneolateral al borde del pubis.",
+    "referencias": [
+      "Dyce, Sack & Wensing 2018",
+      "Auer & Stick, Equine Surgery (ed. reciente)",
+      "NAV 2017"
+    ],
+    "pendiente_validacion": false,
+    "sexo_aplicable": "macho"
+  },
+  {
+    "ficha_id": "ING_CANAL_INGUINAL",
+    "nombre": "Conducto inguinal",
+    "nombre_latino": "Canalis inguinalis",
+    "cavidad": "inguinal",
+    "sistema": "limites",
+    "objetos": [
+      "ING_CANAL_INGUINAL_IZQ",
+      "ING_CANAL_INGUINAL_DER"
+    ],
+    "descripcion": "No es una cavidad cerrada, sino un paso oblicuo en la pared abdominal ventral caudal, entre el músculo oblicuo interno del abdomen (craneomedial) y la aponeurosis del oblicuo externo (caudolateral). En la nomenclatura veterinaria se habla de región inguinal y conducto inguinal, no de cavidad inguinal.",
+    "topografia": "Se dirige de craneodorsal-lateral a caudoventral-medial, desde el anillo inguinal profundo hasta el superficial.",
+    "proyeccion_superficial": "Región inguinal, lateral al prepucio en el macho.",
+    "relaciones": "En el macho: proceso o túnica vaginal con el cordón espermático, músculo cremáster, vasos pudendos externos y nervio genitofemoral. En la hembra: vasos pudendos externos, linfáticos de la glándula mamaria y nervio genitofemoral, sin proceso vaginal relevante.",
+    "medios_de_fijacion": "Pared abdominal (músculos oblicuos y sus aponeurosis).",
+    "irrigacion_drenaje": "Vasos pudendos externos que lo atraviesan.",
+    "dimensiones": "Longitud de ≈10-15 cm (dato de referencia por validar).",
+    "consideraciones_clinicas": "Hernia inguinal indirecta, hernia escrotal congénita en potros (a menudo autolimitada), hernia directa (rotura de túnicas) y criptorquidia inguinal.",
+    "exploracion": "Palpación externa de la región inguinal; palpación rectal del anillo vaginal; ecografía.",
+    "referencias": [
+      "Dyce, Sack & Wensing 2018",
+      "König & Liebich (ed. reciente)",
+      "NAV 2017"
+    ],
+    "pendiente_validacion": true,
+    "campos_pendientes": [
+      "dimensiones"
+    ],
+    "sexo_aplicable": "ambos"
+  },
+  {
+    "ficha_id": "ING_ANILLO_SUPERFICIAL",
+    "nombre": "Anillo inguinal superficial",
+    "nombre_latino": "Anulus inguinalis superficialis",
+    "cavidad": "inguinal",
+    "sistema": "limites",
+    "objetos": [
+      "ING_ANILLO_SUPERFICIAL_IZQ",
+      "ING_ANILLO_SUPERFICIAL_DER"
+    ],
+    "descripcion": "Abertura externa del conducto inguinal: una hendidura en la aponeurosis del músculo oblicuo externo del abdomen. Con el anillo profundo delimita los extremos del conducto inguinal.",
+    "topografia": "Craneal al pubis y lateral al prepucio, en la pared abdominal ventral caudal.",
+    "proyeccion_superficial": "Región inguinal, palpable a través de la piel, lateral al prepucio.",
+    "relaciones": "Por él emerge el cordón espermático hacia el escroto; vasos pudendos externos y nervio genitofemoral. Lateral al prepucio en el macho y a la base de la glándula mamaria en la hembra.",
+    "medios_de_fijacion": "Aponeurosis del músculo oblicuo externo del abdomen.",
+    "irrigacion_drenaje": "No aplica",
+    "dimensiones": "Hendidura alargada; en el modelo, 5 × 2 cm.",
+    "consideraciones_clinicas": "Referencia en la castración y en la reparación de hernias inguinales; en la criptorquidia inguinal el testículo puede quedar a este nivel.",
+    "exploracion": "Palpación externa de la región inguinal; ecografía.",
+    "referencias": [
+      "Dyce, Sack & Wensing 2018",
+      "Auer & Stick, Equine Surgery (ed. reciente)"
+    ],
+    "pendiente_validacion": true,
+    "campos_pendientes": [
+      "dimensiones",
+      "relaciones"
+    ],
+    "sexo_aplicable": "ambos"
+  },
+  {
+    "ficha_id": "ING_CORDON_ESPERMATICO",
+    "nombre": "Cordón espermático y túnica vaginal",
+    "nombre_latino": "Funiculus spermaticus; tunica vaginalis",
+    "cavidad": "inguinal",
+    "sistema": "reproductor",
+    "objetos": [
+      "ING_CORDON_ESPERMATICO_IZQ",
+      "ING_CORDON_ESPERMATICO_DER"
+    ],
+    "descripcion": "Conjunto de estructuras que suspenden el testículo y lo conectan con la cavidad abdominal, envueltas por la túnica vaginal (evaginación del peritoneo). Su longitud permite que el cremáster eleve y descienda el testículo.",
+    "topografia": "Desde el anillo vaginal, a través del conducto inguinal, hasta el polo dorsal del testículo en el escroto.",
+    "proyeccion_superficial": "Cuello del escroto y región inguinal.",
+    "relaciones": "Contiene el conducto deferente, la arteria testicular, el plexo pampiniforme, linfáticos y nervios; el músculo cremáster discurre fuera de la túnica vaginal.",
+    "medios_de_fijacion": "Continuidad con el peritoneo en el anillo vaginal; ligamento de la cola del epidídimo distalmente.",
+    "irrigacion_drenaje": "Arteria testicular y plexo pampiniforme.",
+    "dimensiones": "No aplica",
+    "consideraciones_clinicas": "Torsión del cordón espermático; base de las técnicas de castración abierta, cerrada y semicerrada (según se incida o no la túnica vaginal).",
+    "exploracion": "Palpación externa del cuello escrotal; ecografía Doppler.",
+    "referencias": [
+      "Dyce, Sack & Wensing 2018",
+      "Auer & Stick, Equine Surgery (ed. reciente)"
+    ],
+    "pendiente_validacion": true,
+    "sexo_aplicable": "macho",
+    "campos_pendientes": [
+      "descripcion"
+    ]
+  },
+  {
+    "ficha_id": "ING_CONDUCTO_DEFERENTE",
+    "nombre": "Conducto deferente",
+    "nombre_latino": "Ductus deferens",
+    "cavidad": "inguinal",
+    "sistema": "reproductor",
+    "objetos": [
+      "ING_CONDUCTO_DEFERENTE_IZQ",
+      "ING_CONDUCTO_DEFERENTE_DER"
+    ],
+    "descripcion": "Conducto que transporta los espermatozoides desde la cola del epidídimo hasta la uretra. Termina en una ampolla bien desarrollada antes de desembocar en el colículo seminal.",
+    "topografia": "De la cola del epidídimo asciende por el cordón espermático y el conducto inguinal, entra en el abdomen por el anillo vaginal, gira caudomedialmente en el pliegue genital, cruza dorsal al uréter y forma la ampolla dorsal al cuello vesical.",
+    "proyeccion_superficial": "No aplica",
+    "relaciones": "Cordón espermático, uréter (al que cruza dorsalmente), vejiga urinaria y recto (dorsal a la ampolla).",
+    "medios_de_fijacion": "Mesoducto deferente y pliegue genital.",
+    "irrigacion_drenaje": "Arteria del conducto deferente.",
+    "dimensiones": "Fino en casi todo su trayecto; la ampolla tiene un diámetro mucho mayor.",
+    "consideraciones_clinicas": "La ampolla es palpable por vía rectal; su obstrucción (ampollas taponadas) produce eyaculados pobres en espermatozoides.",
+    "exploracion": "Palpación y ecografía transrectales de las ampollas.",
+    "referencias": [
+      "Dyce, Sack & Wensing 2018",
+      "Budras, Sack & Röck 2012"
+    ],
+    "pendiente_validacion": true,
+    "campos_pendientes": [
+      "irrigacion_drenaje",
+      "consideraciones_clinicas"
+    ],
+    "sexo_aplicable": "macho"
+  },
+  {
+    "ficha_id": "ING_VASOS_TESTICULARES",
+    "nombre": "Arteria testicular y plexo pampiniforme",
+    "nombre_latino": "Arteria testicularis; plexus pampiniformis",
+    "cavidad": "inguinal",
+    "sistema": "cardiovascular",
+    "objetos": [
+      "ING_VASOS_TESTICULARES_IZQ",
+      "ING_VASOS_TESTICULARES_DER"
+    ],
+    "descripcion": "La arteria testicular, rama de la aorta abdominal, irriga el testículo y el epidídimo. Las venas testiculares forman alrededor de ella el plexo pampiniforme, que enfría la sangre arterial por intercambio de calor.",
+    "topografia": "Nace de la aorta abdominal, desciende retroperitonealmente hasta el anillo vaginal y recorre el cordón espermático hasta el polo dorsal del testículo, donde el plexo es más voluminoso.",
+    "proyeccion_superficial": "Cuello del escroto (plexo pampiniforme palpable).",
+    "relaciones": "Conducto deferente y túnica vaginal en el cordón espermático. El músculo cremáster queda fuera de la túnica vaginal, junto al cordón.",
+    "medios_de_fijacion": "Mesorquio dentro del cordón espermático.",
+    "irrigacion_drenaje": "Las venas testiculares drenan a la vena cava caudal.",
+    "dimensiones": "La arteria es fina; el plexo pampiniforme se ensancha cerca del polo dorsal del testículo.",
+    "consideraciones_clinicas": "Hemorragia tras la castración (ligadura o emasculación del cordón); varicocele (raro).",
+    "exploracion": "Ecografía Doppler del cordón espermático.",
+    "referencias": [
+      "Dyce, Sack & Wensing 2018",
+      "Auer & Stick, Equine Surgery (ed. reciente)"
+    ],
+    "pendiente_validacion": true,
+    "campos_pendientes": [
+      "descripcion",
+      "irrigacion_drenaje",
+      "consideraciones_clinicas",
+      "dimensiones"
+    ],
+    "sexo_aplicable": "macho"
+  },
+  {
+    "ficha_id": "ING_TESTICULO",
+    "nombre": "Testículo",
+    "nombre_latino": "Testis",
+    "cavidad": "inguinal",
+    "sistema": "reproductor",
+    "objetos": [
+      "ING_TESTICULO_IZQ",
+      "ING_TESTICULO_DER"
+    ],
+    "descripcion": "Gónada masculina ovoide, productora de espermatozoides y testosterona, alojada en el escroto con el eje mayor casi horizontal. Está rodeado por la túnica albugínea y por la hoja visceral de la túnica vaginal.",
+    "topografia": "En el escroto, en la región inguinal, ventral al pubis; suspendido por el cordón espermático.",
+    "proyeccion_superficial": "Escroto.",
+    "relaciones": "El epidídimo se sitúa en su borde dorsolateral; túnica vaginal alrededor. El conducto deferente parte de la cola del epidídimo, en su polo caudal.",
+    "medios_de_fijacion": "Cordón espermático, mesorquio y ligamento propio del testículo hacia el epidídimo.",
+    "irrigacion_drenaje": "Arteria testicular; drenaje por el plexo pampiniforme.",
+    "dimensiones": "≈10-12 cm de longitud.",
+    "consideraciones_clinicas": "Criptorquidia inguinal o abdominal; torsión del cordón espermático. El descenso ocurre alrededor del nacimiento (≈30 días antes a ≈10 días después), guiado por el gubernáculo.",
+    "exploracion": "Palpación escrotal; ecografía; en la criptorquidia, palpación rectal y ecografía transabdominal.",
+    "referencias": [
+      "Dyce, Sack & Wensing 2018",
+      "Auer & Stick, Equine Surgery (ed. reciente)"
+    ],
+    "pendiente_validacion": true,
+    "sexo_aplicable": "macho",
+    "campos_pendientes": [
+      "descripcion"
+    ]
+  },
+  {
+    "ficha_id": "ING_EPIDIDIMO",
+    "nombre": "Epidídimo",
+    "nombre_latino": "Epididymis",
+    "cavidad": "inguinal",
+    "sistema": "reproductor",
+    "objetos": [
+      "ING_EPIDIDIMO_IZQ",
+      "ING_EPIDIDIMO_DER"
+    ],
+    "descripcion": "Conducto muy contorneado donde maduran y se almacenan los espermatozoides. Tiene cabeza, cuerpo y cola. La cola almacena los espermatozoides hasta la eyaculación.",
+    "topografia": "Dorsolateral al testículo; la cabeza es craneal y la cola, caudal. Recorre el borde dorsolateral del testículo de polo a polo.",
+    "proyeccion_superficial": "Escroto: la cola es palpable en el polo caudal del testículo.",
+    "relaciones": "Testículo; de la cola nace el conducto deferente.",
+    "medios_de_fijacion": "La cola se fija a la túnica vaginal por el ligamento de la cola del epidídimo.",
+    "irrigacion_drenaje": "Ramas de la arteria testicular.",
+    "dimensiones": "Acompaña toda la longitud del testículo (≈10-12 cm).",
+    "consideraciones_clinicas": "Referencia para orientar el testículo en la palpación (la cola indica el polo caudal); epididimitis (rara). En la castración, la tracción del ligamento de la cola del epidídimo ayuda a exteriorizar el testículo.",
+    "exploracion": "Palpación escrotal; ecografía.",
+    "referencias": [
+      "Dyce, Sack & Wensing 2018",
+      "Budras, Sack & Röck 2012"
+    ],
+    "pendiente_validacion": true,
+    "campos_pendientes": [
+      "irrigacion_drenaje",
+      "consideraciones_clinicas",
+      "descripcion"
+    ],
+    "sexo_aplicable": "macho"
+  }
+]
