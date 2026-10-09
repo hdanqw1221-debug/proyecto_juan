@@ -1,0 +1,2159 @@
+{
+  "version": 1,
+  "unidades": "m",
+  "sistema_coordenadas": "+X craneal, +Y izquierda, +Z dorsal; origen en la abertura pélvica craneal, plano medio y suelo de la cavidad a la altura del xifoides",
+  "generador": "Blender 4.2.23 LTS",
+  "vertice_diafragma": [
+    1.3157,
+    0.0,
+    0.3
+  ],
+  "objetos": [
+    {
+      "objeto_id": "TOR_PULMON_DER",
+      "ficha_id": "TOR_PULMON",
+      "nombre": "Pulmón derecho",
+      "cavidad": "toracica",
+      "sistema": "respiratorio",
+      "lado": "DER",
+      "color_hex": "#E8A0A8",
+      "opacidad": 1.0,
+      "capa": 1,
+      "seleccionable": true,
+      "visible_por_defecto": true,
+      "coleccion": "Toracica",
+      "sexo_aplicable": "ambos",
+      "archivo": "obj/TOR_PULMON_DER.obj",
+      "n_triangulos": 13600,
+      "manifold": true,
+      "volumen_m3": 0.035903,
+      "centroide": [
+        1.2491,
+        -0.1297,
+        0.4474
+      ],
+      "caja": [
+        [
+          0.8411,
+          -0.2763,
+          0.0408
+        ],
+        [
+          1.579,
+          0.0299,
+          0.6958
+        ]
+      ],
+      "refinado": false
+    },
+    {
+      "objeto_id": "TOR_PULMON_IZQ",
+      "ficha_id": "TOR_PULMON",
+      "nombre": "Pulmón izquierdo",
+      "cavidad": "toracica",
+      "sistema": "respiratorio",
+      "lado": "IZQ",
+      "color_hex": "#E8A0A8",
+      "opacidad": 1.0,
+      "capa": 1,
+      "seleccionable": true,
+      "visible_por_defecto": true,
+      "coleccion": "Toracica",
+      "sexo_aplicable": "ambos",
+      "archivo": "obj/TOR_PULMON_IZQ.obj",
+      "n_triangulos": 12552,
+      "manifold": true,
+      "volumen_m3": 0.029623,
+      "centroide": [
+        1.2184,
+        0.1405,
+        0.4744
+      ],
+      "caja": [
+        [
+          0.8386,
+          0.0349,
+          0.0514
+        ],
+        [
+          1.5786,
+          0.2772,
+          0.6954
+        ]
+      ],
+      "refinado": false
+    },
+    {
+      "objeto_id": "TOR_CORAZON",
+      "ficha_id": "TOR_CORAZON",
+      "nombre": "Corazón",
+      "cavidad": "toracica",
+      "sistema": "cardiovascular",
+      "lado": "MED",
+      "color_hex": "#A93226",
+      "opacidad": 1.0,
+      "capa": 2,
+      "seleccionable": true,
+      "visible_por_defecto": true,
+      "coleccion": "Toracica",
+      "sexo_aplicable": "ambos",
+      "archivo": "obj/TOR_CORAZON.obj",
+      "n_triangulos": 13224,
+      "manifold": true,
+      "volumen_m3": 0.008344,
+      "centroide": [
+        1.4518,
+        0.024,
+        0.2573
+      ],
+      "caja": [
+        [
+          1.3355,
+          -0.102,
+          0.0715
+        ],
+        [
+          1.5693,
+          0.1291,
+          0.4348
+        ]
+      ],
+      "refinado": false
+    },
+    {
+      "objeto_id": "TOR_PERICARDIO",
+      "ficha_id": "TOR_PERICARDIO",
+      "nombre": "Pericardio",
+      "cavidad": "toracica",
+      "sistema": "cardiovascular",
+      "lado": "MED",
+      "color_hex": "#D6CFC4",
+      "opacidad": 0.25,
+      "capa": 0,
+      "seleccionable": true,
+      "visible_por_defecto": false,
+      "coleccion": "Toracica",
+      "sexo_aplicable": "ambos",
+      "archivo": "obj/TOR_PERICARDIO.obj",
+      "n_triangulos": 13276,
+      "manifold": true,
+      "volumen_m3": 0.010898,
+      "centroide": [
+        1.4555,
+        0.0234,
+        0.263
+      ],
+      "caja": [
+        [
+          1.3248,
+          -0.1137,
+          0.0659
+        ],
+        [
+          1.5805,
+          0.1395,
+          0.4472
+        ]
+      ],
+      "refinado": false
+    },
+    {
+      "objeto_id": "TOR_TRAQUEA",
+      "ficha_id": "TOR_TRAQUEA",
+      "nombre": "Tráquea y bronquios principales",
+      "cavidad": "toracica",
+      "sistema": "respiratorio",
+      "lado": "MED",
+      "color_hex": "#E8A0A8",
+      "opacidad": 1.0,
+      "capa": 2,
+      "seleccionable": true,
+      "visible_por_defecto": true,
+      "coleccion": "Toracica",
+      "sexo_aplicable": "ambos",
+      "archivo": "obj/TOR_TRAQUEA.obj",
+      "n_triangulos": 13396,
+      "manifold": true,
+      "volumen_m3": 0.000908,
+      "centroide": [
+        1.45,
+        -0.0,
+        0.4458
+      ],
+      "caja": [
+        [
+          1.1403,
+          -0.1293,
+          0.3907
+        ],
+        [
+          1.654,
+          0.1293,
+          0.496
+        ]
+      ],
+      "refinado": false
+    },
+    {
+      "objeto_id": "TOR_ESOFAGO",
+      "ficha_id": "TOR_ESOFAGO",
+      "nombre": "Esófago (porción torácica)",
+      "cavidad": "toracica",
+      "sistema": "digestivo",
+      "lado": "MED",
+      "color_hex": "#D9A066",
+      "opacidad": 1.0,
+      "capa": 3,
+      "seleccionable": true,
+      "visible_por_defecto": true,
+      "coleccion": "Toracica",
+      "sexo_aplicable": "ambos",
+      "archivo": "obj/TOR_ESOFAGO.obj",
+      "n_triangulos": 12444,
+      "manifold": true,
+      "volumen_m3": 0.000616,
+      "centroide": [
+        1.1989,
+        0.0118,
+        0.5205
+      ],
+      "caja": [
+        [
+          0.8613,
+          -0.0268,
+          0.3869
+        ],
+        [
+          1.6393,
+          0.0908,
+          0.5926
+        ]
+      ],
+      "refinado": false
+    },
+    {
+      "objeto_id": "TOR_AORTA",
+      "ficha_id": "TOR_AORTA",
+      "nombre": "Aorta torácica",
+      "cavidad": "toracica",
+      "sistema": "cardiovascular",
+      "lado": "MED",
+      "color_hex": "#C0392B",
+      "opacidad": 1.0,
+      "capa": 3,
+      "seleccionable": true,
+      "visible_por_defecto": true,
+      "coleccion": "Toracica",
+      "sexo_aplicable": "ambos",
+      "archivo": "obj/TOR_AORTA.obj",
+      "n_triangulos": 12112,
+      "manifold": true,
+      "volumen_m3": 0.001749,
+      "centroide": [
+        1.2379,
+        0.0286,
+        0.5924
+      ],
+      "caja": [
+        [
+          0.7894,
+          -0.0139,
+          0.3289
+        ],
+        [
+          1.6377,
+          0.0752,
+          0.6752
+        ]
+      ],
+      "refinado": false
+    },
+    {
+      "objeto_id": "TOR_VENA_CAVA_CRANEAL",
+      "ficha_id": "TOR_VENA_CAVA_CRANEAL",
+      "nombre": "Vena cava craneal",
+      "cavidad": "toracica",
+      "sistema": "cardiovascular",
+      "lado": "MED",
+      "color_hex": "#2E5C9A",
+      "opacidad": 1.0,
+      "capa": 3,
+      "seleccionable": true,
+      "visible_por_defecto": true,
+      "coleccion": "Toracica",
+      "sexo_aplicable": "ambos",
+      "archivo": "obj/TOR_VENA_CAVA_CRANEAL.obj",
+      "n_triangulos": 12424,
+      "manifold": true,
+      "volumen_m3": 0.000292,
+      "centroide": [
+        1.5425,
+        -0.0199,
+        0.3549
+      ],
+      "caja": [
+        [
+          1.4382,
+          -0.0516,
+          0.3283
+        ],
+        [
+          1.6467,
+          0.0117,
+          0.3817
+        ]
+      ],
+      "refinado": false
+    },
+    {
+      "objeto_id": "TOR_VENA_CAVA_CAUDAL",
+      "ficha_id": "TOR_VENA_CAVA_CAUDAL",
+      "nombre": "Vena cava caudal (porción torácica)",
+      "cavidad": "toracica",
+      "sistema": "cardiovascular",
+      "lado": "MED",
+      "color_hex": "#2E5C9A",
+      "opacidad": 1.0,
+      "capa": 3,
+      "seleccionable": true,
+      "visible_por_defecto": true,
+      "coleccion": "Toracica",
+      "sexo_aplicable": "ambos",
+      "archivo": "obj/TOR_VENA_CAVA_CAUDAL.obj",
+      "n_triangulos": 12924,
+      "manifold": true,
+      "volumen_m3": 0.000411,
+      "centroide": [
+        1.3026,
+        -0.0349,
+        0.3871
+      ],
+      "caja": [
+        [
+          1.1622,
+          -0.0617,
+          0.3283
+        ],
+        [
+          1.4417,
+          -0.0083,
+          0.4415
+        ]
+      ],
+      "refinado": false
+    },
+    {
+      "objeto_id": "TOR_DIAFRAGMA",
+      "ficha_id": "TOR_DIAFRAGMA",
+      "nombre": "Diafragma",
+      "cavidad": "toracica",
+      "sistema": "limites",
+      "lado": "MED",
+      "color_hex": "#D6CFC4",
+      "opacidad": 0.5,
+      "capa": 0,
+      "seleccionable": true,
+      "visible_por_defecto": true,
+      "coleccion": "Toracica",
+      "sexo_aplicable": "ambos",
+      "archivo": "obj/TOR_DIAFRAGMA.obj",
+      "n_triangulos": 12866,
+      "manifold": true,
+      "volumen_m3": 0.005446,
+      "centroide": [
+        1.0917,
+        0.0001,
+        0.3686
+      ],
+      "caja": [
+        [
+          0.7506,
+          -0.2988,
+          0.0098
+        ],
+        [
+          1.3617,
+          0.2988,
+          0.6964
+        ]
+      ],
+      "refinado": false
+    },
+    {
+      "objeto_id": "TOR_MEDIASTINO",
+      "ficha_id": "TOR_MEDIASTINO",
+      "nombre": "Mediastino",
+      "cavidad": "toracica",
+      "sistema": "limites",
+      "lado": "MED",
+      "color_hex": "#D6CFC4",
+      "opacidad": 0.15,
+      "capa": 0,
+      "seleccionable": true,
+      "visible_por_defecto": false,
+      "coleccion": "Toracica",
+      "sexo_aplicable": "ambos",
+      "archivo": "obj/TOR_MEDIASTINO.obj",
+      "n_triangulos": 14550,
+      "manifold": true,
+      "volumen_m3": 0.002939,
+      "centroide": [
+        1.3117,
+        0.005,
+        0.4501
+      ],
+      "caja": [
+        [
+          0.7695,
+          -0.0011,
+          0.0231
+        ],
+        [
+          1.6002,
+          0.0112,
+          0.7025
+        ]
+      ],
+      "refinado": false
+    },
+    {
+      "objeto_id": "ABD_ESTOMAGO",
+      "ficha_id": "ABD_ESTOMAGO",
+      "nombre": "Estómago",
+      "cavidad": "abdominal",
+      "sistema": "digestivo",
+      "lado": "MED",
+      "color_hex": "#C98B5A",
+      "opacidad": 1.0,
+      "capa": 1,
+      "seleccionable": true,
+      "visible_por_defecto": true,
+      "coleccion": "Abdominal",
+      "sexo_aplicable": "ambos",
+      "archivo": "obj/ABD_ESTOMAGO.obj",
+      "n_triangulos": 13392,
+      "manifold": true,
+      "volumen_m3": 0.009526,
+      "centroide": [
+        0.931,
+        0.0751,
+        0.3488
+      ],
+      "caja": [
+        [
+          0.7757,
+          -0.0577,
+          0.196
+        ],
+        [
+          1.0776,
+          0.1876,
+          0.5251
+        ]
+      ],
+      "refinado": false
+    },
+    {
+      "objeto_id": "ABD_DUODENO",
+      "ficha_id": "ABD_DUODENO",
+      "nombre": "Duodeno",
+      "cavidad": "abdominal",
+      "sistema": "digestivo",
+      "lado": "MED",
+      "color_hex": "#D9A066",
+      "opacidad": 1.0,
+      "capa": 2,
+      "seleccionable": true,
+      "visible_por_defecto": true,
+      "coleccion": "Abdominal",
+      "sexo_aplicable": "ambos",
+      "archivo": "obj/ABD_DUODENO.obj",
+      "n_triangulos": 12516,
+      "manifold": true,
+      "volumen_m3": 0.001708,
+      "centroide": [
+        0.8112,
+        -0.0162,
+        0.4958
+      ],
+      "caja": [
+        [
+          0.6377,
+          -0.1199,
+          0.3302
+        ],
+        [
+          1.0574,
+          0.1812,
+          0.5883
+        ]
+      ],
+      "refinado": false
+    },
+    {
+      "objeto_id": "ABD_YEYUNO",
+      "ficha_id": "ABD_YEYUNO",
+      "nombre": "Yeyuno",
+      "cavidad": "abdominal",
+      "sistema": "digestivo",
+      "lado": "MED",
+      "color_hex": "#D9A066",
+      "opacidad": 1.0,
+      "capa": 2,
+      "seleccionable": true,
+      "visible_por_defecto": true,
+      "coleccion": "Abdominal",
+      "sexo_aplicable": "ambos",
+      "archivo": "obj/ABD_YEYUNO.obj",
+      "n_triangulos": 12732,
+      "manifold": true,
+      "volumen_m3": 0.009161,
+      "centroide": [
+        0.6069,
+        0.0974,
+        0.3967
+      ],
+      "caja": [
+        [
+          0.3493,
+          -0.0287,
+          0.2216
+        ],
+        [
+          0.808,
+          0.2567,
+          0.5704
+        ]
+      ],
+      "refinado": false
+    },
+    {
+      "objeto_id": "ABD_ILEON",
+      "ficha_id": "ABD_ILEON",
+      "nombre": "Íleon",
+      "cavidad": "abdominal",
+      "sistema": "digestivo",
+      "lado": "MED",
+      "color_hex": "#D9A066",
+      "opacidad": 1.0,
+      "capa": 2,
+      "seleccionable": true,
+      "visible_por_defecto": true,
+      "coleccion": "Abdominal",
+      "sexo_aplicable": "ambos",
+      "archivo": "obj/ABD_ILEON.obj",
+      "n_triangulos": 13336,
+      "manifold": true,
+      "volumen_m3": 0.000621,
+      "centroide": [
+        0.6059,
+        0.0062,
+        0.3596
+      ],
+      "caja": [
+        [
+          0.5417,
+          -0.1079,
+          0.2822
+        ],
+        [
+          0.6641,
+          0.1401,
+          0.497
+        ]
+      ],
+      "refinado": false
+    },
+    {
+      "objeto_id": "ABD_CIEGO",
+      "ficha_id": "ABD_CIEGO",
+      "nombre": "Ciego",
+      "cavidad": "abdominal",
+      "sistema": "digestivo",
+      "lado": "MED",
+      "color_hex": "#B9875A",
+      "opacidad": 1.0,
+      "capa": 1,
+      "seleccionable": true,
+      "visible_por_defecto": true,
+      "coleccion": "Abdominal",
+      "sexo_aplicable": "ambos",
+      "archivo": "obj/ABD_CIEGO.obj",
+      "n_triangulos": 13280,
+      "manifold": true,
+      "volumen_m3": 0.021414,
+      "centroide": [
+        0.6776,
+        -0.1001,
+        0.3334
+      ],
+      "caja": [
+        [
+          0.3772,
+          -0.2622,
+          0.0313
+        ],
+        [
+          1.0836,
+          0.0627,
+          0.5617
+        ]
+      ],
+      "refinado": false
+    },
+    {
+      "objeto_id": "ABD_COLON_VENTRAL_DER",
+      "ficha_id": "ABD_COLON_VENTRAL_DER",
+      "nombre": "Colon ventral derecho",
+      "cavidad": "abdominal",
+      "sistema": "digestivo",
+      "lado": "DER",
+      "color_hex": "#B9875A",
+      "opacidad": 1.0,
+      "capa": 1,
+      "seleccionable": true,
+      "visible_por_defecto": true,
+      "coleccion": "Abdominal",
+      "sexo_aplicable": "ambos",
+      "archivo": "obj/ABD_COLON_VENTRAL_DER.obj",
+      "n_triangulos": 11960,
+      "manifold": true,
+      "volumen_m3": 0.023291,
+      "centroide": [
+        0.8477,
+        -0.1228,
+        0.194
+      ],
+      "caja": [
+        [
+          0.5723,
+          -0.2741,
+          0.0197
+        ],
+        [
+          1.2316,
+          0.008,
+          0.5022
+        ]
+      ],
+      "refinado": false
+    },
+    {
+      "objeto_id": "ABD_FLEXURA_ESTERNAL",
+      "ficha_id": "ABD_FLEXURA_ESTERNAL",
+      "nombre": "Flexura esternal",
+      "cavidad": "abdominal",
+      "sistema": "digestivo",
+      "lado": "MED",
+      "color_hex": "#B9875A",
+      "opacidad": 1.0,
+      "capa": 1,
+      "seleccionable": true,
+      "visible_por_defecto": true,
+      "coleccion": "Abdominal",
+      "sexo_aplicable": "ambos",
+      "archivo": "obj/ABD_FLEXURA_ESTERNAL.obj",
+      "n_triangulos": 8716,
+      "manifold": true,
+      "volumen_m3": 0.007794,
+      "centroide": [
+        1.1675,
+        -0.0171,
+        0.1324
+      ],
+      "caja": [
+        [
+          1.0377,
+          -0.1794,
+          0.0224
+        ],
+        [
+          1.2818,
+          0.1427,
+          0.2477
+        ]
+      ],
+      "refinado": false
+    },
+    {
+      "objeto_id": "ABD_COLON_VENTRAL_IZQ",
+      "ficha_id": "ABD_COLON_VENTRAL_IZQ",
+      "nombre": "Colon ventral izquierdo",
+      "cavidad": "abdominal",
+      "sistema": "digestivo",
+      "lado": "IZQ",
+      "color_hex": "#B9875A",
+      "opacidad": 1.0,
+      "capa": 1,
+      "seleccionable": true,
+      "visible_por_defecto": true,
+      "coleccion": "Abdominal",
+      "sexo_aplicable": "ambos",
+      "archivo": "obj/ABD_COLON_VENTRAL_IZQ.obj",
+      "n_triangulos": 12844,
+      "manifold": true,
+      "volumen_m3": 0.021783,
+      "centroide": [
+        0.7526,
+        0.1134,
+        0.1525
+      ],
+      "caja": [
+        [
+          0.2641,
+          -0.0409,
+          0.0375
+        ],
+        [
+          1.2672,
+          0.2413,
+          0.3399
+        ]
+      ],
+      "refinado": false
+    },
+    {
+      "objeto_id": "ABD_FLEXURA_PELVICA",
+      "ficha_id": "ABD_FLEXURA_PELVICA",
+      "nombre": "Flexura pélvica",
+      "cavidad": "abdominal",
+      "sistema": "digestivo",
+      "lado": "MED",
+      "color_hex": "#B9875A",
+      "opacidad": 1.0,
+      "capa": 1,
+      "seleccionable": true,
+      "visible_por_defecto": true,
+      "coleccion": "Abdominal",
+      "sexo_aplicable": "ambos",
+      "archivo": "obj/ABD_FLEXURA_PELVICA.obj",
+      "n_triangulos": 12584,
+      "manifold": true,
+      "volumen_m3": 0.003686,
+      "centroide": [
+        0.3339,
+        0.0893,
+        0.2683
+      ],
+      "caja": [
+        [
+          0.2106,
+          -0.0112,
+          0.1655
+        ],
+        [
+          0.4401,
+          0.1923,
+          0.3768
+        ]
+      ],
+      "refinado": false
+    },
+    {
+      "objeto_id": "ABD_COLON_DORSAL_IZQ",
+      "ficha_id": "ABD_COLON_DORSAL_IZQ",
+      "nombre": "Colon dorsal izquierdo",
+      "cavidad": "abdominal",
+      "sistema": "digestivo",
+      "lado": "IZQ",
+      "color_hex": "#B9875A",
+      "opacidad": 1.0,
+      "capa": 2,
+      "seleccionable": true,
+      "visible_por_defecto": true,
+      "coleccion": "Abdominal",
+      "sexo_aplicable": "ambos",
+      "archivo": "obj/ABD_COLON_DORSAL_IZQ.obj",
+      "n_triangulos": 12604,
+      "manifold": true,
+      "volumen_m3": 0.006572,
+      "centroide": [
+        0.7461,
+        0.1915,
+        0.2788
+      ],
+      "caja": [
+        [
+          0.275,
+          0.0911,
+          0.1542
+        ],
+        [
+          1.1586,
+          0.262,
+          0.3872
+        ]
+      ],
+      "refinado": false
+    },
+    {
+      "objeto_id": "ABD_FLEXURA_DIAFRAGMATICA",
+      "ficha_id": "ABD_FLEXURA_DIAFRAGMATICA",
+      "nombre": "Flexura diafragmática",
+      "cavidad": "abdominal",
+      "sistema": "digestivo",
+      "lado": "MED",
+      "color_hex": "#B9875A",
+      "opacidad": 1.0,
+      "capa": 2,
+      "seleccionable": true,
+      "visible_por_defecto": true,
+      "coleccion": "Abdominal",
+      "sexo_aplicable": "ambos",
+      "archivo": "obj/ABD_FLEXURA_DIAFRAGMATICA.obj",
+      "n_triangulos": 11016,
+      "manifold": true,
+      "volumen_m3": 0.005887,
+      "centroide": [
+        1.0699,
+        -0.0104,
+        0.2849
+      ],
+      "caja": [
+        [
+          0.8792,
+          -0.1835,
+          0.1448
+        ],
+        [
+          1.2077,
+          0.2063,
+          0.4015
+        ]
+      ],
+      "refinado": false
+    },
+    {
+      "objeto_id": "ABD_COLON_DORSAL_DER",
+      "ficha_id": "ABD_COLON_DORSAL_DER",
+      "nombre": "Colon dorsal derecho",
+      "cavidad": "abdominal",
+      "sistema": "digestivo",
+      "lado": "DER",
+      "color_hex": "#B9875A",
+      "opacidad": 1.0,
+      "capa": 2,
+      "seleccionable": true,
+      "visible_por_defecto": true,
+      "coleccion": "Abdominal",
+      "sexo_aplicable": "ambos",
+      "archivo": "obj/ABD_COLON_DORSAL_DER.obj",
+      "n_triangulos": 7440,
+      "manifold": true,
+      "volumen_m3": 0.006248,
+      "centroide": [
+        0.9423,
+        -0.1332,
+        0.3159
+      ],
+      "caja": [
+        [
+          0.8133,
+          -0.2628,
+          0.1586
+        ],
+        [
+          1.0603,
+          -0.0196,
+          0.4523
+        ]
+      ],
+      "refinado": false
+    },
+    {
+      "objeto_id": "ABD_COLON_TRANSVERSO",
+      "ficha_id": "ABD_COLON_TRANSVERSO",
+      "nombre": "Colon transverso",
+      "cavidad": "abdominal",
+      "sistema": "digestivo",
+      "lado": "MED",
+      "color_hex": "#B9875A",
+      "opacidad": 1.0,
+      "capa": 3,
+      "seleccionable": true,
+      "visible_por_defecto": true,
+      "coleccion": "Abdominal",
+      "sexo_aplicable": "ambos",
+      "archivo": "obj/ABD_COLON_TRANSVERSO.obj",
+      "n_triangulos": 13804,
+      "manifold": true,
+      "volumen_m3": 0.002266,
+      "centroide": [
+        0.7863,
+        -0.0324,
+        0.4587
+      ],
+      "caja": [
+        [
+          0.6588,
+          -0.1382,
+          0.3513
+        ],
+        [
+          0.9156,
+          0.0822,
+          0.5587
+        ]
+      ],
+      "refinado": false
+    },
+    {
+      "objeto_id": "ABD_COLON_DESCENDENTE",
+      "ficha_id": "ABD_COLON_DESCENDENTE",
+      "nombre": "Colon descendente (colon menor)",
+      "cavidad": "abdominal",
+      "sistema": "digestivo",
+      "lado": "MED",
+      "color_hex": "#B9875A",
+      "opacidad": 1.0,
+      "capa": 2,
+      "seleccionable": true,
+      "visible_por_defecto": true,
+      "coleccion": "Abdominal",
+      "sexo_aplicable": "ambos",
+      "archivo": "obj/ABD_COLON_DESCENDENTE.obj",
+      "n_triangulos": 12092,
+      "manifold": true,
+      "volumen_m3": 0.007396,
+      "centroide": [
+        0.3987,
+        0.0903,
+        0.4776
+      ],
+      "caja": [
+        [
+          0.1141,
+          -0.0427,
+          0.3674
+        ],
+        [
+          0.7528,
+          0.2373,
+          0.601
+        ]
+      ],
+      "refinado": false
+    },
+    {
+      "objeto_id": "ABD_HIGADO",
+      "ficha_id": "ABD_HIGADO",
+      "nombre": "Hígado",
+      "cavidad": "abdominal",
+      "sistema": "digestivo",
+      "lado": "MED",
+      "color_hex": "#7B3F2A",
+      "opacidad": 1.0,
+      "capa": 1,
+      "seleccionable": true,
+      "visible_por_defecto": true,
+      "coleccion": "Abdominal",
+      "sexo_aplicable": "ambos",
+      "archivo": "obj/ABD_HIGADO.obj",
+      "n_triangulos": 14550,
+      "manifold": true,
+      "volumen_m3": 0.014311,
+      "centroide": [
+        1.0423,
+        -0.0654,
+        0.3953
+      ],
+      "caja": [
+        [
+          0.6983,
+          -0.2738,
+          0.1697
+        ],
+        [
+          1.3385,
+          0.1873,
+          0.5939
+        ]
+      ],
+      "refinado": false
+    },
+    {
+      "objeto_id": "ABD_BAZO",
+      "ficha_id": "ABD_BAZO",
+      "nombre": "Bazo",
+      "cavidad": "abdominal",
+      "sistema": "linfatico",
+      "lado": "MED",
+      "color_hex": "#6E2C4F",
+      "opacidad": 1.0,
+      "capa": 1,
+      "seleccionable": true,
+      "visible_por_defecto": true,
+      "coleccion": "Abdominal",
+      "sexo_aplicable": "ambos",
+      "archivo": "obj/ABD_BAZO.obj",
+      "n_triangulos": 12556,
+      "manifold": true,
+      "volumen_m3": 0.001483,
+      "centroide": [
+        0.8277,
+        0.2516,
+        0.4709
+      ],
+      "caja": [
+        [
+          0.6631,
+          0.15,
+          0.2298
+        ],
+        [
+          1.0604,
+          0.296,
+          0.6444
+        ]
+      ],
+      "refinado": false
+    },
+    {
+      "objeto_id": "ABD_PANCREAS",
+      "ficha_id": "ABD_PANCREAS",
+      "nombre": "Páncreas",
+      "cavidad": "abdominal",
+      "sistema": "digestivo",
+      "lado": "MED",
+      "color_hex": "#E3C08D",
+      "opacidad": 1.0,
+      "capa": 3,
+      "seleccionable": true,
+      "visible_por_defecto": true,
+      "coleccion": "Abdominal",
+      "sexo_aplicable": "ambos",
+      "archivo": "obj/ABD_PANCREAS.obj",
+      "n_triangulos": 13368,
+      "manifold": true,
+      "volumen_m3": 0.000135,
+      "centroide": [
+        0.8347,
+        0.0282,
+        0.5373
+      ],
+      "caja": [
+        [
+          0.7839,
+          -0.0719,
+          0.4978
+        ],
+        [
+          0.8817,
+          0.096,
+          0.5707
+        ]
+      ],
+      "refinado": false
+    },
+    {
+      "objeto_id": "ABD_RINON_DER",
+      "ficha_id": "ABD_RINON_DER",
+      "nombre": "Riñón derecho",
+      "cavidad": "abdominal",
+      "sistema": "urinario",
+      "lado": "DER",
+      "color_hex": "#9C5B3C",
+      "opacidad": 1.0,
+      "capa": 3,
+      "seleccionable": true,
+      "visible_por_defecto": true,
+      "coleccion": "Abdominal",
+      "sexo_aplicable": "ambos",
+      "archivo": "obj/ABD_RINON_DER.obj",
+      "n_triangulos": 12636,
+      "manifold": true,
+      "volumen_m3": 0.000455,
+      "centroide": [
+        0.7772,
+        -0.0997,
+        0.5965
+      ],
+      "caja": [
+        [
+          0.7166,
+          -0.174,
+          0.561
+        ],
+        [
+          0.8653,
+          -0.0272,
+          0.6316
+        ]
+      ],
+      "refinado": false
+    },
+    {
+      "objeto_id": "ABD_RINON_IZQ",
+      "ficha_id": "ABD_RINON_IZQ",
+      "nombre": "Riñón izquierdo",
+      "cavidad": "abdominal",
+      "sistema": "urinario",
+      "lado": "IZQ",
+      "color_hex": "#9C5B3C",
+      "opacidad": 1.0,
+      "capa": 3,
+      "seleccionable": true,
+      "visible_por_defecto": true,
+      "coleccion": "Abdominal",
+      "sexo_aplicable": "ambos",
+      "archivo": "obj/ABD_RINON_IZQ.obj",
+      "n_triangulos": 12668,
+      "manifold": true,
+      "volumen_m3": 0.000629,
+      "centroide": [
+        0.66,
+        0.102,
+        0.6
+      ],
+      "caja": [
+        [
+          0.5716,
+          0.0457,
+          0.5702
+        ],
+        [
+          0.7483,
+          0.1591,
+          0.6298
+        ]
+      ],
+      "refinado": false
+    },
+    {
+      "objeto_id": "ABD_ADRENAL_DER",
+      "ficha_id": "ABD_ADRENAL",
+      "nombre": "Glándula adrenal derecha",
+      "cavidad": "abdominal",
+      "sistema": "endocrino",
+      "lado": "DER",
+      "color_hex": "#E3C08D",
+      "opacidad": 1.0,
+      "capa": 3,
+      "seleccionable": true,
+      "visible_por_defecto": true,
+      "coleccion": "Abdominal",
+      "sexo_aplicable": "ambos",
+      "archivo": "obj/ABD_ADRENAL_DER.obj",
+      "n_triangulos": 9720,
+      "manifold": true,
+      "volumen_m3": 1.4e-05,
+      "centroide": [
+        0.8497,
+        -0.0494,
+        0.5785
+      ],
+      "caja": [
+        [
+          0.8208,
+          -0.0646,
+          0.5678
+        ],
+        [
+          0.894,
+          -0.0353,
+          0.5891
+        ]
+      ],
+      "refinado": false
+    },
+    {
+      "objeto_id": "ABD_ADRENAL_IZQ",
+      "ficha_id": "ABD_ADRENAL",
+      "nombre": "Glándula adrenal izquierda",
+      "cavidad": "abdominal",
+      "sistema": "endocrino",
+      "lado": "IZQ",
+      "color_hex": "#E3C08D",
+      "opacidad": 1.0,
+      "capa": 3,
+      "seleccionable": true,
+      "visible_por_defecto": true,
+      "coleccion": "Abdominal",
+      "sexo_aplicable": "ambos",
+      "archivo": "obj/ABD_ADRENAL_IZQ.obj",
+      "n_triangulos": 9780,
+      "manifold": true,
+      "volumen_m3": 2.4e-05,
+      "centroide": [
+        0.74,
+        0.06,
+        0.58
+      ],
+      "caja": [
+        [
+          0.7007,
+          0.0452,
+          0.5701
+        ],
+        [
+          0.7791,
+          0.0748,
+          0.5899
+        ]
+      ],
+      "refinado": false
+    },
+    {
+      "objeto_id": "ABD_URETER_DER",
+      "ficha_id": "ABD_URETER",
+      "nombre": "Uréter derecho",
+      "cavidad": "abdominal",
+      "sistema": "urinario",
+      "lado": "DER",
+      "color_hex": "#9C5B3C",
+      "opacidad": 1.0,
+      "capa": 3,
+      "seleccionable": true,
+      "visible_por_defecto": true,
+      "coleccion": "Abdominal",
+      "sexo_aplicable": "ambos",
+      "archivo": "obj/ABD_URETER_DER.obj",
+      "n_triangulos": 12672,
+      "manifold": true,
+      "volumen_m3": 8e-05,
+      "centroide": [
+        0.431,
+        -0.0541,
+        0.5035
+      ],
+      "caja": [
+        [
+          0.1146,
+          -0.0687,
+          0.2943
+        ],
+        [
+          0.8055,
+          -0.0246,
+          0.6005
+        ]
+      ],
+      "refinado": false
+    },
+    {
+      "objeto_id": "ABD_URETER_IZQ",
+      "ficha_id": "ABD_URETER",
+      "nombre": "Uréter izquierdo",
+      "cavidad": "abdominal",
+      "sistema": "urinario",
+      "lado": "IZQ",
+      "color_hex": "#9C5B3C",
+      "opacidad": 1.0,
+      "capa": 3,
+      "seleccionable": true,
+      "visible_por_defecto": true,
+      "coleccion": "Abdominal",
+      "sexo_aplicable": "ambos",
+      "archivo": "obj/ABD_URETER_IZQ.obj",
+      "n_triangulos": 13088,
+      "manifold": true,
+      "volumen_m3": 6.7e-05,
+      "centroide": [
+        0.3657,
+        0.0557,
+        0.4857
+      ],
+      "caja": [
+        [
+          0.1147,
+          0.0245,
+          0.2946
+        ],
+        [
+          0.6658,
+          0.0681,
+          0.6006
+        ]
+      ],
+      "refinado": false
+    },
+    {
+      "objeto_id": "ABD_AORTA",
+      "ficha_id": "ABD_AORTA",
+      "nombre": "Aorta abdominal",
+      "cavidad": "abdominal",
+      "sistema": "cardiovascular",
+      "lado": "MED",
+      "color_hex": "#C0392B",
+      "opacidad": 1.0,
+      "capa": 3,
+      "seleccionable": true,
+      "visible_por_defecto": true,
+      "coleccion": "Abdominal",
+      "sexo_aplicable": "ambos",
+      "archivo": "obj/ABD_AORTA.obj",
+      "n_triangulos": 12284,
+      "manifold": true,
+      "volumen_m3": 0.000784,
+      "centroide": [
+        0.5001,
+        0.0092,
+        0.5927
+      ],
+      "caja": [
+        [
+          0.1713,
+          -0.1087,
+          0.4414
+        ],
+        [
+          0.8315,
+          0.1086,
+          0.6619
+        ]
+      ],
+      "refinado": false
+    },
+    {
+      "objeto_id": "ABD_VENA_CAVA_CAUDAL",
+      "ficha_id": "ABD_VENA_CAVA_CAUDAL",
+      "nombre": "Vena cava caudal (porción abdominal)",
+      "cavidad": "abdominal",
+      "sistema": "cardiovascular",
+      "lado": "MED",
+      "color_hex": "#2E5C9A",
+      "opacidad": 1.0,
+      "capa": 3,
+      "seleccionable": true,
+      "visible_por_defecto": true,
+      "coleccion": "Abdominal",
+      "sexo_aplicable": "ambos",
+      "archivo": "obj/ABD_VENA_CAVA_CAUDAL.obj",
+      "n_triangulos": 12424,
+      "manifold": true,
+      "volumen_m3": 0.001355,
+      "centroide": [
+        0.7695,
+        -0.0408,
+        0.5447
+      ],
+      "caja": [
+        [
+          0.3088,
+          -0.0716,
+          0.3988
+        ],
+        [
+          1.2055,
+          -0.0086,
+          0.6016
+        ]
+      ],
+      "refinado": false
+    },
+    {
+      "objeto_id": "ABD_A_MESENTERICA_CRANEAL",
+      "ficha_id": "ABD_A_MESENTERICA_CRANEAL",
+      "nombre": "Arteria mesentérica craneal",
+      "cavidad": "abdominal",
+      "sistema": "cardiovascular",
+      "lado": "MED",
+      "color_hex": "#C0392B",
+      "opacidad": 1.0,
+      "capa": 3,
+      "seleccionable": true,
+      "visible_por_defecto": true,
+      "coleccion": "Abdominal",
+      "sexo_aplicable": "ambos",
+      "archivo": "obj/ABD_A_MESENTERICA_CRANEAL.obj",
+      "n_triangulos": 13168,
+      "manifold": true,
+      "volumen_m3": 6.1e-05,
+      "centroide": [
+        0.6547,
+        0.0053,
+        0.5547
+      ],
+      "caja": [
+        [
+          0.6103,
+          -0.0098,
+          0.4702
+        ],
+        [
+          0.6917,
+          0.0217,
+          0.6318
+        ]
+      ],
+      "refinado": false
+    },
+    {
+      "objeto_id": "PEL_RECTO",
+      "ficha_id": "PEL_RECTO",
+      "nombre": "Recto",
+      "cavidad": "pelvica",
+      "sistema": "digestivo",
+      "lado": "MED",
+      "color_hex": "#B9875A",
+      "opacidad": 1.0,
+      "capa": 2,
+      "seleccionable": true,
+      "visible_por_defecto": true,
+      "coleccion": "Pelvica_referencia",
+      "sexo_aplicable": "ambos",
+      "archivo": "obj/PEL_RECTO.obj",
+      "n_triangulos": 12644,
+      "manifold": true,
+      "volumen_m3": 0.002841,
+      "centroide": [
+        -0.0,
+        -0.0,
+        0.4374
+      ],
+      "caja": [
+        [
+          -0.1998,
+          -0.051,
+          0.3704
+        ],
+        [
+          0.1994,
+          0.051,
+          0.5001
+        ]
+      ],
+      "refinado": false
+    },
+    {
+      "objeto_id": "PEL_VEJIGA",
+      "ficha_id": "PEL_VEJIGA",
+      "nombre": "Vejiga urinaria",
+      "cavidad": "pelvica",
+      "sistema": "urinario",
+      "lado": "MED",
+      "color_hex": "#E6C27A",
+      "opacidad": 1.0,
+      "capa": 2,
+      "seleccionable": true,
+      "visible_por_defecto": true,
+      "coleccion": "Pelvica_referencia",
+      "sexo_aplicable": "ambos",
+      "archivo": "obj/PEL_VEJIGA.obj",
+      "n_triangulos": 13404,
+      "manifold": true,
+      "volumen_m3": 0.00202,
+      "centroide": [
+        0.12,
+        0.0,
+        0.28
+      ],
+      "caja": [
+        [
+          0.0207,
+          -0.0697,
+          0.2103
+        ],
+        [
+          0.2193,
+          0.0697,
+          0.3496
+        ]
+      ],
+      "refinado": false
+    },
+    {
+      "objeto_id": "ING_ANILLO_PROFUNDO_IZQ",
+      "ficha_id": "ING_ANILLO_PROFUNDO",
+      "nombre": "Anillo inguinal profundo / vaginal izquierdo",
+      "cavidad": "inguinal",
+      "sistema": "limites",
+      "lado": "IZQ",
+      "color_hex": "#D6CFC4",
+      "opacidad": 1.0,
+      "capa": 2,
+      "seleccionable": true,
+      "visible_por_defecto": true,
+      "coleccion": "Inguinal",
+      "sexo_aplicable": "macho",
+      "archivo": "obj/ING_ANILLO_PROFUNDO_IZQ.obj",
+      "n_triangulos": 12188,
+      "manifold": true,
+      "volumen_m3": 1.7e-05,
+      "centroide": [
+        0.27,
+        0.11,
+        0.17
+      ],
+      "caja": [
+        [
+          0.2461,
+          0.0797,
+          0.1462
+        ],
+        [
+          0.2939,
+          0.1403,
+          0.1938
+        ]
+      ],
+      "refinado": false
+    },
+    {
+      "objeto_id": "ING_CANAL_INGUINAL_IZQ",
+      "ficha_id": "ING_CANAL_INGUINAL",
+      "nombre": "Conducto inguinal izquierdo",
+      "cavidad": "inguinal",
+      "sistema": "limites",
+      "lado": "IZQ",
+      "color_hex": "#D6CFC4",
+      "opacidad": 0.35,
+      "capa": 1,
+      "seleccionable": true,
+      "visible_por_defecto": true,
+      "coleccion": "Inguinal",
+      "sexo_aplicable": "macho",
+      "archivo": "obj/ING_CANAL_INGUINAL_IZQ.obj",
+      "n_triangulos": 13664,
+      "manifold": true,
+      "volumen_m3": 0.000157,
+      "centroide": [
+        0.235,
+        0.1,
+        0.135
+      ],
+      "caja": [
+        [
+          0.1802,
+          0.0703,
+          0.0802
+        ],
+        [
+          0.2898,
+          0.1297,
+          0.1898
+        ]
+      ],
+      "refinado": false
+    },
+    {
+      "objeto_id": "ING_ANILLO_SUPERFICIAL_IZQ",
+      "ficha_id": "ING_ANILLO_SUPERFICIAL",
+      "nombre": "Anillo inguinal superficial izquierdo",
+      "cavidad": "inguinal",
+      "sistema": "limites",
+      "lado": "IZQ",
+      "color_hex": "#D6CFC4",
+      "opacidad": 1.0,
+      "capa": 1,
+      "seleccionable": true,
+      "visible_por_defecto": true,
+      "coleccion": "Inguinal",
+      "sexo_aplicable": "macho",
+      "archivo": "obj/ING_ANILLO_SUPERFICIAL_IZQ.obj",
+      "n_triangulos": 6400,
+      "manifold": true,
+      "volumen_m3": 6e-06,
+      "centroide": [
+        0.2,
+        0.09,
+        0.1
+      ],
+      "caja": [
+        [
+          0.1863,
+          0.0593,
+          0.089
+        ],
+        [
+          0.2137,
+          0.1207,
+          0.111
+        ]
+      ],
+      "refinado": false
+    },
+    {
+      "objeto_id": "ING_CORDON_ESPERMATICO_IZQ",
+      "ficha_id": "ING_CORDON_ESPERMATICO",
+      "nombre": "Cordón espermático y túnica vaginal izquierdo",
+      "cavidad": "inguinal",
+      "sistema": "reproductor",
+      "lado": "IZQ",
+      "color_hex": "#D7A9C0",
+      "opacidad": 0.35,
+      "capa": 1,
+      "seleccionable": true,
+      "visible_por_defecto": true,
+      "coleccion": "Inguinal",
+      "sexo_aplicable": "macho",
+      "archivo": "obj/ING_CORDON_ESPERMATICO_IZQ.obj",
+      "n_triangulos": 13316,
+      "manifold": true,
+      "volumen_m3": 0.000392,
+      "centroide": [
+        0.1763,
+        0.0858,
+        0.0191
+      ],
+      "caja": [
+        [
+          0.089,
+          0.0535,
+          -0.1657
+        ],
+        [
+          0.2876,
+          0.1276,
+          0.1879
+        ]
+      ],
+      "refinado": false
+    },
+    {
+      "objeto_id": "ING_CONDUCTO_DEFERENTE_IZQ",
+      "ficha_id": "ING_CONDUCTO_DEFERENTE",
+      "nombre": "Conducto deferente izquierdo",
+      "cavidad": "inguinal",
+      "sistema": "reproductor",
+      "lado": "IZQ",
+      "color_hex": "#D7A9C0",
+      "opacidad": 1.0,
+      "capa": 2,
+      "seleccionable": true,
+      "visible_por_defecto": true,
+      "coleccion": "Inguinal",
+      "sexo_aplicable": "macho",
+      "archivo": "obj/ING_CONDUCTO_DEFERENTE_IZQ.obj",
+      "n_triangulos": 14550,
+      "manifold": true,
+      "volumen_m3": 6.3e-05,
+      "centroide": [
+        0.1366,
+        0.0633,
+        0.2131
+      ],
+      "caja": [
+        [
+          0.0414,
+          0.0183,
+          -0.2085
+        ],
+        [
+          0.2693,
+          0.1077,
+          0.3867
+        ]
+      ],
+      "refinado": false
+    },
+    {
+      "objeto_id": "ING_VASOS_TESTICULARES_IZQ",
+      "ficha_id": "ING_VASOS_TESTICULARES",
+      "nombre": "Arteria testicular y plexo pampiniforme izquierdo",
+      "cavidad": "inguinal",
+      "sistema": "cardiovascular",
+      "lado": "IZQ",
+      "color_hex": "#C0392B",
+      "opacidad": 1.0,
+      "capa": 2,
+      "seleccionable": true,
+      "visible_por_defecto": true,
+      "coleccion": "Inguinal",
+      "sexo_aplicable": "macho",
+      "archivo": "obj/ING_VASOS_TESTICULARES_IZQ.obj",
+      "n_triangulos": 14550,
+      "manifold": true,
+      "volumen_m3": 0.000104,
+      "centroide": [
+        0.276,
+        0.1349,
+        0.184
+      ],
+      "caja": [
+        [
+          0.0994,
+          0.0257,
+          -0.1607
+        ],
+        [
+          0.5548,
+          0.2624,
+          0.6048
+        ]
+      ],
+      "refinado": false
+    },
+    {
+      "objeto_id": "ING_TESTICULO_IZQ",
+      "ficha_id": "ING_TESTICULO",
+      "nombre": "Testículo izquierdo",
+      "cavidad": "inguinal",
+      "sistema": "reproductor",
+      "lado": "IZQ",
+      "color_hex": "#D7A9C0",
+      "opacidad": 1.0,
+      "capa": 1,
+      "seleccionable": true,
+      "visible_por_defecto": true,
+      "coleccion": "Inguinal",
+      "sexo_aplicable": "macho",
+      "archivo": "obj/ING_TESTICULO_IZQ.obj",
+      "n_triangulos": 13316,
+      "manifold": true,
+      "volumen_m3": 0.000345,
+      "centroide": [
+        0.1,
+        0.07,
+        -0.2
+      ],
+      "caja": [
+        [
+          0.041,
+          0.0352,
+          -0.2405
+        ],
+        [
+          0.1591,
+          0.1048,
+          -0.1595
+        ]
+      ],
+      "refinado": false
+    },
+    {
+      "objeto_id": "ING_EPIDIDIMO_IZQ",
+      "ficha_id": "ING_EPIDIDIMO",
+      "nombre": "Epidídimo izquierdo",
+      "cavidad": "inguinal",
+      "sistema": "reproductor",
+      "lado": "IZQ",
+      "color_hex": "#D7A9C0",
+      "opacidad": 1.0,
+      "capa": 1,
+      "seleccionable": true,
+      "visible_por_defecto": true,
+      "coleccion": "Inguinal",
+      "sexo_aplicable": "macho",
+      "archivo": "obj/ING_EPIDIDIMO_IZQ.obj",
+      "n_triangulos": 13264,
+      "manifold": true,
+      "volumen_m3": 4.8e-05,
+      "centroide": [
+        0.1005,
+        0.0916,
+        -0.1768
+      ],
+      "caja": [
+        [
+          0.0322,
+          0.0713,
+          -0.2077
+        ],
+        [
+          0.1688,
+          0.1096,
+          -0.1563
+        ]
+      ],
+      "refinado": false
+    },
+    {
+      "objeto_id": "ING_ANILLO_PROFUNDO_DER",
+      "ficha_id": "ING_ANILLO_PROFUNDO",
+      "nombre": "Anillo inguinal profundo / vaginal derecho",
+      "cavidad": "inguinal",
+      "sistema": "limites",
+      "lado": "DER",
+      "color_hex": "#D6CFC4",
+      "opacidad": 1.0,
+      "capa": 2,
+      "seleccionable": true,
+      "visible_por_defecto": true,
+      "coleccion": "Inguinal",
+      "sexo_aplicable": "macho",
+      "archivo": "obj/ING_ANILLO_PROFUNDO_DER.obj",
+      "n_triangulos": 12180,
+      "manifold": true,
+      "volumen_m3": 1.7e-05,
+      "centroide": [
+        0.27,
+        -0.11,
+        0.17
+      ],
+      "caja": [
+        [
+          0.2461,
+          -0.1404,
+          0.1462
+        ],
+        [
+          0.2939,
+          -0.0797,
+          0.1939
+        ]
+      ],
+      "refinado": false
+    },
+    {
+      "objeto_id": "ING_CANAL_INGUINAL_DER",
+      "ficha_id": "ING_CANAL_INGUINAL",
+      "nombre": "Conducto inguinal derecho",
+      "cavidad": "inguinal",
+      "sistema": "limites",
+      "lado": "DER",
+      "color_hex": "#D6CFC4",
+      "opacidad": 0.35,
+      "capa": 1,
+      "seleccionable": true,
+      "visible_por_defecto": true,
+      "coleccion": "Inguinal",
+      "sexo_aplicable": "macho",
+      "archivo": "obj/ING_CANAL_INGUINAL_DER.obj",
+      "n_triangulos": 13664,
+      "manifold": true,
+      "volumen_m3": 0.000157,
+      "centroide": [
+        0.235,
+        -0.1,
+        0.135
+      ],
+      "caja": [
+        [
+          0.1802,
+          -0.1297,
+          0.0802
+        ],
+        [
+          0.2898,
+          -0.0703,
+          0.1898
+        ]
+      ],
+      "refinado": false
+    },
+    {
+      "objeto_id": "ING_ANILLO_SUPERFICIAL_DER",
+      "ficha_id": "ING_ANILLO_SUPERFICIAL",
+      "nombre": "Anillo inguinal superficial derecho",
+      "cavidad": "inguinal",
+      "sistema": "limites",
+      "lado": "DER",
+      "color_hex": "#D6CFC4",
+      "opacidad": 1.0,
+      "capa": 1,
+      "seleccionable": true,
+      "visible_por_defecto": true,
+      "coleccion": "Inguinal",
+      "sexo_aplicable": "macho",
+      "archivo": "obj/ING_ANILLO_SUPERFICIAL_DER.obj",
+      "n_triangulos": 6404,
+      "manifold": true,
+      "volumen_m3": 6e-06,
+      "centroide": [
+        0.2,
+        -0.09,
+        0.1
+      ],
+      "caja": [
+        [
+          0.1863,
+          -0.1207,
+          0.0891
+        ],
+        [
+          0.2138,
+          -0.0593,
+          0.1109
+        ]
+      ],
+      "refinado": false
+    },
+    {
+      "objeto_id": "ING_CORDON_ESPERMATICO_DER",
+      "ficha_id": "ING_CORDON_ESPERMATICO",
+      "nombre": "Cordón espermático y túnica vaginal derecho",
+      "cavidad": "inguinal",
+      "sistema": "reproductor",
+      "lado": "DER",
+      "color_hex": "#D7A9C0",
+      "opacidad": 0.35,
+      "capa": 1,
+      "seleccionable": true,
+      "visible_por_defecto": true,
+      "coleccion": "Inguinal",
+      "sexo_aplicable": "macho",
+      "archivo": "obj/ING_CORDON_ESPERMATICO_DER.obj",
+      "n_triangulos": 13316,
+      "manifold": true,
+      "volumen_m3": 0.000392,
+      "centroide": [
+        0.1763,
+        -0.0858,
+        0.0191
+      ],
+      "caja": [
+        [
+          0.089,
+          -0.1276,
+          -0.1657
+        ],
+        [
+          0.2876,
+          -0.0535,
+          0.1879
+        ]
+      ],
+      "refinado": false
+    },
+    {
+      "objeto_id": "ING_CONDUCTO_DEFERENTE_DER",
+      "ficha_id": "ING_CONDUCTO_DEFERENTE",
+      "nombre": "Conducto deferente derecho",
+      "cavidad": "inguinal",
+      "sistema": "reproductor",
+      "lado": "DER",
+      "color_hex": "#D7A9C0",
+      "opacidad": 1.0,
+      "capa": 2,
+      "seleccionable": true,
+      "visible_por_defecto": true,
+      "coleccion": "Inguinal",
+      "sexo_aplicable": "macho",
+      "archivo": "obj/ING_CONDUCTO_DEFERENTE_DER.obj",
+      "n_triangulos": 14550,
+      "manifold": true,
+      "volumen_m3": 6.3e-05,
+      "centroide": [
+        0.1366,
+        -0.0633,
+        0.2131
+      ],
+      "caja": [
+        [
+          0.0414,
+          -0.1077,
+          -0.2084
+        ],
+        [
+          0.2693,
+          -0.0183,
+          0.3867
+        ]
+      ],
+      "refinado": false
+    },
+    {
+      "objeto_id": "ING_VASOS_TESTICULARES_DER",
+      "ficha_id": "ING_VASOS_TESTICULARES",
+      "nombre": "Arteria testicular y plexo pampiniforme derecho",
+      "cavidad": "inguinal",
+      "sistema": "cardiovascular",
+      "lado": "DER",
+      "color_hex": "#C0392B",
+      "opacidad": 1.0,
+      "capa": 2,
+      "seleccionable": true,
+      "visible_por_defecto": true,
+      "coleccion": "Inguinal",
+      "sexo_aplicable": "macho",
+      "archivo": "obj/ING_VASOS_TESTICULARES_DER.obj",
+      "n_triangulos": 14550,
+      "manifold": true,
+      "volumen_m3": 0.000104,
+      "centroide": [
+        0.276,
+        -0.1349,
+        0.184
+      ],
+      "caja": [
+        [
+          0.0995,
+          -0.2625,
+          -0.1607
+        ],
+        [
+          0.5548,
+          -0.0257,
+          0.6048
+        ]
+      ],
+      "refinado": false
+    },
+    {
+      "objeto_id": "ING_TESTICULO_DER",
+      "ficha_id": "ING_TESTICULO",
+      "nombre": "Testículo derecho",
+      "cavidad": "inguinal",
+      "sistema": "reproductor",
+      "lado": "DER",
+      "color_hex": "#D7A9C0",
+      "opacidad": 1.0,
+      "capa": 1,
+      "seleccionable": true,
+      "visible_por_defecto": true,
+      "coleccion": "Inguinal",
+      "sexo_aplicable": "macho",
+      "archivo": "obj/ING_TESTICULO_DER.obj",
+      "n_triangulos": 13316,
+      "manifold": true,
+      "volumen_m3": 0.000345,
+      "centroide": [
+        0.1,
+        -0.07,
+        -0.2
+      ],
+      "caja": [
+        [
+          0.041,
+          -0.1048,
+          -0.2405
+        ],
+        [
+          0.1591,
+          -0.0352,
+          -0.1595
+        ]
+      ],
+      "refinado": false
+    },
+    {
+      "objeto_id": "ING_EPIDIDIMO_DER",
+      "ficha_id": "ING_EPIDIDIMO",
+      "nombre": "Epidídimo derecho",
+      "cavidad": "inguinal",
+      "sistema": "reproductor",
+      "lado": "DER",
+      "color_hex": "#D7A9C0",
+      "opacidad": 1.0,
+      "capa": 1,
+      "seleccionable": true,
+      "visible_por_defecto": true,
+      "coleccion": "Inguinal",
+      "sexo_aplicable": "macho",
+      "archivo": "obj/ING_EPIDIDIMO_DER.obj",
+      "n_triangulos": 13264,
+      "manifold": true,
+      "volumen_m3": 4.8e-05,
+      "centroide": [
+        0.1005,
+        -0.0916,
+        -0.1768
+      ],
+      "caja": [
+        [
+          0.0322,
+          -0.1097,
+          -0.2077
+        ],
+        [
+          0.1688,
+          -0.0713,
+          -0.1563
+        ]
+      ],
+      "refinado": false
+    },
+    {
+      "objeto_id": "REF_ENVOLVENTE",
+      "ficha_id": null,
+      "nombre": "Envolvente interna de la cavidad",
+      "cavidad": "referencia",
+      "sistema": "referencia",
+      "lado": "MED",
+      "color_hex": "#888888",
+      "opacidad": 0.08,
+      "capa": 0,
+      "seleccionable": false,
+      "visible_por_defecto": false,
+      "coleccion": "Referencias",
+      "sexo_aplicable": "ambos",
+      "archivo": "obj/REF_ENVOLVENTE.obj",
+      "n_triangulos": 10240,
+      "manifold": true,
+      "volumen_m3": 0.413125,
+      "centroide": [
+        0.8599,
+        0.0,
+        0.3419
+      ],
+      "caja": [
+        [
+          0.05,
+          -0.31,
+          -0.0395
+        ],
+        [
+          1.62,
+          0.31,
+          0.71
+        ]
+      ],
+      "refinado": false
+    },
+    {
+      "objeto_id": "REF_ARCOS_COSTALES",
+      "ficha_id": null,
+      "nombre": "Costillas y arco costal",
+      "cavidad": "referencia",
+      "sistema": "referencia",
+      "lado": "MED",
+      "color_hex": "#888888",
+      "opacidad": 1.0,
+      "capa": 0,
+      "seleccionable": false,
+      "visible_por_defecto": false,
+      "coleccion": "Referencias",
+      "sexo_aplicable": "ambos",
+      "archivo": "obj/REF_ARCOS_COSTALES.obj",
+      "n_triangulos": 13824,
+      "manifold": true,
+      "volumen_m3": 0.000885,
+      "centroide": [
+        1.2032,
+        0.0,
+        0.4175
+      ],
+      "caja": [
+        [
+          0.7465,
+          -0.32,
+          0.0165
+        ],
+        [
+          1.6035,
+          0.32,
+          0.703
+        ]
+      ],
+      "refinado": false
+    },
+    {
+      "objeto_id": "REF_LINEAS_TOPOGRAFICAS",
+      "ficha_id": null,
+      "nombre": "Líneas topográficas",
+      "cavidad": "referencia",
+      "sistema": "referencia",
+      "lado": "MED",
+      "color_hex": "#888888",
+      "opacidad": 1.0,
+      "capa": 0,
+      "seleccionable": false,
+      "visible_por_defecto": false,
+      "coleccion": "Referencias",
+      "sexo_aplicable": "ambos",
+      "archivo": "obj/REF_LINEAS_TOPOGRAFICAS.obj",
+      "n_triangulos": 7368,
+      "manifold": true,
+      "volumen_m3": 0.000187,
+      "centroide": [
+        0.8976,
+        0.0,
+        0.3861
+      ],
+      "caja": [
+        [
+          0.0972,
+          -0.3148,
+          0.097
+        ],
+        [
+          1.6028,
+          0.3148,
+          0.623
+        ]
+      ],
+      "refinado": false
+    }
+  ]
+}

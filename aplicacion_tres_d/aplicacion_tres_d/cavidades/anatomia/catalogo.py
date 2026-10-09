@@ -43,7 +43,7 @@ PRIORIDAD = {
     "diafragma": 100, "vaso": 90, "corazon": 85, "conducto": 80, "rinon": 75,
     "higado": 70, "bazo": 65, "estomago": 60, "pancreas": 55, "ciego": 50,
     "colon": 45, "colon_menor": 40, "intestino_delgado": 35, "pulmon": 30,
-    "pelvico": 95, "inguinal": 95, "referencia": 0,
+    "pelvico": 95, "inguinal": 96, "referencia": 0,
 }
 
 # (objeto_id, ficha_id, nombre, cavidad, sistema, material, capa, clase_prioridad, opciones)

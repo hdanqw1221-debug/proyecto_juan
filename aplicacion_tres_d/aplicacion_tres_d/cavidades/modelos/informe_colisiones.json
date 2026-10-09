@@ -1,0 +1,443 @@
+{
+  "colisiones": [
+    {
+      "a": "ABD_ADRENAL_DER",
+      "b": "ABD_VENA_CAVA_CAUDAL",
+      "profundidad_inicial_m": 0.0197,
+      "corregida": false
+    },
+    {
+      "a": "ABD_ADRENAL_IZQ",
+      "b": "ABD_DUODENO",
+      "profundidad_inicial_m": 0.015,
+      "corregida": false,
+      "deformado": "",
+      "profundidad_final_m": 0.015
+    },
+    {
+      "a": "ABD_CIEGO",
+      "b": "ABD_COLON_DORSAL_DER",
+      "profundidad_inicial_m": 0.0232,
+      "corregida": true,
+      "deformado": "ABD_COLON_DORSAL_DER",
+      "profundidad_final_m": 0.0004
+    },
+    {
+      "a": "ABD_CIEGO",
+      "b": "ABD_COLON_VENTRAL_IZQ",
+      "profundidad_inicial_m": 0.0103,
+      "corregida": true,
+      "deformado": "ABD_COLON_VENTRAL_IZQ",
+      "profundidad_final_m": 0.0
+    },
+    {
+      "a": "ABD_COLON_DESCENDENTE",
+      "b": "ABD_DUODENO",
+      "profundidad_inicial_m": 0.0194,
+      "corregida": true,
+      "deformado": "ABD_DUODENO",
+      "profundidad_final_m": 0.0
+    },
+    {
+      "a": "ABD_COLON_DESCENDENTE",
+      "b": "ABD_URETER_IZQ",
+      "profundidad_inicial_m": 0.0168,
+      "corregida": false
+    },
+    {
+      "a": "ABD_COLON_DESCENDENTE",
+      "b": "ABD_YEYUNO",
+      "profundidad_inicial_m": 0.0312,
+      "corregida": false,
+      "deformado": "",
+      "profundidad_final_m": 0.0312
+    },
+    {
+      "a": "ABD_COLON_DORSAL_DER",
+      "b": "ABD_COLON_VENTRAL_DER",
+      "profundidad_inicial_m": 0.0692,
+      "corregida": true,
+      "deformado": "ABD_COLON_DORSAL_DER",
+      "profundidad_final_m": 0.0065
+    },
+    {
+      "a": "ABD_COLON_DORSAL_DER",
+      "b": "ABD_DUODENO",
+      "profundidad_inicial_m": 0.0136,
+      "corregida": true,
+      "deformado": "ABD_DUODENO",
+      "profundidad_final_m": 0.0
+    },
+    {
+      "a": "ABD_COLON_DORSAL_DER",
+      "b": "ABD_ESTOMAGO",
+      "profundidad_inicial_m": 0.017,
+      "corregida": true,
+      "deformado": "ABD_COLON_DORSAL_DER",
+      "profundidad_final_m": 0.0
+    },
+    {
+      "a": "ABD_COLON_DORSAL_DER",
+      "b": "ABD_HIGADO",
+      "profundidad_inicial_m": 0.0494,
+      "corregida": false,
+      "deformado": "",
+      "profundidad_final_m": 0.0494
+    },
+    {
+      "a": "ABD_COLON_DORSAL_IZQ",
+      "b": "ABD_COLON_VENTRAL_IZQ",
+      "profundidad_inicial_m": 0.0346,
+      "corregida": true,
+      "deformado": "ABD_COLON_DORSAL_IZQ",
+      "profundidad_final_m": 0.0021
+    },
+    {
+      "a": "ABD_COLON_DORSAL_IZQ",
+      "b": "ABD_ESTOMAGO",
+      "profundidad_inicial_m": 0.0263,
+      "corregida": true,
+      "deformado": "ABD_COLON_DORSAL_IZQ",
+      "profundidad_final_m": 0.0
+    },
+    {
+      "a": "ABD_COLON_TRANSVERSO",
+      "b": "ABD_DUODENO",
+      "profundidad_inicial_m": 0.0379,
+      "corregida": true,
+      "deformado": "ABD_DUODENO",
+      "profundidad_final_m": 0.0021
+    },
+    {
+      "a": "ABD_COLON_TRANSVERSO",
+      "b": "ABD_YEYUNO",
+      "profundidad_inicial_m": 0.0129,
+      "corregida": true,
+      "deformado": "ABD_YEYUNO",
+      "profundidad_final_m": 0.0
+    },
+    {
+      "a": "ABD_COLON_VENTRAL_DER",
+      "b": "ABD_COLON_VENTRAL_IZQ",
+      "profundidad_inicial_m": 0.0443,
+      "corregida": true,
+      "deformado": "ABD_COLON_VENTRAL_DER",
+      "profundidad_final_m": 0.0007
+    },
+    {
+      "a": "ABD_COLON_VENTRAL_DER",
+      "b": "ABD_ILEON",
+      "profundidad_inicial_m": 0.033,
+      "corregida": true,
+      "deformado": "ABD_ILEON",
+      "profundidad_final_m": 0.0
+    },
+    {
+      "a": "ABD_COLON_VENTRAL_IZQ",
+      "b": "ABD_FLEXURA_DIAFRAGMATICA",
+      "profundidad_inicial_m": 0.0561,
+      "corregida": true,
+      "deformado": "ABD_COLON_VENTRAL_IZQ",
+      "profundidad_final_m": 0.007
+    },
+    {
+      "a": "ABD_DUODENO",
+      "b": "ABD_FLEXURA_DIAFRAGMATICA",
+      "profundidad_inicial_m": 0.0278,
+      "corregida": true,
+      "deformado": "ABD_DUODENO",
+      "profundidad_final_m": 0.0
+    },
+    {
+      "a": "ABD_ESTOMAGO",
+      "b": "ABD_FLEXURA_DIAFRAGMATICA",
+      "profundidad_inicial_m": 0.0425,
+      "corregida": true,
+      "deformado": "ABD_FLEXURA_DIAFRAGMATICA",
+      "profundidad_final_m": 0.0021
+    },
+    {
+      "a": "ABD_FLEXURA_DIAFRAGMATICA",
+      "b": "ABD_FLEXURA_ESTERNAL",
+      "profundidad_inicial_m": 0.0331,
+      "corregida": true,
+      "deformado": "ABD_FLEXURA_DIAFRAGMATICA",
+      "profundidad_final_m": 0.0
+    },
+    {
+      "a": "ABD_FLEXURA_DIAFRAGMATICA",
+      "b": "ABD_HIGADO",
+      "profundidad_inicial_m": 0.02,
+      "corregida": true,
+      "deformado": "ABD_FLEXURA_DIAFRAGMATICA",
+      "profundidad_final_m": 0.0
+    },
+    {
+      "a": "ABD_RINON_DER",
+      "b": "ABD_VENA_CAVA_CAUDAL",
+      "profundidad_inicial_m": 0.0195,
+      "corregida": false
+    },
+    {
+      "a": "ABD_URETER_DER",
+      "b": "ABD_VENA_CAVA_CAUDAL",
+      "profundidad_inicial_m": 0.0161,
+      "corregida": false
+    },
+    {
+      "a": "ABD_VENA_CAVA_CAUDAL",
+      "b": "TOR_PULMON_DER",
+      "profundidad_inicial_m": 0.0146,
+      "corregida": false
+    },
+    {
+      "a": "ING_ANILLO_SUPERFICIAL_DER",
+      "b": "ING_CANAL_INGUINAL_DER",
+      "profundidad_inicial_m": 0.0125,
+      "corregida": false
+    },
+    {
+      "a": "ING_ANILLO_SUPERFICIAL_DER",
+      "b": "ING_CORDON_ESPERMATICO_DER",
+      "profundidad_inicial_m": 0.0112,
+      "corregida": false
+    },
+    {
+      "a": "ING_ANILLO_SUPERFICIAL_IZQ",
+      "b": "ING_CANAL_INGUINAL_IZQ",
+      "profundidad_inicial_m": 0.0125,
+      "corregida": false
+    },
+    {
+      "a": "ING_ANILLO_SUPERFICIAL_IZQ",
+      "b": "ING_CORDON_ESPERMATICO_IZQ",
+      "profundidad_inicial_m": 0.0112,
+      "corregida": false
+    },
+    {
+      "a": "ING_CANAL_INGUINAL_DER",
+      "b": "ING_CONDUCTO_DEFERENTE_DER",
+      "profundidad_inicial_m": 0.0187,
+      "corregida": false
+    },
+    {
+      "a": "ING_CANAL_INGUINAL_DER",
+      "b": "ING_CORDON_ESPERMATICO_DER",
+      "profundidad_inicial_m": 0.016,
+      "corregida": false
+    },
+    {
+      "a": "ING_CANAL_INGUINAL_DER",
+      "b": "ING_VASOS_TESTICULARES_DER",
+      "profundidad_inicial_m": 0.0197,
+      "corregida": false
+    },
+    {
+      "a": "ING_CANAL_INGUINAL_IZQ",
+      "b": "ING_CONDUCTO_DEFERENTE_IZQ",
+      "profundidad_inicial_m": 0.0186,
+      "corregida": false
+    },
+    {
+      "a": "ING_CANAL_INGUINAL_IZQ",
+      "b": "ING_CORDON_ESPERMATICO_IZQ",
+      "profundidad_inicial_m": 0.0174,
+      "corregida": false
+    },
+    {
+      "a": "ING_CANAL_INGUINAL_IZQ",
+      "b": "ING_VASOS_TESTICULARES_IZQ",
+      "profundidad_inicial_m": 0.0197,
+      "corregida": false
+    },
+    {
+      "a": "ING_CONDUCTO_DEFERENTE_DER",
+      "b": "ING_CORDON_ESPERMATICO_DER",
+      "profundidad_inicial_m": 0.0174,
+      "corregida": false
+    },
+    {
+      "a": "ING_CONDUCTO_DEFERENTE_IZQ",
+      "b": "ING_CORDON_ESPERMATICO_IZQ",
+      "profundidad_inicial_m": 0.0174,
+      "corregida": false
+    },
+    {
+      "a": "ING_CORDON_ESPERMATICO_DER",
+      "b": "ING_VASOS_TESTICULARES_DER",
+      "profundidad_inicial_m": 0.0173,
+      "corregida": false
+    },
+    {
+      "a": "ING_CORDON_ESPERMATICO_IZQ",
+      "b": "ING_VASOS_TESTICULARES_IZQ",
+      "profundidad_inicial_m": 0.0172,
+      "corregida": false
+    },
+    {
+      "a": "ING_EPIDIDIMO_DER",
+      "b": "ING_TESTICULO_DER",
+      "profundidad_inicial_m": 0.0101,
+      "corregida": false
+    },
+    {
+      "a": "ING_EPIDIDIMO_IZQ",
+      "b": "ING_TESTICULO_IZQ",
+      "profundidad_inicial_m": 0.0102,
+      "corregida": false
+    },
+    {
+      "a": "TOR_AORTA",
+      "b": "TOR_TRAQUEA",
+      "profundidad_inicial_m": 0.0216,
+      "corregida": false
+    },
+    {
+      "a": "TOR_AORTA",
+      "b": "TOR_VENA_CAVA_CRANEAL",
+      "profundidad_inicial_m": 0.0177,
+      "corregida": false
+    }
+  ],
+  "desplazamientos_lineas_medias": {
+    "ABD_ESTOMAGO": {
+      "max_m": 0.12,
+      "medio_m": 0.07
+    },
+    "ABD_DUODENO": {
+      "max_m": 0.212,
+      "medio_m": 0.11
+    },
+    "ABD_YEYUNO": {
+      "max_m": 0.166,
+      "medio_m": 0.069
+    },
+    "ABD_ILEON": {
+      "max_m": 0.055,
+      "medio_m": 0.046
+    },
+    "ABD_CIEGO": {
+      "max_m": 0.112,
+      "medio_m": 0.037
+    },
+    "ABD_COLON_VENTRAL_DER": {
+      "max_m": 0.35,
+      "medio_m": 0.151
+    },
+    "ABD_FLEXURA_ESTERNAL": {
+      "max_m": 0.221,
+      "medio_m": 0.139
+    },
+    "ABD_COLON_VENTRAL_IZQ": {
+      "max_m": 0.228,
+      "medio_m": 0.096
+    },
+    "ABD_FLEXURA_PELVICA": {
+      "max_m": 0.094,
+      "medio_m": 0.059
+    },
+    "ABD_COLON_DORSAL_IZQ": {
+      "max_m": 0.194,
+      "medio_m": 0.055
+    },
+    "ABD_FLEXURA_DIAFRAGMATICA": {
+      "max_m": 0.147,
+      "medio_m": 0.106
+    },
+    "ABD_COLON_DORSAL_DER": {
+      "max_m": 0.182,
+      "medio_m": 0.116
+    },
+    "ABD_COLON_TRANSVERSO": {
+      "max_m": 0.108,
+      "medio_m": 0.08
+    },
+    "ABD_COLON_DESCENDENTE": {
+      "max_m": 0.14,
+      "medio_m": 0.054
+    }
+  },
+  "ajustes_respecto_al_prompt": [
+    {
+      "objeto": "TOR_AORTA",
+      "cambio": "Arco aórtico desplazado 3–4 cm a la izquierda (y 0,045–0,05).",
+      "motivo": "En el prompt el arco coincidía con el esófago en (1,50; 0,01; 0,50); el documento indica que el esófago pasa a la derecha del arco."
+    },
+    {
+      "objeto": "TOR_ESOFAGO",
+      "cambio": "Trayecto torácico con y ligeramente negativa (−0,005 a −0,012) y continuación hasta el cardias.",
+      "motivo": "Esófago a la derecha del arco aórtico; el hiato se recalcula con x_diafragma (x ≈ 0,92)."
+    },
+    {
+      "objeto": "TOR_AORTA",
+      "cambio": "Tronco braquiocefálico ventral a la tráquea.",
+      "motivo": "Evitar que cruce la luz traqueal (relación anatómica normal)."
+    },
+    {
+      "objeto": "TOR_VENA_CAVA_CAUDAL",
+      "cambio": "Foramen recalculado: x = x_diafragma(−0,04; 0,42) ≈ 1,18.",
+      "motivo": "Indicado en el prompt."
+    },
+    {
+      "objeto": "ABD_ESTOMAGO",
+      "cambio": "Saco ciego bajado a z = 0,52 (antes 0,57).",
+      "motivo": "A z = 0,57 quedaba ~6 cm craneal al diafragma, fuera de la cavidad abdominal."
+    },
+    {
+      "objeto": "ABD_CIEGO",
+      "cambio": "Cuerpo y ápice desplazados hacia el plano medio (y −0,02 a −0,05) y base ligeramente caudal.",
+      "motivo": "En el prompt el cuerpo del ciego ocupaba el mismo volumen que los colones ventral y dorsal derechos (solape de 6–12 cm)."
+    },
+    {
+      "objeto": "ABD_COLON_VENTRAL_DER",
+      "cambio": "Inicio en el orificio cecocólico (0,66; −0,12; 0,42).",
+      "motivo": "Continuidad con la base del ciego."
+    },
+    {
+      "objeto": "ABD_COLON_DORSAL_DER",
+      "cambio": "Extremo caudal en (0,78; −0,15; 0,47).",
+      "motivo": "Separarlo de la base del ciego."
+    },
+    {
+      "objeto": "ABD_COLON_TRANSVERSO",
+      "cambio": "Trayecto (0,78; −0,15; 0,47) → (0,78; −0,05; 0,55) → (0,76; 0,06; 0,55).",
+      "motivo": "Continuidad con el colon dorsal derecho ajustado; sigue craneal a la a. mesentérica craneal (x 0,68)."
+    },
+    {
+      "objeto": "ABD_YEYUNO",
+      "cambio": "Meandro determinista en capas (x 0,43–0,85; y 0,02–0,16; z 0,33–0,51), ~6 m.",
+      "motivo": "Garantiza ausencia de autointersecciones; techo bajado para no invadir riñón izquierdo ni colon transverso."
+    },
+    {
+      "objeto": "ABD_COLON_DESCENDENTE",
+      "cambio": "Meandro en dos capas (x 0,20–0,56; z 0,445–0,53), ≈2,5 m esquemáticos.",
+      "motivo": "Cuadrante dorsal izquierdo; la longitud real (3–3,5 m) se indica en la ficha."
+    },
+    {
+      "objeto": "ABD_HIGADO",
+      "cambio": "Proceso caudado añadido como lóbulo en (y −0,10; z 0,56).",
+      "motivo": "Contacto con el riñón derecho (impresión renal)."
+    },
+    {
+      "objeto": "ING_CONDUCTO_DEFERENTE",
+      "cambio": "Ampolla a z = 0,375 (antes 0,32); recorrido caudomedial lateral a la vejiga.",
+      "motivo": "A z = 0,32 quedaba dentro de la vejiga."
+    },
+    {
+      "objeto": "ING_VASOS_TESTICULARES",
+      "cambio": "Trayecto pegado a la pared dorsolateral (retroperitoneal).",
+      "motivo": "El trayecto recto cruzaba el colon izquierdo y la flexura pélvica."
+    },
+    {
+      "objeto": "ESTOMAGO_CIEGO_COLON_MAYOR",
+      "cambio": "Radios ×0,90 (estómago) y ×0,85 (ciego y colon mayor).",
+      "motivo": "Con los radios nominales el tubo digestivo ocuparía ~90 % de la cavidad abdominal; se reduce a ~65 %."
+    },
+    {
+      "objeto": "TODOS_LOS_TUBOS_DIGESTIVOS",
+      "cambio": "Líneas medias relajadas automáticamente (ver informe de colisiones).",
+      "motivo": "Separación determinista por prioridad y ajuste a la cavidad; el desplazamiento de cada órgano se informa."
+    }
+  ],
+  "refinados": []
+}
