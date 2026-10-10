@@ -32,7 +32,7 @@ from anatomia import catalogo as cat  # noqa: E402
 from anatomia import especificacion as E  # noqa: E402
 from anatomia import referencia as ref  # noqa: E402
 from anatomia.organos import contexto as Ctx  # noqa: E402
-from anatomia.organos import diafragma, estomago, rinones  # noqa: E402
+from anatomia.organos import diafragma, estomago, rinones, tubos  # noqa: E402
 from blender import exportar  # noqa: E402
 from blender import materiales as M  # noqa: E402
 from blender import primitivas as P  # noqa: E402
@@ -44,7 +44,8 @@ TRIS_MAX_ENVOLTURA = 45000  # las envolturas son grandes y llevan relieve costal
 MARGEN_CAVIDAD = 0.01
 
 # Estado global de la ejecución (líneas medias relajadas, contexto de los órganos, informes).
-ESTADO = {"lineas": {}, "desplazamientos": {}, "mallas": {}, "registro": [], "ctx": Ctx.Contexto()}
+ESTADO = {"lineas": {}, "desplazamientos": {}, "mallas": {}, "registro": [], "ctx": Ctx.Contexto(),
+          "amoldados": set()}  # estructuras que ya tallan a sus vecinos en el campo
 
 
 def log(msg):
@@ -397,16 +398,7 @@ def relajar_cadenas():
         excl |= ciego[:, None] & a[None, :]
     original = pts.copy()
 
-    def restriccion(Pp, R):
-        Q = Pp.copy()
-        for _ in range(2):
-            x = np.clip(Q[:, 0], ref.X_MIN_ENVOLVENTE, ref.X_MAX_ENVOLVENTE)
-            Q[:, 1], Q[:, 2] = ref.proyectar_dentro_envolvente(x, Q[:, 1], Q[:, 2], R + 0.01)
-            n = ref.normal_diafragma(Q[:, 1], Q[:, 2])
-            d = (ref.x_diafragma(Q[:, 1], Q[:, 2]) - Q[:, 0]) * n[:, 0]
-            falta = np.maximum(R + 0.014 - d, 0.0)
-            Q -= falta[:, None] * n
-        return Q
+    restriccion = tubos.restriccion_relajacion
 
     t0 = time.time()
     relajado = P.relajar_tubos(pts, rad, np.array(pri, float), np.array(cad), arc, fijos, restriccion,
@@ -425,21 +417,60 @@ def relajar_cadenas():
 
 
 def lineas_finales():
-    """Líneas medias relajadas y suavizadas con las que se mallan los tubos: {objeto_id: (curva, radios)}."""
-    return {oid: (P.suavizar_polilinea(linea["curva"], iteraciones=3, alfa=0.3), linea["radios"])
-            for oid, linea in ESTADO["lineas"].items()}
+    """Líneas medias relajadas, suavizadas y con las asas separadas: {objeto_id: (curva, radios)}."""
+    finales, r_ext = {}, {}
+    for oid, linea in ESTADO["lineas"].items():
+        finales[oid] = (P.suavizar_polilinea(linea["curva"], iteraciones=3, alfa=0.3), linea["radios"])
+        # Radio exterior: incluye las crestas de las haustras.
+        r_ext[oid] = linea["radios"] * (1.0 + linea["spec"].get("haustras", {}).get("amplitud", 0.0))
+    for oid in finales:
+        curva = finales[oid][0]
+        antes = tubos.holgura_entre_asas(curva, r_ext[oid]) if tubos.en_meandro(oid) else np.inf
+        if antes < 0.012:
+            curva = tubos.separar_asas(curva, r_ext[oid], restriccion=tubos.restriccion_relajacion)
+            finales[oid] = (curva, finales[oid][1])
+            log(f"{oid}: asas separadas (holgura mínima {antes * 100:.1f} -> "
+                f"{tubos.holgura_entre_asas(curva, r_ext[oid]) * 100:.1f} cm)")
+    return finales
+
+
+def caja_de(objeto_id):
+    """Caja (mín, máx) de una estructura ya construida, en coordenadas del mundo."""
+    V, _ = _datos(ESTADO["mallas"][objeto_id])
+    return V.min(0), V.max(0)
 
 
 def construir_tubos_digestivos():
+    """Tubos digestivos como campos amoldados a los vecinos ya construidos (anatomia/organos/tubos.py).
+
+    Se construyen de mayor a menor prioridad; cada uno talla a los anteriores y a los órganos macizos,
+    de modo que las caras de contacto quedan aplanadas y la revisión de colisiones no tiene que
+    apartar vértices a la fuerza.
+    """
     log("Construyendo tubos digestivos…")
-    finales = lineas_finales()
-    for oid, linea in ESTADO["lineas"].items():
+    ctx = ESTADO["ctx"]
+    # Los órganos macizos se tallan aunque aún no tengan malla (el hígado se construye después): basta su forma.
+    construidos = list(MACIZOS_ABDOMINALES) + ["ABD_HIGADO"]
+    for oid in tubos.orden_de_construccion(list(ESTADO["lineas"])):
         if oid == "ABD_ESTOMAGO" and estomago.USAR_CAMPO:
-            continue  # se malla como órgano macizo (anatomia/organos/estomago.py)
-        spec = linea["spec"]
-        curva, radios = finales[oid]
-        v, f, rmin = tubo_parte(None, None, spec.get("haustras"), curva=curva, radios_puntos=radios)
-        materializar(oid, v, f, "abdominal", rmin)
+            construir_organo(oid)  # órgano macizo (anatomia/organos/estomago.py)
+            construidos.append(oid)
+            continue
+        pz = tubos.pieza(oid, ctx)
+        mn, mx = pz["caja"]
+        vecinos = []
+        for v in construidos:
+            if v in ESTADO["mallas"]:
+                vmn, vmx = caja_de(v)
+            else:
+                vmn, vmx = (np.asarray(c, dtype=float) for c in ctx.pieza(v)["caja"])
+            if np.all(vmn < mx) and np.all(vmx > mn):
+                vecinos.append(v)
+        organo_por_campo(oid, lambda p, oid=oid, vecinos=tuple(vecinos): tubos.campo(oid, p, ctx, vecinos), mn, mx,
+                         pz["h"], sigma=pz["sigma"], recorte=pz["recorte"], radio_min=pz["radio_min"],
+                         voxel=pz.get("voxel"))
+        ESTADO["amoldados"].add(oid)
+        construidos.append(oid)
 
 
 def cardias_relajado():
@@ -748,7 +779,14 @@ def revisar_colisiones(corregir=True, umbral=0.01):
             ma, mb = cat.POR_ID[a], cat.POR_ID[b]
             vol = ma["prioridad"] in CLASES_VOLUMETRICAS and mb["prioridad"] in CLASES_VOLUMETRICAS
             entrada = {"a": a, "b": b, "profundidad_inicial_m": round(float(prof), 4), "corregida": False}
-            if corregir and (vol or "TOR_DIAFRAGMA" in (a, b)):
+            amoldado = bool({a, b} & ESTADO["amoldados"])
+            if amoldado:
+                # Las vísceras amoldadas en el campo no se deforman a posteriori: apartar vértices a la
+                # fuerza deja parches rasgados. El solape residual queda en el informe.
+                entrada["motivo"] = "amoldado en el campo"
+            elif not (vol or "TOR_DIAFRAGMA" in (a, b)):
+                entrada["motivo"] = "conducto fino"
+            if corregir and not amoldado and (vol or "TOR_DIAFRAGMA" in (a, b)):
                 bajo, alto = (a, b) if ma["prioridad"] < mb["prioridad"] else (b, a)
                 if ma["prioridad"] == mb["prioridad"]:
                     bajo, alto = sorted((a, b))

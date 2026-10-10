@@ -139,7 +139,7 @@ def _informe_md(inf):
          "## Interpenetraciones > 1 cm entre estructuras no contiguas", "",
          "| A | B | Profundidad inicial | Corregida | Deformado | Profundidad final |", "|---|---|---|---|---|---|"]
     for c in inf["colisiones"]:
-        l.append(f"| {c['a']} | {c['b']} | {c['profundidad_inicial_m']} | {'sí' if c['corregida'] else 'no (conducto fino: solo informe)'} "
+        l.append(f"| {c['a']} | {c['b']} | {c['profundidad_inicial_m']} | {'sí' if c['corregida'] else 'no (' + c.get('motivo', 'sin mejora') + ': solo informe)'} "
                  f"| {c.get('deformado', '')} | {c.get('profundidad_final_m', '')} |")
     l += ["", "## Desplazamiento de las líneas medias digestivas tras la relajación", "",
           "| Objeto | Máximo (m) | Medio (m) |", "|---|---|---|"]

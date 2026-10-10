@@ -6,29 +6,15 @@ Generado automáticamente por `blender/generar_cavidades.py`. Profundidades en m
 
 | A | B | Profundidad inicial | Corregida | Deformado | Profundidad final |
 |---|---|---|---|---|---|
-| ABD_ADRENAL_DER | ABD_VENA_CAVA_CAUDAL | 0.0197 | no (conducto fino: solo informe) |  |  |
-| ABD_ADRENAL_IZQ | ABD_DUODENO | 0.015 | no (conducto fino: solo informe) |  | 0.015 |
-| ABD_CIEGO | ABD_COLON_DORSAL_DER | 0.0228 | sí | ABD_COLON_DORSAL_DER | 0.0 |
-| ABD_COLON_DESCENDENTE | ABD_DUODENO | 0.0201 | sí | ABD_DUODENO | 0.0 |
-| ABD_COLON_DESCENDENTE | ABD_URETER_IZQ | 0.0168 | no (conducto fino: solo informe) |  |  |
-| ABD_COLON_DESCENDENTE | ABD_YEYUNO | 0.0304 | no (conducto fino: solo informe) |  | 0.0304 |
-| ABD_COLON_DORSAL_DER | ABD_COLON_VENTRAL_DER | 0.0689 | sí | ABD_COLON_DORSAL_DER | 0.0043 |
-| ABD_COLON_DORSAL_DER | ABD_DUODENO | 0.0136 | sí | ABD_DUODENO | 0.0 |
-| ABD_COLON_DORSAL_DER | ABD_ESTOMAGO | 0.0171 | sí | ABD_COLON_DORSAL_DER | 0.0 |
-| ABD_COLON_DORSAL_DER | ABD_HIGADO | 0.0495 | no (conducto fino: solo informe) |  | 0.0495 |
-| ABD_COLON_DORSAL_IZQ | ABD_COLON_VENTRAL_IZQ | 0.0356 | sí | ABD_COLON_DORSAL_IZQ | 0.0022 |
-| ABD_COLON_DORSAL_IZQ | ABD_ESTOMAGO | 0.026 | sí | ABD_COLON_DORSAL_IZQ | 0.0 |
-| ABD_COLON_TRANSVERSO | ABD_DUODENO | 0.0381 | sí | ABD_DUODENO | 0.0021 |
-| ABD_COLON_TRANSVERSO | ABD_YEYUNO | 0.0127 | sí | ABD_YEYUNO | 0.0 |
-| ABD_COLON_VENTRAL_DER | ABD_COLON_VENTRAL_IZQ | 0.0434 | sí | ABD_COLON_VENTRAL_DER | 0.0007 |
-| ABD_COLON_VENTRAL_DER | ABD_ILEON | 0.0331 | sí | ABD_ILEON | 0.0 |
-| ABD_COLON_VENTRAL_IZQ | ABD_FLEXURA_DIAFRAGMATICA | 0.0569 | sí | ABD_COLON_VENTRAL_IZQ | 0.0146 |
-| ABD_DUODENO | ABD_FLEXURA_DIAFRAGMATICA | 0.0289 | sí | ABD_DUODENO | 0.0 |
-| ABD_ESTOMAGO | ABD_FLEXURA_DIAFRAGMATICA | 0.0432 | sí | ABD_FLEXURA_DIAFRAGMATICA | 0.0054 |
-| ABD_FLEXURA_DIAFRAGMATICA | ABD_FLEXURA_ESTERNAL | 0.0333 | sí | ABD_FLEXURA_DIAFRAGMATICA | 0.0 |
-| ABD_FLEXURA_DIAFRAGMATICA | ABD_HIGADO | 0.0238 | sí | ABD_FLEXURA_DIAFRAGMATICA | 0.0 |
-| ABD_RINON_DER | ABD_VENA_CAVA_CAUDAL | 0.0195 | no (conducto fino: solo informe) |  |  |
-| ABD_URETER_DER | ABD_VENA_CAVA_CAUDAL | 0.0161 | no (conducto fino: solo informe) |  |  |
+| ABD_AORTA | ABD_COLON_DESCENDENTE | 0.0104 | no (amoldado en el campo: solo informe) |  |  |
+| ABD_A_MESENTERICA_CRANEAL | ABD_DUODENO | 0.014 | no (amoldado en el campo: solo informe) |  |  |
+| ABD_COLON_DESCENDENTE | ABD_URETER_IZQ | 0.011 | no (amoldado en el campo: solo informe) |  |  |
+| ABD_COLON_DESCENDENTE | ABD_YEYUNO | 0.0326 | no (amoldado en el campo: solo informe) |  |  |
+| ABD_COLON_DORSAL_DER | ABD_COLON_VENTRAL_DER | 0.0194 | no (amoldado en el campo: solo informe) |  |  |
+| ABD_COLON_TRANSVERSO | ABD_DUODENO | 0.0198 | no (amoldado en el campo: solo informe) |  |  |
+| ABD_COLON_VENTRAL_DER | ABD_ILEON | 0.0176 | no (amoldado en el campo: solo informe) |  |  |
+| ABD_DUODENO | ABD_RINON_IZQ | 0.0198 | no (amoldado en el campo: solo informe) |  |  |
+| ABD_DUODENO | ABD_URETER_IZQ | 0.0131 | no (amoldado en el campo: solo informe) |  |  |
 | ABD_VENA_CAVA_CAUDAL | TOR_PULMON_DER | 0.0146 | no (conducto fino: solo informe) |  |  |
 | ING_ANILLO_SUPERFICIAL_DER | ING_CANAL_INGUINAL_DER | 0.0125 | no (conducto fino: solo informe) |  |  |
 | ING_ANILLO_SUPERFICIAL_DER | ING_CORDON_ESPERMATICO_DER | 0.0106 | no (conducto fino: solo informe) |  |  |
@@ -54,19 +40,19 @@ Generado automáticamente por `blender/generar_cavidades.py`. Profundidades en m
 | Objeto | Máximo (m) | Medio (m) |
 |---|---|---|
 | ABD_ESTOMAGO | 0.12 | 0.07 |
-| ABD_DUODENO | 0.212 | 0.11 |
-| ABD_YEYUNO | 0.166 | 0.069 |
-| ABD_ILEON | 0.055 | 0.046 |
+| ABD_DUODENO | 0.211 | 0.108 |
+| ABD_YEYUNO | 0.169 | 0.069 |
+| ABD_ILEON | 0.056 | 0.044 |
 | ABD_CIEGO | 0.112 | 0.037 |
 | ABD_COLON_VENTRAL_DER | 0.35 | 0.151 |
 | ABD_FLEXURA_ESTERNAL | 0.221 | 0.139 |
-| ABD_COLON_VENTRAL_IZQ | 0.227 | 0.095 |
+| ABD_COLON_VENTRAL_IZQ | 0.228 | 0.095 |
 | ABD_FLEXURA_PELVICA | 0.094 | 0.059 |
 | ABD_COLON_DORSAL_IZQ | 0.2 | 0.056 |
-| ABD_FLEXURA_DIAFRAGMATICA | 0.148 | 0.108 |
+| ABD_FLEXURA_DIAFRAGMATICA | 0.147 | 0.106 |
 | ABD_COLON_DORSAL_DER | 0.182 | 0.116 |
-| ABD_COLON_TRANSVERSO | 0.108 | 0.08 |
-| ABD_COLON_DESCENDENTE | 0.14 | 0.054 |
+| ABD_COLON_TRANSVERSO | 0.107 | 0.079 |
+| ABD_COLON_DESCENDENTE | 0.14 | 0.053 |
 
 ## Ajustes respecto a las coordenadas del prompt
 

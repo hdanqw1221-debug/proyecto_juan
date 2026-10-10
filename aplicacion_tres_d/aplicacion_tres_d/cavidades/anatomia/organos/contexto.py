@@ -121,6 +121,10 @@ class Contexto:
     def sdf(self, objeto_id):
         """Forma base de cualquier estructura como función p -> (N,)."""
         mod = modulo(objeto_id)
+        if objeto_id in self.lineas and (mod is None or not getattr(mod, "USAR_CAMPO", True)):
+            from anatomia.organos import tubos  # tubo digestivo relajado, con sus haustras
+
+            return lambda p: tubos.forma(objeto_id, p, self)
         if mod is None or not getattr(mod, "USAR_CAMPO", True):
             return campo_tubos(self.curvas(objeto_id))
         if getattr(mod, "FORMA_CON_CONTEXTO", False):
