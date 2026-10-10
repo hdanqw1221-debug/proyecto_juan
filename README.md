@@ -43,13 +43,12 @@ Para facilitar pruebas y demostraciones inmediatas, puedes inicializar los usuar
 
 Ubicados en `aplicacion_tres_d/aplicacion_tres_d/`:
 
-1. **Piel del Caballo (`piel_caballo.py`)**: Estudio del sistema tegumentario equino, capas dérmicas y funciones homeostáticas y protectoras.
-2. **Sistema Cardiovascular (`sistema_cardiovascular.py`)**: Visualización detallada de aurículas, ventrículos, miocardio, válvulas cardíacas, aorta, tronco pulmonar, vena yugular y plexos vasculares periféricos del casco.
-3. **Sistema Óseo (`sistema_oseo.py`)**: Esqueleto axial y apendicular equino (cráneo, columna vertebral, costillas, escápula, caña, cuartilla, tejuelo y hueso navicular).
-4. **Sistema Muscular (`sistema_muscular.py`)**: Grupos musculares superficiales y profundos (masetero, braquiocefálico, dorsal ancho, glúteos, aparato recíproco y tendones flexores).
-5. **Órganos Internos (`sistema_organosinternos.py`)**: Aparato digestivo completo (estómago con margo plicatus, ciego de gran volumen, flexura pélvica, colon mayor y menor), hígado sin vesícula, bazo, tráquea, pulmones y riñones acorazonados.
-6. **Cavidades torácica, abdominal e inguinal (`cavidades_equinas.py`)**: 58 estructuras independientes generadas en Blender por script reproducible, con selección por clic (y clic repetido para llegar a estructuras profundas) y ficha anatómica desde PostgreSQL o JSON. Documentación en [`cavidades/docs/MODELOS_README.md`](aplicacion_tres_d/aplicacion_tres_d/cavidades/docs/MODELOS_README.md); esquema en `db/cavidades_schema.sql` y datos en `db/cavidades_fichas.sql`.
-7. **Cavidad torácica inmersiva (`cavidad_toracica.py`)**, 8. **Cavidad abdominal inmersiva (`cavidad_abdominal.py`)** y 9. **Región inguinal inmersiva (`region_inguinal.py`)**: desde lejos se ve la cavidad completa; al acercarse con la rueda del ratón se separa en sus componentes (corazón, pulmones, tráquea…) con etiquetas, y el clic en cualquiera muestra su ficha completa.
+1. **Cavidad torácica (`cavidad_toracica.py`)**: modelo inmersivo. Desde lejos se ve la cavidad completa; al acercarse con la rueda del ratón se separa en pulmones, corazón, pericardio, tráquea, esófago, grandes vasos, mediastino y diafragma, con etiquetas. El clic en cualquier pieza muestra su ficha completa.
+2. **Cavidad abdominal (`cavidad_abdominal.py`)**: modelo inmersivo del abdomen y la transición pélvica (tubo digestivo, hígado, páncreas, bazo, riñones, adrenales, uréteres, grandes vasos, recto y vejiga).
+3. **Región inguinal (`region_inguinal.py`)**: modelo inmersivo de la pared inguinal y el escroto (anillos, conducto inguinal, cordón espermático, conducto deferente, vasos testiculares, testículo y epidídimo).
+4. **Visor general de cavidades (`cavidades_equinas.py`)**: las 58 estructuras a la vez, con conmutadores por cavidad, selección por clic (y clic repetido para llegar a estructuras profundas) y ficha anatómica.
+
+Todos se generan en Blender por script reproducible y leen las fichas desde PostgreSQL o JSON. Documentación en [`cavidades/docs/MODELOS_README.md`](aplicacion_tres_d/aplicacion_tres_d/cavidades/docs/MODELOS_README.md); esquema en `db/cavidades_schema.sql` y datos en `db/cavidades_fichas.sql`.
 
 ---
 

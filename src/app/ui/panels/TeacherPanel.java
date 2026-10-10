@@ -65,11 +65,10 @@ public class TeacherPanel extends JPanel {
             new DefaultTableModel(new Object[]{"Intento", "Examen", "Estudiante", "Inicio", "Fin", "Puntaje"}, 0);
     private static final String[] MODEL_3D_OPTIONS = {
             "(Ninguno)",
-            "sistema_cardiovascular.py",
-            "sistema_oseo.py",
-            "sistema_muscular.py",
-            "sistema_organosinternos.py",
-            "piel_caballo.py"
+            "cavidad_toracica.py",
+            "cavidad_abdominal.py",
+            "region_inguinal.py",
+            "cavidades_equinas.py"
     };
 
     private final DefaultTableModel simulationModel =
@@ -787,7 +786,7 @@ private JPanel buildSimulationPanel() {
             JTextField name = new JTextField(20);
             JTextField desc = new JTextField(20);
             JComboBox<String> modelCombo = new JComboBox<>(MODEL_3D_OPTIONS);
-            modelCombo.setSelectedItem("sistema_cardiovascular.py");
+            modelCombo.setSelectedItem("cavidad_toracica.py");
             JTextArea config = new JTextArea(app.service.SimulationService.defaultConfigJson(), 10, 35);
             config.setLineWrap(true);
             config.setWrapStyleWord(true);
@@ -969,11 +968,10 @@ private JPanel buildSimulationPanel() {
             }
             if (scriptToRun == null || scriptToRun.isBlank()) {
                 String[] availableModels = {
-                        "sistema_cardiovascular.py",
-                        "sistema_oseo.py",
-                        "sistema_muscular.py",
-                        "sistema_organosinternos.py",
-                        "piel_caballo.py"
+                        "cavidad_toracica.py",
+                        "cavidad_abdominal.py",
+                        "region_inguinal.py",
+                        "cavidades_equinas.py"
                 };
                 Object choice = javax.swing.JOptionPane.showInputDialog(
                         this,

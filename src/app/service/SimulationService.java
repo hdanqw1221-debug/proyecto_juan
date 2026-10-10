@@ -78,22 +78,22 @@ public class SimulationService {
         return """
                 {
                   "habilitado": true,
-                  "tema": "anatomia_equina",
+                  "tema": "cavidades_equinas",
                   "nivel": "intermedio",
-                  "script3d": "sistema_cardiovascular.py",
-                  "tiempoMinutos": 30,
+                  "script3d": "cavidad_toracica.py",
+                  "tiempoMinutos": 45,
                   "objetivos": [
-                    "Identificar la morfologia y grandes vasos del corazon equino",
-                    "Explorar las estructuras tridimensionales en el visor interactivo"
+                    "Reconocer pulmones y corazon junto con grandes vasos y diafragma",
+                    "Relacionar cada estructura con su topografia y proyeccion superficial"
                   ],
                   "instrucciones": [
-                    "Inicia el visor 3D para examinar el modelo anatomico",
-                    "Gira la camara y haz clic sobre las estructuras para ver su descripcion",
-                    "Registra tus observaciones en el informe de practica"
+                    "Inicia el visor 3D de la cavidad",
+                    "Acercate con la rueda del raton para separar los componentes",
+                    "Haz clic en una estructura para ver su ficha completa"
                   ],
                   "escenario": {
-                    "titulo": "Exploracion Tridimensional del Sistema Cardiovascular Equino",
-                    "descripcion": "Practica clinica interactiva con visualizacion espacial guiada de organos circulatorios"
+                    "titulo": "Cavidad toracica del equino",
+                    "descripcion": "La cavidad se separa en sus componentes al acercarse"
                   }
                 }
                 """;

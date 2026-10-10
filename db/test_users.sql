@@ -64,16 +64,23 @@ ON CONFLICT DO NOTHING;
 
 -- Simulaciones 3D de ejemplo vinculadas a la materia
 INSERT INTO simulaciones (curso_id, nombre, descripcion, configuracion)
-SELECT c.id, 'Practica 3D: Sistema Cardiovascular Equino',
-       'Exploracion interactiva del corazon, arteria aorta, vena cava y red vascular periferica del caballo.',
-       '{"habilitado": true, "tema": "cardiovascular_equino", "nivel": "intermedio", "script3d": "sistema_cardiovascular.py", "tiempoMinutos": 30, "objetivos": ["Identificar cavidades cardiacas", "Reconocer recorrido aortico y retorno venoso"], "instrucciones": ["Inicia el visor 3D", "Haz clic en cada estructura para ver su nombre y funcion", "Toma capturas para tu reporte"], "escenario": {"titulo": "Morfologia y Hemodinamica Equina", "descripcion": "Estudio visual tridimensional guiado"}}'::jsonb
+SELECT c.id, 'Practica 3D inmersiva: Cavidad toracica',
+       'La cavidad toracica se separa en sus componentes al acercarse.',
+       '{"habilitado": true, "tema": "cavidades_equinas", "nivel": "intermedio", "script3d": "cavidad_toracica.py", "tiempoMinutos": 45, "objetivos": ["Reconocer pulmones y corazon junto con grandes vasos y diafragma", "Relacionar cada estructura con su topografia y proyeccion superficial"], "instrucciones": ["Inicia el visor 3D", "Acercate con la rueda del raton para separar los componentes", "Haz clic en una estructura para ver su ficha completa"], "escenario": {"titulo": "Cavidad toracica", "descripcion": "La cavidad toracica se separa en sus componentes al acercarse."}}'::jsonb
 FROM cursos c WHERE c.nombre = 'Anatomia Veterinaria Equina I'
-AND NOT EXISTS (SELECT 1 FROM simulaciones s WHERE s.curso_id = c.id AND s.nombre = 'Practica 3D: Sistema Cardiovascular Equino');
+AND NOT EXISTS (SELECT 1 FROM simulaciones s WHERE s.curso_id = c.id AND s.nombre = 'Practica 3D inmersiva: Cavidad toracica');
 
 INSERT INTO simulaciones (curso_id, nombre, descripcion, configuracion)
-SELECT c.id, 'Practica 3D: Sistema Oseo y Biomecanica',
-       'Estudio osteologico del esqueleto axial y apendicular del equino.',
-       '{"habilitado": true, "tema": "osteologia_equina", "nivel": "basico", "script3d": "sistema_oseo.py", "tiempoMinutos": 25, "objetivos": ["Diferenciar huesos de la cana y falanges", "Identificar vertebras cervicales y toracicas"], "instrucciones": ["Gira la camara 360 grados", "Localiza los sesamoideos y hueso navicular"], "escenario": {"titulo": "Esqueleto del Equino", "descripcion": "Identificacion de piezas oseas clave"}}'::jsonb
+SELECT c.id, 'Practica 3D inmersiva: Cavidad abdominal',
+       'La cavidad abdominal se separa en sus componentes al acercarse.',
+       '{"habilitado": true, "tema": "cavidades_equinas", "nivel": "intermedio", "script3d": "cavidad_abdominal.py", "tiempoMinutos": 45, "objetivos": ["Reconocer el tubo digestivo con sus glandulas anexas y el aparato urinario", "Relacionar cada estructura con su topografia y proyeccion superficial"], "instrucciones": ["Inicia el visor 3D", "Acercate con la rueda del raton para separar los componentes", "Haz clic en una estructura para ver su ficha completa"], "escenario": {"titulo": "Cavidad abdominal", "descripcion": "La cavidad abdominal se separa en sus componentes al acercarse."}}'::jsonb
 FROM cursos c WHERE c.nombre = 'Anatomia Veterinaria Equina I'
-AND NOT EXISTS (SELECT 1 FROM simulaciones s WHERE s.curso_id = c.id AND s.nombre = 'Practica 3D: Sistema Oseo y Biomecanica');
+AND NOT EXISTS (SELECT 1 FROM simulaciones s WHERE s.curso_id = c.id AND s.nombre = 'Practica 3D inmersiva: Cavidad abdominal');
+
+INSERT INTO simulaciones (curso_id, nombre, descripcion, configuracion)
+SELECT c.id, 'Practica 3D inmersiva: Region inguinal',
+       'La region inguinal y el escroto se separan en sus componentes al acercarse.',
+       '{"habilitado": true, "tema": "cavidades_equinas", "nivel": "intermedio", "script3d": "region_inguinal.py", "tiempoMinutos": 45, "objetivos": ["Reconocer el conducto inguinal y el cordon espermatico hasta el testiculo", "Relacionar cada estructura con su topografia y proyeccion superficial"], "instrucciones": ["Inicia el visor 3D", "Acercate con la rueda del raton para separar los componentes", "Haz clic en una estructura para ver su ficha completa"], "escenario": {"titulo": "Region inguinal", "descripcion": "La region inguinal y el escroto se separan en sus componentes al acercarse."}}'::jsonb
+FROM cursos c WHERE c.nombre = 'Anatomia Veterinaria Equina I'
+AND NOT EXISTS (SELECT 1 FROM simulaciones s WHERE s.curso_id = c.id AND s.nombre = 'Practica 3D inmersiva: Region inguinal');
 
