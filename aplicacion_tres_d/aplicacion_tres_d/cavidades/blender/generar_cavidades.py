@@ -31,6 +31,8 @@ from mathutils.bvhtree import BVHTree  # noqa: E402
 from anatomia import catalogo as cat  # noqa: E402
 from anatomia import especificacion as E  # noqa: E402
 from anatomia import referencia as ref  # noqa: E402
+from anatomia.organos import contexto as Ctx  # noqa: E402
+from anatomia.organos import diafragma, estomago, rinones  # noqa: E402
 from blender import exportar  # noqa: E402
 from blender import materiales as M  # noqa: E402
 from blender import primitivas as P  # noqa: E402
@@ -41,8 +43,8 @@ TRIS_MIN = 2000
 TRIS_MAX_ENVOLTURA = 45000  # las envolturas son grandes y llevan relieve costal
 MARGEN_CAVIDAD = 0.01
 
-# Estado global de la ejecución (líneas medias relajadas, informes).
-ESTADO = {"lineas": {}, "desplazamientos": {}, "mallas": {}, "registro": []}
+# Estado global de la ejecución (líneas medias relajadas, contexto de los órganos, informes).
+ESTADO = {"lineas": {}, "desplazamientos": {}, "mallas": {}, "registro": [], "ctx": Ctx.Contexto()}
 
 
 def log(msg):
@@ -132,27 +134,8 @@ def aristas_tris(tris):
     return np.unique(e, axis=0)
 
 
-# ============================================================================
-# Recorte a la cavidad (empuje según la normal del diafragma)
-# ============================================================================
-def recortar(V, modo, margen=MARGEN_CAVIDAD):
-    if modo is None:
-        return V
-    V = np.array(V, copy=True)
-    for _ in range(3):
-        x = np.clip(V[:, 0], ref.X_MIN_ENVOLVENTE, ref.X_MAX_ENVOLVENTE)
-        V[:, 1], V[:, 2] = ref.proyectar_dentro_envolvente(x, V[:, 1], V[:, 2], margen)
-        if modo in ("abdominal", "toracica"):
-            xd = ref.x_diafragma(V[:, 1], V[:, 2])
-            n = ref.normal_diafragma(V[:, 1], V[:, 2])
-            d = (xd - V[:, 0]) * n[:, 0]  # > 0 caudal al diafragma
-            if modo == "abdominal":
-                falta = np.maximum(margen - d, 0.0)
-                V -= falta[:, None] * n
-            else:
-                falta = np.maximum(margen + d, 0.0)
-                V += falta[:, None] * n
-    return V
+# Recorte a la cavidad (empuje según la normal del diafragma).
+recortar = Ctx.recortar
 
 
 # ============================================================================
@@ -247,71 +230,11 @@ def construir_tubo(objeto_id, spec, reemplazos=None):
 
 
 # ============================================================================
-# Campos implícitos de órganos macizos
+# Órganos macizos (campos implícitos de anatomia/organos)
 # ============================================================================
-def campo_corazon(p, separacion=0.0):
-    C = E.CORAZON
-    B, A = np.array(C["base"]), np.array(C["apice"])
-    eje = A - B
-    L = np.linalg.norm(eje)
-    u = eje / L
-    lat = np.array([0.0, 1.0, 0.0]) - u[1] * u
-    lat /= np.linalg.norm(lat)
-    otro = np.cross(u, lat)
-    q = p - B
-    a = q @ u
-    t = a / L
-    rl, ro = q @ lat, q @ otro
-    rho = np.sqrt((rl / C["aplanamiento_lateral"]) ** 2 + ro ** 2)
-    tc = np.clip(t, 1e-4, 1 - 1e-4)
-    ea, eb = C.get("exponente_apice", 0.65), C.get("exponente_base", 0.35)
-    norma = eb ** eb * ea ** ea / (eb + ea) ** (eb + ea)  # máximo de t^eb (1-t)^ea
-    perfil = C["radio_max"] * tc ** eb * (1 - tc) ** ea / norma
-    fuera_eje = np.where(t < 0, -a, np.where(t > 1, a - L, 0.0))
-    F = np.where((t > 0) & (t < 1), rho - perfil, np.sqrt(rho ** 2 + fuera_eje ** 2))
-    if separacion == 0.0:  # surcos solo en el corazón; el pericardio es un saco liso
-        sc = C["surco_coronario"]
-        F = F + sc["profundidad"] * np.exp(-((t - sc["t"]) / sc["ancho"]) ** 2)
-        si = C["surcos_interventriculares"]
-        azim = np.arctan2(ro, rl)
-        tramo = np.clip((t - 0.22) / 0.08, 0, 1) * np.clip((0.92 - t) / 0.1, 0, 1)
-        for a0 in si["azimuts"]:
-            d = np.angle(np.exp(1j * (azim - a0)))
-            F = F + si["profundidad"] * tramo * np.exp(-(d / si["ancho"]) ** 2)
-    for centro, semiejes in C["auriculas"]:
-        F = P.smin(F, P.sdf_elipsoide(p, centro, semiejes), k=0.04)
-    tp = C["tronco_pulmonar"]
-    seg = np.array([tp["inicio"], tp["fin"]])
-    F = P.smin(F, P.sdf_capsulas(p, seg, tp["radio"]), k=0.015)
-    return F - separacion
-
-
-def campo_tubos(partes_curvas):
-    """SDF de la unión de varias cadenas de cápsulas [(curva, radios)]."""
-    def f(p):
-        return np.min([P.sdf_capsulas(p, c, r) for c, r in partes_curvas], axis=0)
-    return f
-
-
-def curvas_de_spec(spec):
-    salida = []
-    for parte in spec["partes"]:
-        c, s, sc = P.catmull_rom(parte["puntos"], paso=0.01)
-        salida.append((c, P.perfil_radios(parte["radios"], s, sc)))
-    return salida
-
-
-def restriccion_cavidad(p, cavidad, margen=MARGEN_CAVIDAD):
-    """Campo (>0 fuera) que limita un órgano a su cavidad."""
-    x, y, z = p[:, 0], p[:, 1], p[:, 2]
-    c = ref.distancia_envolvente(x, y, z) + margen
-    n = ref.normal_diafragma(y, z)
-    d = (ref.x_diafragma(y, z) - x) * n[:, 0]
-    if cavidad == "abdominal":
-        c = np.maximum(c, margen - d)
-    elif cavidad == "toracica":
-        c = np.maximum(c, margen + d)
-    return c
+campo_tubos = Ctx.campo_tubos
+curvas_de_spec = Ctx.curvas_de_spec
+restriccion_cavidad = Ctx.restriccion_cavidad
 
 
 def organo_por_campo(objeto_id, funcion, minimo, maximo, h, sigma=1.0, recorte=None, radio_min=None, voxel=None,
@@ -322,60 +245,31 @@ def organo_por_campo(objeto_id, funcion, minimo, maximo, h, sigma=1.0, recorte=N
     return materializar(objeto_id, v, f, recorte, radio_min or 3 * h, voxel=voxel, tris_max=tris_max, taubin=taubin)
 
 
+def construir_organo(objeto_id):
+    """Malla una pieza de un módulo de anatomia/organos con el contexto actual."""
+    ctx = ESTADO["ctx"]
+    mod = Ctx.modulo(objeto_id)
+    pz = ctx.pieza(objeto_id)
+    minimo, maximo = pz["caja"]
+    return organo_por_campo(objeto_id, lambda p: mod.campo(objeto_id, p, ctx), minimo, maximo, pz["h"],
+                            sigma=pz.get("sigma", 1.0), recorte=pz.get("recorte"), radio_min=pz.get("radio_min"),
+                            voxel=pz.get("voxel"), tris_max=pz.get("tris_max", TRIS_MAX), taubin=pz.get("taubin", 4))
+
+
 # ============================================================================
 # Cavidad torácica
 # ============================================================================
 def construir_toracica():
     log("Construyendo cavidad torácica…")
-    # Corazón y pericardio.
-    bb_min, bb_max = (1.30, -0.16, 0.0), (1.63, 0.18, 0.52)
-
-    def f_corazon(p):
-        return np.maximum(campo_corazon(p), restriccion_cavidad(p, "toracica", 0.012))
-
-    organo_por_campo("TOR_CORAZON", f_corazon, bb_min, bb_max, 0.006, sigma=1.2, recorte="toracica")
-
-    def f_peri(p):
-        return np.maximum(campo_corazon(p, E.PERICARDIO_SEPARACION), restriccion_cavidad(p, "toracica", 0.005))
-
-    organo_por_campo("TOR_PERICARDIO", f_peri, bb_min, bb_max, 0.006, sigma=1.2, recorte="toracica")
+    for oid in ("TOR_CORAZON", "TOR_PERICARDIO"):
+        construir_organo(oid)
 
     # Tubos mediastínicos (el esófago se completa tras relajar el abdomen).
     for oid in ("TOR_TRAQUEA", "TOR_AORTA", "TOR_VENA_CAVA_CRANEAL", "TOR_VENA_CAVA_CAUDAL"):
         construir_tubo(oid, E.TUBOS[oid])
 
-    # Pulmones.
-    tubos_med = []
-    for oid in ("TOR_TRAQUEA", "TOR_ESOFAGO", "TOR_AORTA", "TOR_VENA_CAVA_CRANEAL", "TOR_VENA_CAVA_CAUDAL"):
-        tubos_med += curvas_de_spec(E.TUBOS[oid])
-    sdf_med = campo_tubos(tubos_med)
-    cfg = E.PULMON
-
-    def f_pulmon(lado):
-        s = 1.0 if lado == "IZQ" else -1.0
-
-        def f(p):
-            x, y, z = p[:, 0], p[:, 1], p[:, 2]
-            lim = np.maximum(ref.x_diafragma(y, z) + 0.012, ref.x_borde_basal_pulmon(z))
-            c = np.maximum(ref.distancia_envolvente(x, y, z) + 0.008, x - cfg["x_max"])
-            c = np.maximum(c, lim - x)
-            med = cfg["mediastino"] - s * y
-            if lado == "DER":
-                acc = cfg["lobulo_accesorio"]
-                med = np.minimum(med, P.sdf_caja(p, acc["min"], acc["max"]))
-            c = np.maximum(c, med)
-            c = np.maximum(c, cfg["dilatacion_corazon"] - campo_corazon(p))
-            if lado == "IZQ":
-                esc = cfg["escotadura_izq"]
-                c = np.maximum(c, -P.sdf_caja(p, esc["min"], esc["max"]))
-            c = np.maximum(c, cfg["dilatacion_tubos"] - sdf_med(p))
-            return c
-        return f
-
-    for lado in ("DER", "IZQ"):
-        ymin, ymax = (-0.33, 0.05) if lado == "DER" else (0.0, 0.33)
-        organo_por_campo(f"TOR_PULMON_{lado}", f_pulmon(lado), (0.74, ymin, -0.03), (1.60, ymax, 0.72), 0.01,
-                         sigma=1.0, recorte="toracica")
+    for oid in ("TOR_PULMON_DER", "TOR_PULMON_IZQ"):
+        construir_organo(oid)
 
     construir_diafragma()
 
@@ -390,64 +284,31 @@ def construir_toracica():
                      recorte=None, voxel=0.004)
 
 
-def construir_diafragma():
-    """Cúpula diafragmática: lámina de 1 cm sobre x = f(y, z), recortada por la envolvente, con 3 aberturas."""
-    M_ang, K = 120, 26
-    c_y, c_z = 0.0, 0.33
-    ang = np.linspace(0.0, 2 * np.pi, M_ang, endpoint=False)
-    largo = np.zeros(M_ang)
-    for i, a in enumerate(ang):
-        lo, hi = 0.0, 0.9
-        for _ in range(40):
-            mid = 0.5 * (lo + hi)
-            y, z = c_y + mid * np.cos(a), c_z + mid * np.sin(a)
-            dentro = ref.valor_envolvente(ref.x_diafragma(y, z), y, z, 0.002) <= 1.0
-            lo, hi = (mid, hi) if dentro else (lo, mid)
-        largo[i] = lo
-    rho = (np.arange(1, K + 1) / K)[:, None] * largo[None, :]
-    Y = np.concatenate([[c_y], (c_y + rho * np.cos(ang)).ravel()])
-    Z = np.concatenate([[c_z], (c_z + rho * np.sin(ang)).ravel()])
-    X = ref.x_diafragma(Y, Z)
-    Pm = np.stack([X, Y, Z], axis=1)
-    n = ref.normal_diafragma(Y, Z)
-    sup, inf = Pm + 0.005 * n, Pm - 0.005 * n
-    nv = len(Pm)
-    verts = np.vstack([sup, inf])
-    idx = lambda k, j: 1 + k * M_ang + (j % M_ang)  # noqa: E731
-    caras = []
-    for j in range(M_ang):
-        caras.append((0, idx(0, j), idx(0, j + 1)))
-        caras.append((nv, nv + idx(0, j + 1), nv + idx(0, j)))
-    for k in range(K - 1):
-        for j in range(M_ang):
-            q = (idx(k, j), idx(k + 1, j), idx(k + 1, j + 1), idx(k, j + 1))
-            caras.append(q)
-            caras.append(tuple(nv + i for i in q[::-1]))
-    for j in range(M_ang):
-        a, b = idx(K - 1, j), idx(K - 1, j + 1)
-        caras.append((a, nv + a, nv + b, b))
-    meta = cat.POR_ID["TOR_DIAFRAGMA"]
-    obj = objeto_desde_malla("TOR_DIAFRAGMA", verts, caras, coleccion(meta["coleccion"]))
-    normales_y_manifold(obj)
-    # Aberturas: cilindros orientados según la normal local, restados con booleano exacto.
-    cortes = []
-    for nombre, (y, z, r) in ref.ABERTURAS_DIAFRAGMA.items():
-        p0 = np.array(ref.punto_abertura(nombre))
-        nn = ref.normal_diafragma(y, z)
-        cortes.append(P.malla_tubo(np.array([p0 - 0.05 * nn, p0 + 0.05 * nn]), np.array([r, r]), n_lados=24,
-                                   anillos_tapa=1))
-    cv, cf = P.unir_mallas(cortes)
-    cortador = objeto_desde_malla("cortador_tmp", cv, cf, coleccion(meta["coleccion"]))
-    normales_y_manifold(cortador)
-    mod = obj.modifiers.new("aberturas", "BOOLEAN")
-    mod.operation, mod.solver, mod.object = "DIFFERENCE", "EXACT", cortador
+def _booleano(obj, verts, caras, operacion):
+    """Aplica un booleano exacto con una malla cerrada auxiliar."""
+    aux = objeto_desde_malla("booleano_tmp", verts, caras, obj.users_collection[0])
+    normales_y_manifold(aux)
+    mod = obj.modifiers.new("booleano", "BOOLEAN")
+    mod.operation, mod.solver, mod.object = operacion, "EXACT", aux
     dg = bpy.context.evaluated_depsgraph_get()
     nuevo = bpy.data.meshes.new_from_object(obj.evaluated_get(dg))
     obj.modifiers.remove(mod)
     viejo = obj.data
     obj.data = nuevo
     bpy.data.meshes.remove(viejo)
-    bpy.data.objects.remove(cortador)
+    bpy.data.objects.remove(aux)
+
+
+def construir_diafragma():
+    """Cúpula diafragmática (anatomia/organos/diafragma.py): lámina, piezas sumadas y aberturas restadas."""
+    meta = cat.POR_ID["TOR_DIAFRAGMA"]
+    verts, caras = diafragma.malla()
+    obj = objeto_desde_malla("TOR_DIAFRAGMA", verts, caras, coleccion(meta["coleccion"]))
+    normales_y_manifold(obj)
+    for uv, uf in diafragma.uniones():
+        _booleano(obj, uv, uf, "UNION")
+    cv, cf = diafragma.cortadores()
+    _booleano(obj, cv, cf, "DIFFERENCE")
     aplicar_modificador(obj, "TRIANGULATE")
     configurar_objeto(obj, meta)
 
@@ -455,137 +316,21 @@ def construir_diafragma():
 # ============================================================================
 # Cavidad abdominal
 # ============================================================================
-def sdf_higado(p):
-    cfg = E.HIGADO
-    x, y, z = p[:, 0], p[:, 1], p[:, 2]
-    huella = np.full(len(p), 1.0)
-    grosor = np.zeros(len(p))
-    for y0, z0, ay, az, k in cfg["lobulos"]:
-        e2 = ((y - y0) / ay) ** 2 + ((z - z0) / az) ** 2
-        huella = np.minimum(huella, (np.sqrt(e2) - 1.0) * min(ay, az))
-        grosor = np.maximum(grosor, k * cfg["grosor_max"] * np.sqrt(np.clip(1.0 - e2, 0.0, 1.0)))
-    grosor = np.maximum(grosor, cfg["grosor_min"])
-    dfdy, dfdz = ref.gradiente_diafragma(y, z)
-    estira = np.sqrt(1.0 + dfdy ** 2 + dfdz ** 2)
-    x_frente = ref.x_diafragma(y, z) - cfg["separacion"] * estira
-    x_dorso = x_frente - grosor * estira
-    lamina = np.maximum(x - x_frente, x_dorso - x) / estira
-    F = np.maximum(np.maximum(huella, lamina), ref.distancia_envolvente(x, y, z) + 0.01)
-    for yf, zf, semi in cfg.get("fisuras", []):  # cuña que se abre hacia el borde ventral
-        ancho = semi + cfg.get("ensanche_fisura", 0.01) * np.clip((zf - z) / 0.15, 0.0, 1.0)
-        cuna = np.where(z < zf, np.abs(y - yf) - ancho, 1.0)
-        F = np.maximum(F, -cuna)
-    return F
-
-
-def campo_higado_final(p):
-    """Hígado con impresiones: renal y adrenal derechas, surco de la vena cava y esófago abdominal."""
-    F = sdf_higado(p)
-    F = np.maximum(F, 0.006 - sdf_rinon("ABD_RINON_DER", p))
-    r = E.ADRENALES["ABD_ADRENAL_DER"]
-    F = np.maximum(F, 0.004 - P.sdf_elipsoide(p, r["centro"], r["semiejes"]))
-    tubos = curvas_de_spec(E.TUBOS["ABD_VENA_CAVA_CAUDAL"]) + ESTADO.get("esofago_final", [])
-    return np.maximum(F, 0.004 - campo_tubos(tubos)(p))
-
-
-def _marco(t, n):
-    t = t / np.linalg.norm(t)
-    n = n - np.dot(n, t) * t
-    n /= np.linalg.norm(n)
-    return np.stack([t, np.cross(n, t), n], axis=1)  # columnas: largo, ancho, grosor
-
-
-def sdf_bazo(p):
-    cfg = E.BAZO
-    base, ext = np.array(cfg["base"]), np.array(cfg["extremo"])
-    medio = (base + ext) / 2 + np.array([-0.03, 0.0, 0.0])
-    c, s, _ = P.catmull_rom([base, medio, ext], paso=0.02)
-    F = np.full(len(p), 1.0)
-    e = ref.EXPONENTE_SECCION
-    for i, (q, si) in enumerate(zip(c, s)):
-        x, z = q[0], q[2]
-        w, _, _ = ref.envolvente(x)
-        zc, hz = ref.centro_y_semialtura(x)
-        u = min(abs((z - zc) / hz), 0.98)
-        y_pared = w * (1 - u ** e) ** (1 / e)
-        n = np.array([0.0, e * y_pared ** (e - 1) / w ** e, e * u ** (e - 1) / hz * np.sign(z - zc)])
-        n /= np.linalg.norm(n)
-        # Centro del elemento: sobre la pared izquierda, retirado según su normal.
-        centro = np.array([x, y_pared, z]) - (0.012 + cfg["semigrosor"]) * n
-        tang = c[min(i + 1, len(c) - 1)] - c[max(i - 1, 0)]
-        R = _marco(tang, n)
-        f = si / s[-1]
-        ancho = cfg["ancho"][0] + (cfg["ancho"][1] - cfg["ancho"][0]) * f
-        F = np.minimum(F, P.sdf_elipsoide(p, centro, (0.03, ancho, cfg["semigrosor"]), R))
-    return np.maximum(F, restriccion_cavidad(p, "abdominal", 0.01))
-
-
-def sdf_rinon(objeto_id, p):
-    r = E.RINONES[objeto_id]
-    c = np.array(r["centro"])
-    a = np.array(r["semiejes"])
-    medial = -np.sign(c[1])
-    if r["forma"] == "cordiforme":
-        F = P.sdf_elipsoide(p, c + (0.015, 0.03, 0), (a[0] * 0.75, a[1] * 0.6, a[2]))
-        F = P.smin(F, P.sdf_elipsoide(p, c + (0.015, -0.03, 0), (a[0] * 0.75, a[1] * 0.6, a[2])), 0.02)
-        F = P.smin(F, P.sdf_elipsoide(p, c + (-0.025, 0, 0), (a[0] * 0.75, a[1] * 0.62, a[2] * 0.93)), 0.02)
-        hilio = c + (0.0, medial * a[1] * 1.0, 0.0)
-        F = np.maximum(F, -(np.linalg.norm(p - hilio, axis=1) - 0.018))
-    else:
-        F = P.sdf_elipsoide(p, c, a)
-        hilio = c + (0.0, medial * a[1] * 1.05, 0.0)
-        F = np.maximum(F, -(np.linalg.norm(p - hilio, axis=1) - 0.028))
-    return F
-
-
-def sdf_pancreas(p):
-    cfg = E.PANCREAS
-    c, s, sc = P.catmull_rom(cfg["puntos"], paso=0.01)
-    r = P.perfil_radios(cfg["radios"], s, sc)
-    centro_z = np.mean(np.array(cfg["puntos"])[:, 2])
-    q = p.copy()
-    q[:, 2] = centro_z + (p[:, 2] - centro_z) / cfg["aplanamiento_z"]
-    c2 = c.copy()
-    c2[:, 2] = centro_z + (c[:, 2] - centro_z) / cfg["aplanamiento_z"]
-    return P.sdf_capsulas(q, c2, r) * cfg["aplanamiento_z"]
-
-
-def sdf_vejiga(p):
-    v = E.VEJIGA
-    return P.sdf_elipsoide(p, v["centro"], v["semiejes"])
+MACIZOS_ABDOMINALES = ("ABD_BAZO", "ABD_PANCREAS", "ABD_RINON_DER", "ABD_RINON_IZQ", "ABD_ADRENAL_DER",
+                       "ABD_ADRENAL_IZQ")
 
 
 def construir_macizos_abdominales():
     log("Construyendo órganos macizos abdominales…")
-    organo_por_campo("ABD_BAZO", sdf_bazo, (0.60, 0.08, 0.12), (1.14, 0.33, 0.72), 0.006, sigma=1.0,
-                     recorte="abdominal")
-
-    def f_panc(p):
-        F = np.maximum(sdf_pancreas(p), restriccion_cavidad(p, "abdominal"))
-        return np.maximum(F, 0.004 - sdf_higado(p))
-
-    organo_por_campo("ABD_PANCREAS", f_panc, (0.72, -0.20, 0.44), (0.96, 0.13, 0.63), 0.005, sigma=1.0,
-                     recorte="abdominal")
-    for oid, r in E.RINONES.items():
-        c = np.array(r["centro"])
-        organo_por_campo(oid, lambda p, oid=oid: sdf_rinon(oid, p), c - 0.11, c + 0.11, 0.004, sigma=1.0,
-                         recorte="abdominal")
-    for oid, r in E.ADRENALES.items():
-        c, a = np.array(r["centro"]), np.array(r["semiejes"])
-        organo_por_campo(oid, lambda p, c=c, a=a: P.sdf_elipsoide(p, c, a), c - a - 0.01, c + a + 0.01, 0.0015,
-                         sigma=0.8, recorte="abdominal", radio_min=0.006)
+    for oid in MACIZOS_ABDOMINALES:
+        construir_organo(oid)
 
 
 def obstaculos_abdominales():
     """Campos de los órganos que los tubos digestivos deben rodear: (sdf, prioridad)."""
-    obs = [
-        (sdf_higado, cat.POR_ID["ABD_HIGADO"]["prioridad"]),
-        (sdf_bazo, cat.POR_ID["ABD_BAZO"]["prioridad"]),
-        (sdf_pancreas, cat.POR_ID["ABD_PANCREAS"]["prioridad"]),
-        (sdf_vejiga, cat.POR_ID["PEL_VEJIGA"]["prioridad"]),
-    ]
-    for oid in E.RINONES:
-        obs.append((lambda p, oid=oid: sdf_rinon(oid, p), cat.POR_ID[oid]["prioridad"]))
+    ctx = ESTADO["ctx"]
+    obs = [(ctx.sdf(oid), cat.POR_ID[oid]["prioridad"])
+           for oid in ("ABD_HIGADO", "ABD_BAZO", "ABD_PANCREAS", "PEL_VEJIGA", "ABD_RINON_DER", "ABD_RINON_IZQ")]
     for oid in ("ABD_AORTA", "ABD_VENA_CAVA_CAUDAL", "ABD_A_MESENTERICA_CRANEAL"):
         obs.append((campo_tubos(curvas_de_spec(E.TUBOS[oid])), cat.POR_ID[oid]["prioridad"]))
     # Trayecto intraabdominal de las estructuras inguinales (vasos testiculares, deferente, canal).
@@ -679,12 +424,21 @@ def relajar_cadenas():
         ESTADO["desplazamientos"][oid] = {"max_m": round(float(desp.max()), 3), "medio_m": round(float(desp.mean()), 3)}
 
 
+def lineas_finales():
+    """Líneas medias relajadas y suavizadas con las que se mallan los tubos: {objeto_id: (curva, radios)}."""
+    return {oid: (P.suavizar_polilinea(linea["curva"], iteraciones=3, alfa=0.3), linea["radios"])
+            for oid, linea in ESTADO["lineas"].items()}
+
+
 def construir_tubos_digestivos():
     log("Construyendo tubos digestivos…")
+    finales = lineas_finales()
     for oid, linea in ESTADO["lineas"].items():
+        if oid == "ABD_ESTOMAGO" and estomago.USAR_CAMPO:
+            continue  # se malla como órgano macizo (anatomia/organos/estomago.py)
         spec = linea["spec"]
-        curva = P.suavizar_polilinea(linea["curva"], iteraciones=3, alfa=0.3)
-        v, f, rmin = tubo_parte(None, None, spec.get("haustras"), curva=curva, radios_puntos=linea["radios"])
+        curva, radios = finales[oid]
+        v, f, rmin = tubo_parte(None, None, spec.get("haustras"), curva=curva, radios_puntos=radios)
         materializar(oid, v, f, "abdominal", rmin)
 
 
@@ -699,20 +453,22 @@ def cardias_relajado():
 def construir_abdominal():
     construir_macizos_abdominales()
     relajar_cadenas()
+    ESTADO["ctx"].lineas.update(lineas_finales())
     construir_tubos_digestivos()
+    if estomago.USAR_CAMPO:
+        construir_organo("ABD_ESTOMAGO")
     # Esófago torácico prolongado hasta el cardias relajado.
     cardias = cardias_relajado()
     spec = {"recorte": E.TUBOS["TOR_ESOFAGO"]["recorte"], "partes": [dict(E.TUBOS["TOR_ESOFAGO"]["partes"][0])]}
     spec["partes"][0]["puntos"] = list(spec["partes"][0]["puntos"]) + [tuple(cardias)]
     construir_tubo("TOR_ESOFAGO", spec)
-    ESTADO["esofago_final"] = curvas_de_spec(spec)
+    ESTADO["ctx"].esofago_final = curvas_de_spec(spec)
     # El hígado se modela después del esófago para tallar su impresión esofágica.
-    organo_por_campo("ABD_HIGADO", campo_higado_final, (0.66, -0.31, -0.02), (1.34, 0.22, 0.72), 0.008,
-                     sigma=1.2, recorte="abdominal")
+    construir_organo("ABD_HIGADO")
     for oid in ("ABD_AORTA", "ABD_VENA_CAVA_CAUDAL", "ABD_A_MESENTERICA_CRANEAL"):
         construir_tubo(oid, E.TUBOS[oid])
     for oid, rid in (("ABD_URETER_DER", "ABD_RINON_DER"), ("ABD_URETER_IZQ", "ABD_RINON_IZQ")):
-        construir_tubo(oid, E.TUBOS[oid], reemplazos={0: lambda pts, rid=rid: [tuple(E.hilio_renal(rid))] + pts[1:]})
+        construir_tubo(oid, E.TUBOS[oid], reemplazos={0: lambda pts, rid=rid: [tuple(rinones.hilio(rid))] + pts[1:]})
 
 
 # ============================================================================
@@ -721,9 +477,7 @@ def construir_abdominal():
 def construir_pelvica():
     log("Construyendo transición pélvica…")
     construir_tubo("PEL_RECTO", E.TUBOS["PEL_RECTO"])
-    v = E.VEJIGA
-    c, a = np.array(v["centro"]), np.array(v["semiejes"])
-    organo_por_campo("PEL_VEJIGA", sdf_vejiga, c - a - 0.01, c + a + 0.01, 0.005, sigma=0.8)
+    construir_organo("PEL_VEJIGA")
 
 
 def construir_inguinal():
@@ -897,25 +651,7 @@ def construir_envoltura(cavidad):
 # Colisiones (§4.6.2)
 # ============================================================================
 CLASES_VOLUMETRICAS = {85, 75, 70, 65, 60, 55, 50, 45, 40, 35, 30, 95}
-UNIONES = {frozenset(p) for p in [
-    ("ABD_ESTOMAGO", "ABD_DUODENO"), ("ABD_DUODENO", "ABD_YEYUNO"), ("ABD_YEYUNO", "ABD_ILEON"),
-    ("ABD_ILEON", "ABD_CIEGO"), ("ABD_CIEGO", "ABD_COLON_VENTRAL_DER"),
-    ("ABD_COLON_VENTRAL_DER", "ABD_FLEXURA_ESTERNAL"), ("ABD_FLEXURA_ESTERNAL", "ABD_COLON_VENTRAL_IZQ"),
-    ("ABD_COLON_VENTRAL_IZQ", "ABD_FLEXURA_PELVICA"), ("ABD_FLEXURA_PELVICA", "ABD_COLON_DORSAL_IZQ"),
-    ("ABD_COLON_DORSAL_IZQ", "ABD_FLEXURA_DIAFRAGMATICA"), ("ABD_FLEXURA_DIAFRAGMATICA", "ABD_COLON_DORSAL_DER"),
-    ("ABD_COLON_DORSAL_DER", "ABD_COLON_TRANSVERSO"), ("ABD_COLON_TRANSVERSO", "ABD_COLON_DESCENDENTE"),
-    ("ABD_COLON_DESCENDENTE", "PEL_RECTO"), ("TOR_ESOFAGO", "ABD_ESTOMAGO"), ("TOR_CORAZON", "TOR_PERICARDIO"),
-    ("ABD_URETER_DER", "ABD_RINON_DER"), ("ABD_URETER_IZQ", "ABD_RINON_IZQ"),
-    ("ABD_URETER_DER", "PEL_VEJIGA"), ("ABD_URETER_IZQ", "PEL_VEJIGA"),
-    ("TOR_AORTA", "TOR_CORAZON"), ("TOR_VENA_CAVA_CRANEAL", "TOR_CORAZON"), ("TOR_VENA_CAVA_CAUDAL", "TOR_CORAZON"),
-    ("TOR_AORTA", "ABD_AORTA"), ("TOR_VENA_CAVA_CAUDAL", "ABD_VENA_CAVA_CAUDAL"),
-    ("ABD_A_MESENTERICA_CRANEAL", "ABD_AORTA"),
-    # Los bronquios principales penetran en el pulmón por el hilio.
-    ("TOR_TRAQUEA", "TOR_PULMON_DER"), ("TOR_TRAQUEA", "TOR_PULMON_IZQ"),
-    # Estructuras que atraviesan las aberturas del diafragma.
-    ("TOR_AORTA", "TOR_DIAFRAGMA"), ("ABD_AORTA", "TOR_DIAFRAGMA"), ("TOR_ESOFAGO", "TOR_DIAFRAGMA"),
-    ("TOR_VENA_CAVA_CAUDAL", "TOR_DIAFRAGMA"), ("ABD_VENA_CAVA_CAUDAL", "TOR_DIAFRAGMA"),
-]}
+UNIONES = cat.UNIONES
 
 
 def _datos(obj):
@@ -1090,6 +826,7 @@ def main():
         o.hide_set(not cat.POR_ID[oid]["visible_por_defecto"])
     exportar.exportar_todo(salida, ESTADO["mallas"], colisiones, ESTADO["desplazamientos"], E.AJUSTES,
                            con_glb=not args.sin_glb)
+    exportar.exportar_contexto(salida, ESTADO["ctx"])
     log(f"Generación completa en {time.time() - t0:.1f} s: {len(ESTADO['mallas'])} objetos en {salida}")
 
 

@@ -304,67 +304,8 @@ def generador(nombre):
     raise KeyError(nombre)
 
 
-# ----------------------------------------------------------------------------
-# Órganos macizos (campos implícitos): parámetros
-# ----------------------------------------------------------------------------
-CORAZON = {
-    "base": (1.48, 0.015, 0.37),
-    "apice": (1.39, 0.04, 0.07),
-    "radio_max": 0.12,
-    "aplanamiento_lateral": 0.88,
-    # Aurículas: lóbulos aplanados que abrazan la base cranealmente (centro, semiejes x, y, z).
-    "auriculas": [((1.50, -0.048, 0.385), (0.032, 0.050, 0.032)), ((1.49, 0.072, 0.40), (0.030, 0.045, 0.030))],
-    # Relieve de superficie según Bradley (1922, fig. 10): surco coronario entre aurículas y ventrículos,
-    # surcos interventriculares paraconal (izquierdo) y subsinuoso (derecho) y tronco pulmonar.
-    "surco_coronario": {"t": 0.20, "ancho": 0.035, "profundidad": 0.009},
-    "surcos_interventriculares": {"azimuts": (0.95, -2.25), "ancho": 0.13, "profundidad": 0.006},
-    "tronco_pulmonar": {"inicio": (1.485, 0.03, 0.37), "fin": (1.535, 0.066, 0.478), "radio": 0.021},
-    "exponente_apice": 0.80,
-    "exponente_base": 0.26,
-}
-PERICARDIO_SEPARACION = 0.012
-
-PULMON = {
-    "x_max": 1.58,
-    "mediastino": 0.035,
-    "dilatacion_corazon": 0.015,
-    # Escotadura cardíaca izquierda: 3.ª–6.ª costilla, ventral.
-    "escotadura_izq": {"min": (float(ref.x_costilla(6)), 0.0, -0.10), "max": (float(ref.x_costilla(3)), 0.40, 0.22)},
-    # Lóbulo accesorio del pulmón derecho (receso mediastínico, junto a la vena cava caudal).
-    "lobulo_accesorio": {"min": (0.0, -0.04, 0.24), "max": (1.34, 0.03, 0.48)},
-    "dilatacion_tubos": 0.010,
-}
-
-HIGADO = {
-    "separacion": 0.012,
-    "grosor_max": 0.09,
-    "grosor_min": 0.018,
-    "lobulos": [  # (y, z, semieje y, semieje z, factor de grosor)
-        (-0.15, 0.42, 0.13, 0.20, 1.0),   # lóbulo derecho
-        (0.07, 0.32, 0.12, 0.16, 0.9),    # lóbulos izquierdos (lateral y medial)
-        (-0.02, 0.45, 0.08, 0.14, 0.8),   # lóbulos cuadrado y caudado
-        (-0.10, 0.56, 0.05, 0.06, 0.7),   # proceso caudado (impresión renal)
-    ],
-    # Fisuras interlobulares del borde ventral (Bradley 1922, fig. 56): (y, z del fondo, semiancho).
-    "fisuras": [(0.125, 0.28, 0.004), (0.025, 0.30, 0.005), (-0.075, 0.28, 0.004)],
-    "ensanche_fisura": 0.010,
-}
-
-# "ancho": semiancho en la base y en el extremo ventral (base ≈ 20 cm de ancho).
-BAZO = {"base": (0.72, 0.27, 0.62), "extremo": (1.05, 0.26, 0.25), "ancho": (0.12, 0.025), "semigrosor": 0.016}
-
-PANCREAS = {"puntos": [(0.86, -0.12, 0.53), (0.88, -0.03, 0.52), (0.80, 0.08, 0.56)], "radios": [0.05, 0.035, 0.02],
-            "aplanamiento_z": 0.6}
-
-RINONES = {
-    "ABD_RINON_DER": {"centro": (0.80, -0.10, 0.60), "semiejes": (0.08, 0.075, 0.03), "forma": "cordiforme"},
-    "ABD_RINON_IZQ": {"centro": (0.66, 0.10, 0.60), "semiejes": (0.09, 0.06, 0.03), "forma": "reniforme"},
-}
-ADRENALES = {
-    "ABD_ADRENAL_DER": {"centro": (0.86, -0.05, 0.58), "semiejes": (0.04, 0.015, 0.01)},
-    "ABD_ADRENAL_IZQ": {"centro": (0.74, 0.06, 0.58), "semiejes": (0.04, 0.015, 0.01)},
-}
-VEJIGA = {"centro": (0.12, 0.0, 0.28), "semiejes": (0.10, 0.07, 0.07)}
+# Los órganos macizos (corazón, pulmones, hígado, bazo, páncreas, riñones, adrenales, vejiga, estómago
+# y diafragma) tienen sus parámetros y su forma en anatomia/organos/.
 
 
 # Envolturas de los modelos inmersivos (moldes de la cavidad vista desde fuera).
@@ -375,11 +316,3 @@ ENVOLTURAS = {
     "pared_inguinal": {"x": (0.13, 0.38), "y_max": 0.19, "grosor": 0.035, "engrosamiento": 0.09},
     "escroto": {"holgura": 0.022, "radio_cuello": 0.032},
 }
-
-
-def hilio_renal(objeto_id):
-    """Punto del hilio (borde medial) de cada riñón, origen del uréter."""
-    r = RINONES[objeto_id]
-    c = np.array(r["centro"])
-    lado = 1.0 if c[1] > 0 else -1.0
-    return c + np.array([0.0, -lado * r["semiejes"][1] * 0.75, -0.005])
