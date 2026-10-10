@@ -24,6 +24,14 @@ def test_seleccionables_tienen_ficha_y_referencias_no():
             assert o["seleccionable"] and o["ficha_id"]
 
 
+def test_una_envoltura_por_cavidad_principal():
+    for cav in ("toracica", "abdominal", "inguinal"):
+        env = [o for o in cat.objetos_de_cavidad(cav) if o["envoltura"]]
+        assert len(env) == 1 and env[0]["seleccionable"] and not env[0]["visible_por_defecto"]
+        assert cat.envoltura_de(cav) == env[0]["objeto_id"]
+    assert cat.envoltura_de("pelvica") is None
+
+
 def test_cada_ficha_tiene_objetos():
     for fid in cat.fichas_ids():
         assert cat.objetos_de_ficha(fid)
@@ -39,7 +47,7 @@ def test_campos_validos():
 
 
 def test_inguinal_bilateral():
-    ing = [o["objeto_id"] for o in cat.objetos_de_cavidad("inguinal")]
+    ing = [o["objeto_id"] for o in cat.objetos_de_cavidad("inguinal") if not o["envoltura"]]
     assert len(ing) == 16
     for oid in ing:
         otro = oid.replace("_IZQ", "_DER") if oid.endswith("_IZQ") else oid.replace("_DER", "_IZQ")

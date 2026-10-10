@@ -17,23 +17,15 @@
     {
       "a": "ABD_CIEGO",
       "b": "ABD_COLON_DORSAL_DER",
-      "profundidad_inicial_m": 0.0232,
+      "profundidad_inicial_m": 0.0228,
       "corregida": true,
       "deformado": "ABD_COLON_DORSAL_DER",
-      "profundidad_final_m": 0.0004
-    },
-    {
-      "a": "ABD_CIEGO",
-      "b": "ABD_COLON_VENTRAL_IZQ",
-      "profundidad_inicial_m": 0.0103,
-      "corregida": true,
-      "deformado": "ABD_COLON_VENTRAL_IZQ",
       "profundidad_final_m": 0.0
     },
     {
       "a": "ABD_COLON_DESCENDENTE",
       "b": "ABD_DUODENO",
-      "profundidad_inicial_m": 0.0194,
+      "profundidad_inicial_m": 0.0201,
       "corregida": true,
       "deformado": "ABD_DUODENO",
       "profundidad_final_m": 0.0
@@ -47,18 +39,18 @@
     {
       "a": "ABD_COLON_DESCENDENTE",
       "b": "ABD_YEYUNO",
-      "profundidad_inicial_m": 0.0312,
+      "profundidad_inicial_m": 0.0304,
       "corregida": false,
       "deformado": "",
-      "profundidad_final_m": 0.0312
+      "profundidad_final_m": 0.0304
     },
     {
       "a": "ABD_COLON_DORSAL_DER",
       "b": "ABD_COLON_VENTRAL_DER",
-      "profundidad_inicial_m": 0.0692,
+      "profundidad_inicial_m": 0.0689,
       "corregida": true,
       "deformado": "ABD_COLON_DORSAL_DER",
-      "profundidad_final_m": 0.0065
+      "profundidad_final_m": 0.0043
     },
     {
       "a": "ABD_COLON_DORSAL_DER",
@@ -71,7 +63,7 @@
     {
       "a": "ABD_COLON_DORSAL_DER",
       "b": "ABD_ESTOMAGO",
-      "profundidad_inicial_m": 0.017,
+      "profundidad_inicial_m": 0.0171,
       "corregida": true,
       "deformado": "ABD_COLON_DORSAL_DER",
       "profundidad_final_m": 0.0
@@ -79,23 +71,23 @@
     {
       "a": "ABD_COLON_DORSAL_DER",
       "b": "ABD_HIGADO",
-      "profundidad_inicial_m": 0.0494,
+      "profundidad_inicial_m": 0.0495,
       "corregida": false,
       "deformado": "",
-      "profundidad_final_m": 0.0494
+      "profundidad_final_m": 0.0495
     },
     {
       "a": "ABD_COLON_DORSAL_IZQ",
       "b": "ABD_COLON_VENTRAL_IZQ",
-      "profundidad_inicial_m": 0.0346,
+      "profundidad_inicial_m": 0.0356,
       "corregida": true,
       "deformado": "ABD_COLON_DORSAL_IZQ",
-      "profundidad_final_m": 0.0021
+      "profundidad_final_m": 0.0022
     },
     {
       "a": "ABD_COLON_DORSAL_IZQ",
       "b": "ABD_ESTOMAGO",
-      "profundidad_inicial_m": 0.0263,
+      "profundidad_inicial_m": 0.026,
       "corregida": true,
       "deformado": "ABD_COLON_DORSAL_IZQ",
       "profundidad_final_m": 0.0
@@ -103,7 +95,7 @@
     {
       "a": "ABD_COLON_TRANSVERSO",
       "b": "ABD_DUODENO",
-      "profundidad_inicial_m": 0.0379,
+      "profundidad_inicial_m": 0.0381,
       "corregida": true,
       "deformado": "ABD_DUODENO",
       "profundidad_final_m": 0.0021
@@ -111,7 +103,7 @@
     {
       "a": "ABD_COLON_TRANSVERSO",
       "b": "ABD_YEYUNO",
-      "profundidad_inicial_m": 0.0129,
+      "profundidad_inicial_m": 0.0127,
       "corregida": true,
       "deformado": "ABD_YEYUNO",
       "profundidad_final_m": 0.0
@@ -119,7 +111,7 @@
     {
       "a": "ABD_COLON_VENTRAL_DER",
       "b": "ABD_COLON_VENTRAL_IZQ",
-      "profundidad_inicial_m": 0.0443,
+      "profundidad_inicial_m": 0.0434,
       "corregida": true,
       "deformado": "ABD_COLON_VENTRAL_DER",
       "profundidad_final_m": 0.0007
@@ -127,7 +119,7 @@
     {
       "a": "ABD_COLON_VENTRAL_DER",
       "b": "ABD_ILEON",
-      "profundidad_inicial_m": 0.033,
+      "profundidad_inicial_m": 0.0331,
       "corregida": true,
       "deformado": "ABD_ILEON",
       "profundidad_final_m": 0.0
@@ -135,15 +127,15 @@
     {
       "a": "ABD_COLON_VENTRAL_IZQ",
       "b": "ABD_FLEXURA_DIAFRAGMATICA",
-      "profundidad_inicial_m": 0.0561,
+      "profundidad_inicial_m": 0.0569,
       "corregida": true,
       "deformado": "ABD_COLON_VENTRAL_IZQ",
-      "profundidad_final_m": 0.007
+      "profundidad_final_m": 0.0146
     },
     {
       "a": "ABD_DUODENO",
       "b": "ABD_FLEXURA_DIAFRAGMATICA",
-      "profundidad_inicial_m": 0.0278,
+      "profundidad_inicial_m": 0.0289,
       "corregida": true,
       "deformado": "ABD_DUODENO",
       "profundidad_final_m": 0.0
@@ -151,15 +143,15 @@
     {
       "a": "ABD_ESTOMAGO",
       "b": "ABD_FLEXURA_DIAFRAGMATICA",
-      "profundidad_inicial_m": 0.0425,
+      "profundidad_inicial_m": 0.0432,
       "corregida": true,
       "deformado": "ABD_FLEXURA_DIAFRAGMATICA",
-      "profundidad_final_m": 0.0021
+      "profundidad_final_m": 0.0054
     },
     {
       "a": "ABD_FLEXURA_DIAFRAGMATICA",
       "b": "ABD_FLEXURA_ESTERNAL",
-      "profundidad_inicial_m": 0.0331,
+      "profundidad_inicial_m": 0.0333,
       "corregida": true,
       "deformado": "ABD_FLEXURA_DIAFRAGMATICA",
       "profundidad_final_m": 0.0
@@ -167,7 +159,7 @@
     {
       "a": "ABD_FLEXURA_DIAFRAGMATICA",
       "b": "ABD_HIGADO",
-      "profundidad_inicial_m": 0.02,
+      "profundidad_inicial_m": 0.0238,
       "corregida": true,
       "deformado": "ABD_FLEXURA_DIAFRAGMATICA",
       "profundidad_final_m": 0.0
@@ -199,7 +191,7 @@
     {
       "a": "ING_ANILLO_SUPERFICIAL_DER",
       "b": "ING_CORDON_ESPERMATICO_DER",
-      "profundidad_inicial_m": 0.0112,
+      "profundidad_inicial_m": 0.0106,
       "corregida": false
     },
     {
@@ -211,37 +203,37 @@
     {
       "a": "ING_ANILLO_SUPERFICIAL_IZQ",
       "b": "ING_CORDON_ESPERMATICO_IZQ",
-      "profundidad_inicial_m": 0.0112,
+      "profundidad_inicial_m": 0.0106,
       "corregida": false
     },
     {
       "a": "ING_CANAL_INGUINAL_DER",
       "b": "ING_CONDUCTO_DEFERENTE_DER",
-      "profundidad_inicial_m": 0.0187,
+      "profundidad_inicial_m": 0.0196,
       "corregida": false
     },
     {
       "a": "ING_CANAL_INGUINAL_DER",
       "b": "ING_CORDON_ESPERMATICO_DER",
-      "profundidad_inicial_m": 0.016,
+      "profundidad_inicial_m": 0.0171,
       "corregida": false
     },
     {
       "a": "ING_CANAL_INGUINAL_DER",
       "b": "ING_VASOS_TESTICULARES_DER",
-      "profundidad_inicial_m": 0.0197,
+      "profundidad_inicial_m": 0.0194,
       "corregida": false
     },
     {
       "a": "ING_CANAL_INGUINAL_IZQ",
       "b": "ING_CONDUCTO_DEFERENTE_IZQ",
-      "profundidad_inicial_m": 0.0186,
+      "profundidad_inicial_m": 0.0197,
       "corregida": false
     },
     {
       "a": "ING_CANAL_INGUINAL_IZQ",
       "b": "ING_CORDON_ESPERMATICO_IZQ",
-      "profundidad_inicial_m": 0.0174,
+      "profundidad_inicial_m": 0.0171,
       "corregida": false
     },
     {
@@ -253,31 +245,31 @@
     {
       "a": "ING_CONDUCTO_DEFERENTE_DER",
       "b": "ING_CORDON_ESPERMATICO_DER",
-      "profundidad_inicial_m": 0.0174,
+      "profundidad_inicial_m": 0.0177,
       "corregida": false
     },
     {
       "a": "ING_CONDUCTO_DEFERENTE_IZQ",
       "b": "ING_CORDON_ESPERMATICO_IZQ",
-      "profundidad_inicial_m": 0.0174,
+      "profundidad_inicial_m": 0.0176,
       "corregida": false
     },
     {
       "a": "ING_CORDON_ESPERMATICO_DER",
       "b": "ING_VASOS_TESTICULARES_DER",
-      "profundidad_inicial_m": 0.0173,
+      "profundidad_inicial_m": 0.0176,
       "corregida": false
     },
     {
       "a": "ING_CORDON_ESPERMATICO_IZQ",
       "b": "ING_VASOS_TESTICULARES_IZQ",
-      "profundidad_inicial_m": 0.0172,
+      "profundidad_inicial_m": 0.0177,
       "corregida": false
     },
     {
       "a": "ING_EPIDIDIMO_DER",
       "b": "ING_TESTICULO_DER",
-      "profundidad_inicial_m": 0.0101,
+      "profundidad_inicial_m": 0.0102,
       "corregida": false
     },
     {
@@ -329,20 +321,20 @@
       "medio_m": 0.139
     },
     "ABD_COLON_VENTRAL_IZQ": {
-      "max_m": 0.228,
-      "medio_m": 0.096
+      "max_m": 0.227,
+      "medio_m": 0.095
     },
     "ABD_FLEXURA_PELVICA": {
       "max_m": 0.094,
       "medio_m": 0.059
     },
     "ABD_COLON_DORSAL_IZQ": {
-      "max_m": 0.194,
-      "medio_m": 0.055
+      "max_m": 0.2,
+      "medio_m": 0.056
     },
     "ABD_FLEXURA_DIAFRAGMATICA": {
-      "max_m": 0.147,
-      "medio_m": 0.106
+      "max_m": 0.148,
+      "medio_m": 0.108
     },
     "ABD_COLON_DORSAL_DER": {
       "max_m": 0.182,
@@ -422,6 +414,11 @@
       "objeto": "ING_CONDUCTO_DEFERENTE",
       "cambio": "Ampolla a z = 0,375 (antes 0,32); recorrido caudomedial lateral a la vejiga.",
       "motivo": "A z = 0,32 quedaba dentro de la vejiga."
+    },
+    {
+      "objeto": "ING_TESTICULO",
+      "cambio": "Centro a z = −0,07 (antes −0,20); estructuras escrotales referidas a él.",
+      "motivo": "Escroto con cuello corto, como en el semental; con −0,20 el cordón medía ~30 cm."
     },
     {
       "objeto": "ING_VASOS_TESTICULARES",

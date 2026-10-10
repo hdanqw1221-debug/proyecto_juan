@@ -62,6 +62,9 @@ _FILAS = [
     ("TOR_DIAFRAGMA", "TOR_DIAFRAGMA", "Diafragma", "toracica", "limites", "serosa", 0, "diafragma", {"opacidad": 0.5}),
     ("TOR_MEDIASTINO", "TOR_MEDIASTINO", "Mediastino", "toracica", "limites", "serosa", 0, "referencia",
      {"opacidad": 0.15, "visible": False}),
+    # Envoltura: la cavidad completa vista desde lejos (se despieza al acercarse).
+    ("TOR_CAVIDAD_TORACICA", "TOR_CAVIDAD_TORACICA", "Cavidad torácica", "toracica", "limites", "pleura", 0,
+     "referencia", {"envoltura": True, "visible": False}),
     # --- Cavidad abdominal ------------------------------------------------
     ("ABD_ESTOMAGO", "ABD_ESTOMAGO", "Estómago", "abdominal", "digestivo", "estomago", 1, "estomago", {}),
     ("ABD_DUODENO", "ABD_DUODENO", "Duodeno", "abdominal", "digestivo", "digestivo_tubular", 2, "intestino_delgado", {}),
@@ -89,6 +92,8 @@ _FILAS = [
     ("ABD_AORTA", "ABD_AORTA", "Aorta abdominal", "abdominal", "cardiovascular", "arterial", 3, "vaso", {}),
     ("ABD_VENA_CAVA_CAUDAL", "ABD_VENA_CAVA_CAUDAL", "Vena cava caudal (porción abdominal)", "abdominal", "cardiovascular", "venoso", 3, "vaso", {}),
     ("ABD_A_MESENTERICA_CRANEAL", "ABD_A_MESENTERICA_CRANEAL", "Arteria mesentérica craneal", "abdominal", "cardiovascular", "arterial", 3, "vaso", {}),
+    ("ABD_CAVIDAD_ABDOMINAL", "ABD_CAVIDAD_ABDOMINAL", "Cavidad abdominal", "abdominal", "limites", "peritoneo", 0,
+     "referencia", {"envoltura": True, "visible": False}),
     # --- Transición pélvica -----------------------------------------------
     ("PEL_RECTO", "PEL_RECTO", "Recto", "pelvica", "digestivo", "ciego_colon", 2, "pelvico", {}),
     ("PEL_VEJIGA", "PEL_VEJIGA", "Vejiga urinaria", "pelvica", "urinario", "vejiga", 2, "pelvico", {}),
@@ -106,6 +111,9 @@ for _lado, _txt in (("IZQ", "izquierdo"), ("DER", "derecho")):
         (f"ING_TESTICULO_{_lado}", "ING_TESTICULO", f"Testículo {_txt}", "inguinal", "reproductor", "reproductor", 1, "inguinal", {"sexo": "macho"}),
         (f"ING_EPIDIDIMO_{_lado}", "ING_EPIDIDIMO", f"Epidídimo {_txt}", "inguinal", "reproductor", "reproductor", 1, "inguinal", {"sexo": "macho"}),
     ]
+
+_FILAS.append(("ING_REGION_INGUINAL", "ING_REGION_INGUINAL", "Región inguinal (pared y escroto)", "inguinal", "limites",
+               "escroto", 0, "referencia", {"envoltura": True, "visible": False, "sexo": "macho"}))
 
 # Referencias de orientación (no seleccionables, ocultas por defecto).
 _FILAS += [
@@ -147,12 +155,22 @@ def _construir():
             "coleccion": COLECCIONES[cav],
             "prioridad": PRIORIDAD[clase],
             "sexo_aplicable": opc.get("sexo", "ambos"),
+            # Envoltura de cavidad: oculta en el visor general; en el modelo inmersivo se desvanece al acercarse.
+            "envoltura": bool(opc.get("envoltura", False)),
         })
     return objetos
 
 
 OBJETOS = _construir()
 POR_ID = {o["objeto_id"]: o for o in OBJETOS}
+
+
+def envoltura_de(cavidad):
+    """objeto_id de la envoltura de una cavidad (o None)."""
+    for o in OBJETOS:
+        if o["cavidad"] == cavidad and o["envoltura"]:
+            return o["objeto_id"]
+    return None
 
 
 def objetos_de_cavidad(cavidad):

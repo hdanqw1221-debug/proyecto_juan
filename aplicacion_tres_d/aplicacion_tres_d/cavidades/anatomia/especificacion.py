@@ -37,6 +37,8 @@ AJUSTES = [
     ("ABD_HIGADO", "Proceso caudado añadido como lóbulo en (y −0,10; z 0,56).", "Contacto con el riñón derecho (impresión renal)."),
     ("ING_CONDUCTO_DEFERENTE", "Ampolla a z = 0,375 (antes 0,32); recorrido caudomedial lateral a la vejiga.",
      "A z = 0,32 quedaba dentro de la vejiga."),
+    ("ING_TESTICULO", "Centro a z = −0,07 (antes −0,20); estructuras escrotales referidas a él.",
+     "Escroto con cuello corto, como en el semental; con −0,20 el cordón medía ~30 cm."),
     ("ING_VASOS_TESTICULARES", "Trayecto pegado a la pared dorsolateral (retroperitoneal).",
      "El trayecto recto cruzaba el colon izquierdo y la flexura pélvica."),
     ("ESTOMAGO_CIEGO_COLON_MAYOR", "Radios ×0,90 (estómago) y ×0,85 (ciego y colon mayor).",
@@ -135,22 +137,28 @@ def _pared(x, z, s, holgura):
     return (x, s * (float(w) * (1 - u ** e) ** (1 / e) - holgura), z)
 
 
+# Altura del centro del testículo. El prompt lo situaba en z = −0,20 (≈30 cm bajo el conducto inguinal,
+# con un cordón desproporcionado); se sube a −0,07 para un escroto con cuello corto, como en el semental.
+Z_TESTICULO = -0.07
+
+
 def inguinal(lado):
     s = 1.0 if lado == "IZQ" else -1.0
+    zt = Z_TESTICULO
     anillo_prof = np.array([0.27, 0.11 * s, 0.17])
     anillo_sup = np.array([0.20, 0.09 * s, 0.10])
     eje_canal = anillo_sup - anillo_prof
-    testiculo = np.array([0.10, 0.07 * s, -0.20])
+    testiculo = np.array([0.10, 0.07 * s, zt])
     polo_dorsal = testiculo + np.array([0.0, 0.0, 0.04])
     return {
         "anillo_profundo": {"centro": anillo_prof, "eje": eje_canal, "radio_mayor": 0.025, "radio_menor": 0.006},
         "anillo_superficial": {"centro": anillo_sup, "eje": eje_canal, "radio_mayor": 0.025, "radio_menor": 0.005,
                                "escala_plano": (1.0, 0.4)},
         "canal": {"puntos": [anillo_prof, (anillo_prof + anillo_sup) / 2, anillo_sup], "radios": 0.02},
-        "cordon": {"puntos": [anillo_prof, anillo_sup, (0.15, 0.08 * s, -0.04), (0.115, 0.072 * s, -0.13),
-                              polo_dorsal + (0.005, 0, 0.01)], "radios": [0.018, 0.018, 0.018, 0.019, 0.016]},
+        "cordon": {"puntos": [anillo_prof, anillo_sup, (0.14, 0.078 * s, 0.03), polo_dorsal + (0.005, 0, 0.01)],
+                   "radios": [0.018, 0.018, 0.019, 0.016]},
         # Tras el anillo vaginal gira caudomedialmente (pliegue genital), lateral y luego dorsal a la vejiga.
-        "deferente": {"puntos": [(0.045, 0.082 * s, -0.205), (0.07, 0.066 * s, -0.15), (0.10, 0.064 * s, -0.08),
+        "deferente": {"puntos": [(0.045, 0.082 * s, zt - 0.005), (0.07, 0.066 * s, zt + 0.05), (0.12, 0.068 * s, 0.04),
                                  (0.18, 0.082 * s, 0.09), (0.265, 0.104 * s, 0.17), (0.215, 0.088 * s, 0.185),
                                  (0.16, 0.078 * s, 0.24), (0.13, 0.06 * s, 0.335), (0.10, 0.03 * s, 0.375)],
                       "radios": [0.004, 0.004, 0.004, 0.004, 0.004, 0.004, 0.004, 0.009, 0.012]},
@@ -158,11 +166,11 @@ def inguinal(lado):
         "vasos": {"puntos": [(0.55, 0.03 * s, 0.60)] + [_pared(x, z, s, 0.007) for x, z in
                                                          ((0.48, 0.57), (0.42, 0.47), (0.36, 0.35), (0.31, 0.25))]
                   + [anillo_prof + (0, 0, -0.005), anillo_sup + (0, 0, -0.005),
-                     (0.15, 0.078 * s, -0.04), (0.11, 0.07 * s, -0.15)],
+                     (0.14, 0.076 * s, 0.03), (0.11, 0.07 * s, zt + 0.05)],
                   "radios": [0.005, 0.005, 0.005, 0.005, 0.005, 0.005, 0.005, 0.007, 0.011]},
         "testiculo": {"centro": testiculo, "semiejes": (0.06, 0.035, 0.04), "inclinacion_grados": 10.0},
-        "epididimo": {"puntos": [(0.155, 0.085 * s, -0.175), (0.12, 0.10 * s, -0.165), (0.08, 0.10 * s, -0.168),
-                                 (0.045, 0.085 * s, -0.195)],
+        "epididimo": {"puntos": [(0.155, 0.085 * s, zt + 0.025), (0.12, 0.10 * s, zt + 0.035),
+                                 (0.08, 0.10 * s, zt + 0.032), (0.045, 0.085 * s, zt + 0.005)],
                       "radios": [0.014, 0.008, 0.008, 0.013]},
     }
 
@@ -304,7 +312,15 @@ CORAZON = {
     "apice": (1.39, 0.04, 0.07),
     "radio_max": 0.12,
     "aplanamiento_lateral": 0.88,
-    "auriculas": [((1.515, -0.058, 0.385), 0.046), ((1.50, 0.085, 0.395), 0.042)],
+    # Aurículas: lóbulos aplanados que abrazan la base cranealmente (centro, semiejes x, y, z).
+    "auriculas": [((1.50, -0.048, 0.385), (0.032, 0.050, 0.032)), ((1.49, 0.072, 0.40), (0.030, 0.045, 0.030))],
+    # Relieve de superficie según Bradley (1922, fig. 10): surco coronario entre aurículas y ventrículos,
+    # surcos interventriculares paraconal (izquierdo) y subsinuoso (derecho) y tronco pulmonar.
+    "surco_coronario": {"t": 0.20, "ancho": 0.035, "profundidad": 0.009},
+    "surcos_interventriculares": {"azimuts": (0.95, -2.25), "ancho": 0.13, "profundidad": 0.006},
+    "tronco_pulmonar": {"inicio": (1.485, 0.03, 0.37), "fin": (1.535, 0.066, 0.478), "radio": 0.021},
+    "exponente_apice": 0.80,
+    "exponente_base": 0.26,
 }
 PERICARDIO_SEPARACION = 0.012
 
@@ -329,10 +345,13 @@ HIGADO = {
         (-0.02, 0.45, 0.08, 0.14, 0.8),   # lóbulos cuadrado y caudado
         (-0.10, 0.56, 0.05, 0.06, 0.7),   # proceso caudado (impresión renal)
     ],
+    # Fisuras interlobulares del borde ventral (Bradley 1922, fig. 56): (y, z del fondo, semiancho).
+    "fisuras": [(0.125, 0.28, 0.004), (0.025, 0.30, 0.005), (-0.075, 0.28, 0.004)],
+    "ensanche_fisura": 0.010,
 }
 
 # "ancho": semiancho en la base y en el extremo ventral (base ≈ 20 cm de ancho).
-BAZO = {"base": (0.72, 0.27, 0.62), "extremo": (1.05, 0.26, 0.25), "ancho": (0.10, 0.03), "semigrosor": 0.016}
+BAZO = {"base": (0.72, 0.27, 0.62), "extremo": (1.05, 0.26, 0.25), "ancho": (0.12, 0.025), "semigrosor": 0.016}
 
 PANCREAS = {"puntos": [(0.86, -0.12, 0.53), (0.88, -0.03, 0.52), (0.80, 0.08, 0.56)], "radios": [0.05, 0.035, 0.02],
             "aplanamiento_z": 0.6}
@@ -346,6 +365,16 @@ ADRENALES = {
     "ABD_ADRENAL_IZQ": {"centro": (0.74, 0.06, 0.58), "semiejes": (0.04, 0.015, 0.01)},
 }
 VEJIGA = {"centro": (0.12, 0.0, 0.28), "semiejes": (0.10, 0.07, 0.07)}
+
+
+# Envolturas de los modelos inmersivos (moldes de la cavidad vista desde fuera).
+ENVOLTURAS = {
+    "profundidad_surco_costal": 0.006,   # impresión de cada costilla en el molde
+    "ancho_surco_costal": 0.011,
+    "oblicuidad_costal": 0.10,           # el extremo dorsal de la costilla es más craneal
+    "pared_inguinal": {"x": (0.13, 0.38), "y_max": 0.19, "grosor": 0.035, "engrosamiento": 0.09},
+    "escroto": {"holgura": 0.022, "radio_cuello": 0.032},
+}
 
 
 def hilio_renal(objeto_id):

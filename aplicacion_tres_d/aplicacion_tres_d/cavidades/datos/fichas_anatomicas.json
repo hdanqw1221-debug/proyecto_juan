@@ -1276,5 +1276,93 @@
       "descripcion"
     ],
     "sexo_aplicable": "macho"
+  },
+  {
+    "ficha_id": "TOR_CAVIDAD_TORACICA",
+    "nombre": "Cavidad torácica",
+    "nombre_latino": "Cavitas thoracis",
+    "cavidad": "toracica",
+    "sistema": "limites",
+    "objetos": [
+      "TOR_CAVIDAD_TORACICA"
+    ],
+    "descripcion": "Cavidad con forma de cono truncado aplanado lateralmente. Su abertura craneal (apertura thoracis cranialis) es estrecha y ovalada, a nivel de la 1.ª costilla, y su base está cerrada por el diafragma, muy convexo hacia craneal. Contiene dos cavidades pleurales, derecha e izquierda, separadas por el mediastino. El modelo la representa como el molde interno de la cavidad, tapizado por la pleura costal y con las impresiones de las costillas.",
+    "topografia": "Se extiende desde la abertura torácica craneal hasta el diafragma, cuyo vértice llega en espiración al EIC 6. Por la gran cúpula diafragmática, buena parte del tórax óseo caudal contiene vísceras abdominales (abdomen intratorácico: hígado, estómago, bazo y flexuras del colon).",
+    "proyeccion_superficial": "Referencias de la pared lateral: líneas de la tuberosidad coxal, de la punta del hombro y del olécranon. Campo pulmonar hasta el EIC 16, 11 y 6 en esas líneas; área cardíaca entre las costillas 3.ª y 6.ª.",
+    "relaciones": "Contiene los pulmones, el corazón y el pericardio, la tráquea terminal, el esófago, la aorta, las venas cavas, el conducto torácico, el timo (vestigial en el adulto), los nervios frénicos y vagos y los linfonodos mediastínicos.",
+    "medios_de_fijacion": "Delimitada por la pared costal (18 pares de costillas: 8 esternales y 10 asternales que forman el arco costal), las vértebras torácicas y el esternón; caudalmente, el diafragma.",
+    "irrigacion_drenaje": "No aplica",
+    "dimensiones": "Variable con la fase respiratoria; el modelo representa la espiración.",
+    "consideraciones_clinicas": "El mediastino caudal del caballo es delgado y a menudo fenestrado, por lo que el neumotórax y los derrames pleurales suelen ser bilaterales. Pleuroneumonía, hernia diafragmática y hemorragia pulmonar inducida por el ejercicio.",
+    "exploracion": "Auscultación y percusión del campo pulmonar, ecografía y radiografía torácicas; toracocentesis en los derrames.",
+    "referencias": [
+      "Dyce, Sack & Wensing 2018",
+      "Bradley 1922 (The topographical anatomy of the thorax and abdomen of the horse)",
+      "NAV 2017"
+    ],
+    "pendiente_validacion": true,
+    "campos_pendientes": [
+      "exploracion"
+    ],
+    "sexo_aplicable": "ambos"
+  },
+  {
+    "ficha_id": "ABD_CAVIDAD_ABDOMINAL",
+    "nombre": "Cavidad abdominal",
+    "nombre_latino": "Cavitas abdominis",
+    "cavidad": "abdominal",
+    "sistema": "limites",
+    "objetos": [
+      "ABD_CAVIDAD_ABDOMINAL"
+    ],
+    "descripcion": "Cavidad tapizada por el peritoneo y ocupada en su mayor parte por el tubo digestivo; el intestino grueso (ciego y colon) contiene la mayor parte de la ingesta. El omento mayor del caballo es pequeño y no cubre las vísceras como en el perro. El modelo la representa como el molde interno de la cavidad, tapizado por el peritoneo parietal.",
+    "topografia": "Limitada cranealmente por el diafragma, dorsalmente por las vértebras lumbares y la musculatura sublumbar, y lateral y ventralmente por la pared abdominal. Caudalmente se continúa sin separación con la cavidad pélvica, a nivel de la abertura pélvica craneal. Su parte craneal queda bajo la cúpula diafragmática, dentro del arco costal.",
+    "proyeccion_superficial": "Cuadrantes: dorsal izquierdo (yeyuno, colon descendente, bazo, riñón izquierdo); dorsal derecho (base del ciego, colon dorsal derecho, duodeno descendente, riñón derecho); ventral izquierdo (colones ventral y dorsal izquierdos); ventral derecho (cuerpo del ciego, colon ventral derecho).",
+    "relaciones": "Contiene el estómago, el intestino delgado, el ciego, el colon, el hígado, el páncreas y el bazo; en posición retroperitoneal, los riñones, las adrenales, los uréteres, la aorta abdominal y la vena cava caudal.",
+    "medios_de_fijacion": "Peritoneo parietal y visceral con sus mesos y ligamentos. Solo el colon dorsal derecho y la base del ciego están fijos a la pared dorsal; las porciones izquierdas del colon quedan libres.",
+    "irrigacion_drenaje": "Aorta abdominal y sus ramas (tronco celíaco, arteria mesentérica craneal, arterias renales y mesentérica caudal); vena cava caudal y vena porta.",
+    "dimensiones": "Ciego ≈25-35 L y colon mayor ≈50-60 L en un caballo de 500 kg.",
+    "consideraciones_clinicas": "La libertad del colon izquierdo explica los desplazamientos, el atrapamiento nefroesplénico y el vólvulo del colon mayor; lipomas estrangulantes, impactaciones y enterolitos son otras causas de cólico.",
+    "exploracion": "Palpación rectal por cuadrantes, ecografía transabdominal, abdominocentesis y laparotomía exploratoria.",
+    "referencias": [
+      "Dyce, Sack & Wensing 2018",
+      "Bradley 1922 (The topographical anatomy of the thorax and abdomen of the horse)",
+      "Auer & Stick, Equine Surgery (ed. reciente)"
+    ],
+    "pendiente_validacion": true,
+    "campos_pendientes": [
+      "exploracion"
+    ],
+    "sexo_aplicable": "ambos"
+  },
+  {
+    "ficha_id": "ING_REGION_INGUINAL",
+    "nombre": "Región inguinal",
+    "nombre_latino": "Regio inguinalis",
+    "cavidad": "inguinal",
+    "sistema": "limites",
+    "objetos": [
+      "ING_REGION_INGUINAL"
+    ],
+    "descripcion": "Región de la pared abdominal ventral caudal atravesada por el conducto inguinal, que no es una cavidad cerrada sino un paso oblicuo. Por eso se habla de región inguinal y conducto inguinal y no de cavidad inguinal. El modelo representa la pared engrosada alrededor del conducto y, en el macho, el escroto bilobulado con su cuello.",
+    "topografia": "Pared abdominal ventral caudal, craneal al pubis y lateral al prepucio. El conducto discurre entre el músculo oblicuo interno del abdomen (craneomedial) y la aponeurosis del oblicuo externo (caudolateral), de craneodorsal-lateral a caudoventral-medial.",
+    "proyeccion_superficial": "Anillo inguinal superficial craneal al pubis y lateral al prepucio; anillo vaginal palpable por vía rectal, craneolateral al borde del pubis.",
+    "relaciones": "En el macho, el proceso vaginal con el cordón espermático (conducto deferente, arteria testicular, plexo pampiniforme, linfáticos y nervios), el músculo cremáster, los vasos pudendos externos y el nervio genitofemoral. En la hembra, los vasos pudendos externos, los linfáticos de la glándula mamaria y el nervio genitofemoral.",
+    "medios_de_fijacion": "Músculos oblicuos interno y externo del abdomen y sus aponeurosis; ligamento inguinal.",
+    "irrigacion_drenaje": "Vasos pudendos externos; en el macho, arteria testicular y plexo pampiniforme dentro del cordón espermático.",
+    "dimensiones": "Conducto de ≈10-15 cm (dato de referencia por validar).",
+    "consideraciones_clinicas": "Hernia inguinal indirecta (sementales tras la monta o el ejercicio), hernia escrotal congénita en potros, hernia directa, criptorquidia inguinal, torsión del cordón espermático y evisceración tras la castración a través del anillo vaginal.",
+    "exploracion": "Palpación externa de la región inguinal y del escroto, palpación rectal del anillo vaginal y ecografía.",
+    "referencias": [
+      "Dyce, Sack & Wensing 2018",
+      "König & Liebich (ed. reciente)",
+      "NAV 2017",
+      "Auer & Stick, Equine Surgery (ed. reciente)"
+    ],
+    "pendiente_validacion": true,
+    "campos_pendientes": [
+      "dimensiones"
+    ],
+    "sexo_aplicable": "ambos"
   }
 ]

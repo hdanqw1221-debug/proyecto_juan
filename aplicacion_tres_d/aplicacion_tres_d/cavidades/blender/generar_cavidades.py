@@ -38,6 +38,7 @@ from blender import primitivas as P  # noqa: E402
 TRIS_OBJETIVO = 9000
 TRIS_MAX = 15000
 TRIS_MIN = 2000
+TRIS_MAX_ENVOLTURA = 45000  # las envolturas son grandes y llevan relieve costal
 MARGEN_CAVIDAD = 0.01
 
 # Estado global de la ejecución (líneas medias relajadas, informes).
@@ -157,7 +158,7 @@ def recortar(V, modo, margen=MARGEN_CAVIDAD):
 # ============================================================================
 # Materialización: malla base -> objeto final
 # ============================================================================
-def materializar(objeto_id, verts, caras, recorte, radio_min, remallar=True, taubin=4, voxel=None):
+def materializar(objeto_id, verts, caras, recorte, radio_min, remallar=True, taubin=4, voxel=None, tris_max=TRIS_MAX):
     meta = cat.POR_ID[objeto_id]
     col = coleccion(meta["coleccion"])
     obj = objeto_desde_malla(objeto_id, verts, caras, col)
@@ -180,8 +181,8 @@ def materializar(objeto_id, verts, caras, recorte, radio_min, remallar=True, tau
             V2 = recortar(V2, recorte)
         V = V2
     reemplazar_malla(obj, V, T)
-    if len(T) > TRIS_MAX:
-        aplicar_modificador(obj, "DECIMATE", decimate_type="COLLAPSE", ratio=(TRIS_MAX * 0.97) / len(T))
+    if len(T) > tris_max:
+        aplicar_modificador(obj, "DECIMATE", decimate_type="COLLAPSE", ratio=(tris_max * 0.97) / len(T))
         aplicar_modificador(obj, "TRIANGULATE")
     configurar_objeto(obj, meta)
     return obj
@@ -263,11 +264,25 @@ def campo_corazon(p, separacion=0.0):
     rl, ro = q @ lat, q @ otro
     rho = np.sqrt((rl / C["aplanamiento_lateral"]) ** 2 + ro ** 2)
     tc = np.clip(t, 1e-4, 1 - 1e-4)
-    perfil = C["radio_max"] * tc ** 0.35 * (1 - tc) ** 0.65 / 0.524
+    ea, eb = C.get("exponente_apice", 0.65), C.get("exponente_base", 0.35)
+    norma = eb ** eb * ea ** ea / (eb + ea) ** (eb + ea)  # máximo de t^eb (1-t)^ea
+    perfil = C["radio_max"] * tc ** eb * (1 - tc) ** ea / norma
     fuera_eje = np.where(t < 0, -a, np.where(t > 1, a - L, 0.0))
     F = np.where((t > 0) & (t < 1), rho - perfil, np.sqrt(rho ** 2 + fuera_eje ** 2))
-    for centro, radio in C["auriculas"]:
-        F = P.smin(F, np.linalg.norm(p - np.array(centro), axis=1) - radio, k=0.05)
+    if separacion == 0.0:  # surcos solo en el corazón; el pericardio es un saco liso
+        sc = C["surco_coronario"]
+        F = F + sc["profundidad"] * np.exp(-((t - sc["t"]) / sc["ancho"]) ** 2)
+        si = C["surcos_interventriculares"]
+        azim = np.arctan2(ro, rl)
+        tramo = np.clip((t - 0.22) / 0.08, 0, 1) * np.clip((0.92 - t) / 0.1, 0, 1)
+        for a0 in si["azimuts"]:
+            d = np.angle(np.exp(1j * (azim - a0)))
+            F = F + si["profundidad"] * tramo * np.exp(-(d / si["ancho"]) ** 2)
+    for centro, semiejes in C["auriculas"]:
+        F = P.smin(F, P.sdf_elipsoide(p, centro, semiejes), k=0.04)
+    tp = C["tronco_pulmonar"]
+    seg = np.array([tp["inicio"], tp["fin"]])
+    F = P.smin(F, P.sdf_capsulas(p, seg, tp["radio"]), k=0.015)
     return F - separacion
 
 
@@ -299,11 +314,12 @@ def restriccion_cavidad(p, cavidad, margen=MARGEN_CAVIDAD):
     return c
 
 
-def organo_por_campo(objeto_id, funcion, minimo, maximo, h, sigma=1.0, recorte=None, radio_min=None, voxel=None):
+def organo_por_campo(objeto_id, funcion, minimo, maximo, h, sigma=1.0, recorte=None, radio_min=None, voxel=None,
+                     tris_max=TRIS_MAX, taubin=4):
     v, f = P.superficie_por_campo(funcion, minimo, maximo, h, sigma=sigma)
     if len(f) == 0:
         raise RuntimeError(f"{objeto_id}: el campo no produjo superficie")
-    return materializar(objeto_id, v, f, recorte, radio_min or 3 * h, voxel=voxel)
+    return materializar(objeto_id, v, f, recorte, radio_min or 3 * h, voxel=voxel, tris_max=tris_max, taubin=taubin)
 
 
 # ============================================================================
@@ -454,7 +470,12 @@ def sdf_higado(p):
     x_frente = ref.x_diafragma(y, z) - cfg["separacion"] * estira
     x_dorso = x_frente - grosor * estira
     lamina = np.maximum(x - x_frente, x_dorso - x) / estira
-    return np.maximum(np.maximum(huella, lamina), ref.distancia_envolvente(x, y, z) + 0.01)
+    F = np.maximum(np.maximum(huella, lamina), ref.distancia_envolvente(x, y, z) + 0.01)
+    for yf, zf, semi in cfg.get("fisuras", []):  # cuña que se abre hacia el borde ventral
+        ancho = semi + cfg.get("ensanche_fisura", 0.01) * np.clip((zf - z) / 0.15, 0.0, 1.0)
+        cuna = np.where(z < zf, np.abs(y - yf) - ancho, 1.0)
+        F = np.maximum(F, -cuna)
+    return F
 
 
 def campo_higado_final(p):
@@ -794,6 +815,85 @@ def construir_referencias():
 
 
 # ============================================================================
+# Envolturas de cavidad (modelos inmersivos)
+# ============================================================================
+def surcos_costales(x, y, z, costillas=range(1, ref.NUM_COSTILLAS + 1)):
+    """Intensidad (0…1) de las impresiones costales sobre la pared lateral del molde de la cavidad."""
+    cfg = E.ENVOLTURAS
+    w, _, zd = ref.envolvente(x)
+    acc = np.zeros(len(x))
+    for i in costillas:
+        xr = ref.x_costilla(i) + cfg["oblicuidad_costal"] * (z - 0.35)
+        z_ven = 0.0 if i <= ref.NUM_COSTILLAS_ESTERNALES else 0.05 + (i - 9) / 9 * 0.40
+        en_z = 1.0 / (1.0 + np.exp(-(z - z_ven) / 0.015)) * 1.0 / (1.0 + np.exp((z - (zd - 0.03)) / 0.015))
+        acc += np.exp(-((x - xr) / cfg["ancho_surco_costal"]) ** 2) * en_z
+    lateral = np.clip(np.abs(y) / np.maximum(w, 1e-3) * 1.6 - 0.3, 0.0, 1.0)  # no en el plano medio
+    cerca_pared = np.exp(-(ref.distancia_envolvente(x, y, z) / 0.02) ** 2)
+    return np.clip(acc, 0, 1) * lateral * cerca_pared
+
+
+def construir_envoltura(cavidad):
+    oid = cat.envoltura_de(cavidad)
+    if oid is None:
+        return
+    log(f"Construyendo envoltura {oid}…")
+    prof = E.ENVOLTURAS["profundidad_surco_costal"]
+    if cavidad == "toracica":
+        def f(p):
+            x, y, z = p[:, 0], p[:, 1], p[:, 2]
+            n = ref.normal_diafragma(y, z)
+            F = np.maximum(ref.distancia_envolvente(x, y, z), (ref.x_diafragma(y, z) - x) * n[:, 0])
+            F = np.maximum(F, x - 1.625)
+            return F + prof * surcos_costales(x, y, z)
+        organo_por_campo(oid, f, (0.74, -0.33, -0.06), (1.64, 0.33, 0.73), 0.007, sigma=1.0, voxel=0.006,
+                         tris_max=TRIS_MAX_ENVOLTURA, taubin=3)
+    elif cavidad == "abdominal":
+        def f(p):
+            x, y, z = p[:, 0], p[:, 1], p[:, 2]
+            n = ref.normal_diafragma(y, z)
+            F = np.maximum(ref.distancia_envolvente(x, y, z), (x - ref.x_diafragma(y, z)) * n[:, 0])
+            F = np.maximum(F, 0.10 - x)
+            zc, _ = ref.centro_y_semialtura(x)
+            linea_alba = 0.004 * np.exp(-(y / 0.012) ** 2) * (z < zc)
+            return F + prof * surcos_costales(x, y, z, range(8, ref.NUM_COSTILLAS + 1)) + linea_alba
+        organo_por_campo(oid, f, (0.08, -0.33, -0.06), (1.38, 0.33, 0.73), 0.008, sigma=1.0, voxel=0.007,
+                         tris_max=TRIS_MAX_ENVOLTURA, taubin=3)
+    elif cavidad == "inguinal":
+        cfg_p, cfg_e = E.ENVOLTURAS["pared_inguinal"], E.ENVOLTURAS["escroto"]
+
+        def f(p):
+            x, y, z = p[:, 0], p[:, 1], p[:, 2]
+            partes = []
+            for lado in ("IZQ", "DER"):
+                g = E.inguinal(lado)
+                t = g["testiculo"]
+                ang = np.radians(t["inclinacion_grados"])
+                rot = np.array([[np.cos(ang), 0, -np.sin(ang)], [0, 1, 0], [np.sin(ang), 0, np.cos(ang)]])
+                semi = np.asarray(t["semiejes"]) + cfg_e["holgura"]
+                partes.append(P.sdf_elipsoide(p, t["centro"], semi, rot))
+                c, s, sc = P.catmull_rom(g["cordon"]["puntos"][1:], paso=0.01)
+                partes.append(P.sdf_capsulas(p, c, cfg_e["radio_cuello"]))
+            # Saco escrotal único: puente central entre los dos lóbulos.
+            zt = E.Z_TESTICULO
+            partes.append(P.sdf_elipsoide(p, (0.10, 0.0, zt + 0.01), (0.07, 0.055, 0.055)))
+            F = partes[0]
+            for q in partes[1:]:
+                F = P.smin(F, q, k=0.04)
+            F = F + 0.005 * np.exp(-(y / 0.01) ** 2) * (z < E.Z_TESTICULO + 0.03)  # rafe escrotal
+            # Pared abdominal ventral caudal, engrosada alrededor del conducto inguinal.
+            d = ref.distancia_envolvente(np.clip(x, ref.X_MIN_ENVOLVENTE, None), y, z)
+            grosor = cfg_p["grosor"] + cfg_p["engrosamiento"] * np.exp(
+                -((x - 0.22) / 0.06) ** 2 - ((np.abs(y) - 0.10) / 0.05) ** 2)
+            zc, _ = ref.centro_y_semialtura(np.clip(x, ref.X_MIN_ENVOLVENTE, None))
+            pared = np.maximum(np.maximum(-d, d - grosor), P.sdf_caja(
+                p, (cfg_p["x"][0], -cfg_p["y_max"], -1.0), (cfg_p["x"][1], cfg_p["y_max"], 1.0)))
+            pared = np.maximum(pared, z - zc)
+            return P.smin(F, pared, k=0.025)
+        organo_por_campo(oid, f, (0.0, -0.25, -0.17), (0.42, 0.25, 0.40), 0.006, sigma=1.0, voxel=0.005,
+                         tris_max=TRIS_MAX_ENVOLTURA, taubin=3)
+
+
+# ============================================================================
 # Colisiones (§4.6.2)
 # ============================================================================
 CLASES_VOLUMETRICAS = {85, 75, 70, 65, 60, 55, 50, 45, 40, 35, 30, 95}
@@ -890,7 +990,8 @@ def _abrir_hueco(V, T, Vh, holgura=0.004):
 def revisar_colisiones(corregir=True, umbral=0.01):
     log("Revisando colisiones entre estructuras…")
     objs = {oid: o for oid, o in ESTADO["mallas"].items()
-            if cat.POR_ID[oid]["cavidad"] != "referencia" and oid not in ("TOR_PERICARDIO", "TOR_MEDIASTINO")}
+            if cat.POR_ID[oid]["cavidad"] != "referencia" and not cat.POR_ID[oid]["envoltura"]
+            and oid not in ("TOR_PERICARDIO", "TOR_MEDIASTINO")}
     datos = {oid: _datos(o) for oid, o in objs.items()}
     bvh = {oid: BVHTree.FromPolygons(V.tolist(), T.tolist()) for oid, (V, T) in datos.items()}
     caja = {oid: (V.min(0), V.max(0)) for oid, (V, _) in datos.items()}
@@ -973,12 +1074,15 @@ def main():
         coleccion(nombre)
     if "toracica" in cavidades:
         construir_toracica()
+        construir_envoltura("toracica")
     if "abdominal" in cavidades:
         construir_abdominal()
+        construir_envoltura("abdominal")
     if "pelvica" in cavidades:
         construir_pelvica()
     if "inguinal" in cavidades:
         construir_inguinal()
+        construir_envoltura("inguinal")
     if "referencia" in cavidades:
         construir_referencias()
     colisiones = revisar_colisiones()

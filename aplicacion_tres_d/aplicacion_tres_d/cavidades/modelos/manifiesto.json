@@ -23,14 +23,15 @@
       "visible_por_defecto": true,
       "coleccion": "Toracica",
       "sexo_aplicable": "ambos",
+      "envoltura": false,
       "archivo": "obj/TOR_PULMON_DER.obj",
-      "n_triangulos": 13600,
+      "n_triangulos": 13612,
       "manifold": true,
-      "volumen_m3": 0.035903,
+      "volumen_m3": 0.036417,
       "centroide": [
-        1.2491,
-        -0.1297,
-        0.4474
+        1.2526,
+        -0.1288,
+        0.4453
       ],
       "caja": [
         [
@@ -39,7 +40,7 @@
           0.0408
         ],
         [
-          1.579,
+          1.5792,
           0.0299,
           0.6958
         ]
@@ -60,25 +61,26 @@
       "visible_por_defecto": true,
       "coleccion": "Toracica",
       "sexo_aplicable": "ambos",
+      "envoltura": false,
       "archivo": "obj/TOR_PULMON_IZQ.obj",
-      "n_triangulos": 12552,
+      "n_triangulos": 12688,
       "manifold": true,
-      "volumen_m3": 0.029623,
+      "volumen_m3": 0.029751,
       "centroide": [
-        1.2184,
-        0.1405,
-        0.4744
+        1.2196,
+        0.1407,
+        0.4723
       ],
       "caja": [
         [
-          0.8386,
+          0.8396,
           0.0349,
-          0.0514
+          0.0519
         ],
         [
-          1.5786,
-          0.2772,
-          0.6954
+          1.5789,
+          0.277,
+          0.6951
         ]
       ],
       "refinado": false
@@ -97,25 +99,26 @@
       "visible_por_defecto": true,
       "coleccion": "Toracica",
       "sexo_aplicable": "ambos",
+      "envoltura": false,
       "archivo": "obj/TOR_CORAZON.obj",
-      "n_triangulos": 13224,
+      "n_triangulos": 13220,
       "manifold": true,
-      "volumen_m3": 0.008344,
+      "volumen_m3": 0.00754,
       "centroide": [
-        1.4518,
-        0.024,
-        0.2573
+        1.4525,
+        0.0238,
+        0.2705
       ],
       "caja": [
         [
-          1.3355,
-          -0.102,
-          0.0715
+          1.3375,
+          -0.0937,
+          0.0779
         ],
         [
-          1.5693,
-          0.1291,
-          0.4348
+          1.5752,
+          0.1262,
+          0.4949
         ]
       ],
       "refinado": false
@@ -134,25 +137,26 @@
       "visible_por_defecto": false,
       "coleccion": "Toracica",
       "sexo_aplicable": "ambos",
+      "envoltura": false,
       "archivo": "obj/TOR_PERICARDIO.obj",
-      "n_triangulos": 13276,
+      "n_triangulos": 13312,
       "manifold": true,
-      "volumen_m3": 0.010898,
+      "volumen_m3": 0.010171,
       "centroide": [
-        1.4555,
-        0.0234,
-        0.263
+        1.4559,
+        0.0238,
+        0.2768
       ],
       "caja": [
         [
-          1.3248,
-          -0.1137,
-          0.0659
+          1.3273,
+          -0.1121,
+          0.0677
         ],
         [
-          1.5805,
-          0.1395,
-          0.4472
+          1.5879,
+          0.1368,
+          0.5083
         ]
       ],
       "refinado": false
@@ -171,6 +175,7 @@
       "visible_por_defecto": true,
       "coleccion": "Toracica",
       "sexo_aplicable": "ambos",
+      "envoltura": false,
       "archivo": "obj/TOR_TRAQUEA.obj",
       "n_triangulos": 13396,
       "manifold": true,
@@ -208,6 +213,7 @@
       "visible_por_defecto": true,
       "coleccion": "Toracica",
       "sexo_aplicable": "ambos",
+      "envoltura": false,
       "archivo": "obj/TOR_ESOFAGO.obj",
       "n_triangulos": 12444,
       "manifold": true,
@@ -245,6 +251,7 @@
       "visible_por_defecto": true,
       "coleccion": "Toracica",
       "sexo_aplicable": "ambos",
+      "envoltura": false,
       "archivo": "obj/TOR_AORTA.obj",
       "n_triangulos": 12112,
       "manifold": true,
@@ -282,6 +289,7 @@
       "visible_por_defecto": true,
       "coleccion": "Toracica",
       "sexo_aplicable": "ambos",
+      "envoltura": false,
       "archivo": "obj/TOR_VENA_CAVA_CRANEAL.obj",
       "n_triangulos": 12424,
       "manifold": true,
@@ -319,6 +327,7 @@
       "visible_por_defecto": true,
       "coleccion": "Toracica",
       "sexo_aplicable": "ambos",
+      "envoltura": false,
       "archivo": "obj/TOR_VENA_CAVA_CAUDAL.obj",
       "n_triangulos": 12924,
       "manifold": true,
@@ -356,6 +365,7 @@
       "visible_por_defecto": true,
       "coleccion": "Toracica",
       "sexo_aplicable": "ambos",
+      "envoltura": false,
       "archivo": "obj/TOR_DIAFRAGMA.obj",
       "n_triangulos": 12866,
       "manifold": true,
@@ -393,6 +403,7 @@
       "visible_por_defecto": false,
       "coleccion": "Toracica",
       "sexo_aplicable": "ambos",
+      "envoltura": false,
       "archivo": "obj/TOR_MEDIASTINO.obj",
       "n_triangulos": 14550,
       "manifold": true,
@@ -417,6 +428,44 @@
       "refinado": false
     },
     {
+      "objeto_id": "TOR_CAVIDAD_TORACICA",
+      "ficha_id": "TOR_CAVIDAD_TORACICA",
+      "nombre": "Cavidad torácica",
+      "cavidad": "toracica",
+      "sistema": "limites",
+      "lado": "MED",
+      "color_hex": "#E6C3BC",
+      "opacidad": 1.0,
+      "capa": 0,
+      "seleccionable": true,
+      "visible_por_defecto": false,
+      "coleccion": "Toracica",
+      "sexo_aplicable": "ambos",
+      "envoltura": true,
+      "archivo": "obj/TOR_CAVIDAD_TORACICA.obj",
+      "n_triangulos": 43650,
+      "manifold": true,
+      "volumen_m3": 0.116061,
+      "centroide": [
+        1.2544,
+        -0.0,
+        0.4364
+      ],
+      "caja": [
+        [
+          0.7642,
+          -0.2968,
+          0.0148
+        ],
+        [
+          1.625,
+          0.2967,
+          0.71
+        ]
+      ],
+      "refinado": false
+    },
+    {
       "objeto_id": "ABD_ESTOMAGO",
       "ficha_id": "ABD_ESTOMAGO",
       "nombre": "Estómago",
@@ -430,18 +479,19 @@
       "visible_por_defecto": true,
       "coleccion": "Abdominal",
       "sexo_aplicable": "ambos",
+      "envoltura": false,
       "archivo": "obj/ABD_ESTOMAGO.obj",
-      "n_triangulos": 13392,
+      "n_triangulos": 13400,
       "manifold": true,
       "volumen_m3": 0.009526,
       "centroide": [
-        0.931,
+        0.9309,
         0.0751,
         0.3488
       ],
       "caja": [
         [
-          0.7757,
+          0.7756,
           -0.0577,
           0.196
         ],
@@ -467,23 +517,24 @@
       "visible_por_defecto": true,
       "coleccion": "Abdominal",
       "sexo_aplicable": "ambos",
+      "envoltura": false,
       "archivo": "obj/ABD_DUODENO.obj",
-      "n_triangulos": 12516,
+      "n_triangulos": 12532,
       "manifold": true,
-      "volumen_m3": 0.001708,
+      "volumen_m3": 0.001701,
       "centroide": [
-        0.8112,
+        0.8104,
         -0.0162,
-        0.4958
+        0.4964
       ],
       "caja": [
         [
           0.6377,
-          -0.1199,
-          0.3302
+          -0.1198,
+          0.3298
         ],
         [
-          1.0574,
+          1.0571,
           0.1812,
           0.5883
         ]
@@ -504,24 +555,25 @@
       "visible_por_defecto": true,
       "coleccion": "Abdominal",
       "sexo_aplicable": "ambos",
+      "envoltura": false,
       "archivo": "obj/ABD_YEYUNO.obj",
-      "n_triangulos": 12732,
+      "n_triangulos": 12736,
       "manifold": true,
-      "volumen_m3": 0.009161,
+      "volumen_m3": 0.009167,
       "centroide": [
         0.6069,
-        0.0974,
-        0.3967
+        0.0973,
+        0.3968
       ],
       "caja": [
         [
-          0.3493,
+          0.3494,
           -0.0287,
-          0.2216
+          0.2217
         ],
         [
           0.808,
-          0.2567,
+          0.2565,
           0.5704
         ]
       ],
@@ -541,20 +593,21 @@
       "visible_por_defecto": true,
       "coleccion": "Abdominal",
       "sexo_aplicable": "ambos",
+      "envoltura": false,
       "archivo": "obj/ABD_ILEON.obj",
-      "n_triangulos": 13336,
+      "n_triangulos": 13332,
       "manifold": true,
       "volumen_m3": 0.000621,
       "centroide": [
         0.6059,
         0.0062,
-        0.3596
+        0.3597
       ],
       "caja": [
         [
           0.5417,
           -0.1079,
-          0.2822
+          0.2824
         ],
         [
           0.6641,
@@ -578,10 +631,11 @@
       "visible_por_defecto": true,
       "coleccion": "Abdominal",
       "sexo_aplicable": "ambos",
+      "envoltura": false,
       "archivo": "obj/ABD_CIEGO.obj",
       "n_triangulos": 13280,
       "manifold": true,
-      "volumen_m3": 0.021414,
+      "volumen_m3": 0.021413,
       "centroide": [
         0.6776,
         -0.1001,
@@ -615,14 +669,15 @@
       "visible_por_defecto": true,
       "coleccion": "Abdominal",
       "sexo_aplicable": "ambos",
+      "envoltura": false,
       "archivo": "obj/ABD_COLON_VENTRAL_DER.obj",
-      "n_triangulos": 11960,
+      "n_triangulos": 11968,
       "manifold": true,
-      "volumen_m3": 0.023291,
+      "volumen_m3": 0.023297,
       "centroide": [
-        0.8477,
-        -0.1228,
-        0.194
+        0.8478,
+        -0.1227,
+        0.1939
       ],
       "caja": [
         [
@@ -631,7 +686,7 @@
           0.0197
         ],
         [
-          1.2316,
+          1.2317,
           0.008,
           0.5022
         ]
@@ -652,25 +707,26 @@
       "visible_por_defecto": true,
       "coleccion": "Abdominal",
       "sexo_aplicable": "ambos",
+      "envoltura": false,
       "archivo": "obj/ABD_FLEXURA_ESTERNAL.obj",
-      "n_triangulos": 8716,
+      "n_triangulos": 8648,
       "manifold": true,
-      "volumen_m3": 0.007794,
+      "volumen_m3": 0.007828,
       "centroide": [
-        1.1675,
-        -0.0171,
-        0.1324
+        1.1676,
+        -0.0174,
+        0.1321
       ],
       "caja": [
         [
-          1.0377,
-          -0.1794,
-          0.0224
+          1.0391,
+          -0.1814,
+          0.0225
         ],
         [
-          1.2818,
-          0.1427,
-          0.2477
+          1.2819,
+          0.1433,
+          0.2488
         ]
       ],
       "refinado": false
@@ -689,25 +745,26 @@
       "visible_por_defecto": true,
       "coleccion": "Abdominal",
       "sexo_aplicable": "ambos",
+      "envoltura": false,
       "archivo": "obj/ABD_COLON_VENTRAL_IZQ.obj",
-      "n_triangulos": 12844,
+      "n_triangulos": 12916,
       "manifold": true,
-      "volumen_m3": 0.021783,
+      "volumen_m3": 0.021824,
       "centroide": [
-        0.7526,
-        0.1134,
-        0.1525
+        0.7534,
+        0.1139,
+        0.1528
       ],
       "caja": [
         [
-          0.2641,
-          -0.0409,
-          0.0375
+          0.2643,
+          -0.0402,
+          0.0377
         ],
         [
-          1.2672,
-          0.2413,
-          0.3399
+          1.2668,
+          0.241,
+          0.3398
         ]
       ],
       "refinado": false
@@ -726,6 +783,7 @@
       "visible_por_defecto": true,
       "coleccion": "Abdominal",
       "sexo_aplicable": "ambos",
+      "envoltura": false,
       "archivo": "obj/ABD_FLEXURA_PELVICA.obj",
       "n_triangulos": 12584,
       "manifold": true,
@@ -763,24 +821,25 @@
       "visible_por_defecto": true,
       "coleccion": "Abdominal",
       "sexo_aplicable": "ambos",
+      "envoltura": false,
       "archivo": "obj/ABD_COLON_DORSAL_IZQ.obj",
-      "n_triangulos": 12604,
+      "n_triangulos": 12648,
       "manifold": true,
-      "volumen_m3": 0.006572,
+      "volumen_m3": 0.006549,
       "centroide": [
-        0.7461,
+        0.7454,
         0.1915,
-        0.2788
+        0.2796
       ],
       "caja": [
         [
-          0.275,
-          0.0911,
-          0.1542
+          0.2748,
+          0.0917,
+          0.1548
         ],
         [
-          1.1586,
-          0.262,
+          1.1581,
+          0.2611,
           0.3872
         ]
       ],
@@ -800,25 +859,26 @@
       "visible_por_defecto": true,
       "coleccion": "Abdominal",
       "sexo_aplicable": "ambos",
+      "envoltura": false,
       "archivo": "obj/ABD_FLEXURA_DIAFRAGMATICA.obj",
-      "n_triangulos": 11016,
+      "n_triangulos": 10460,
       "manifold": true,
-      "volumen_m3": 0.005887,
+      "volumen_m3": 0.005794,
       "centroide": [
-        1.0699,
-        -0.0104,
-        0.2849
+        1.0689,
+        -0.0081,
+        0.2843
       ],
       "caja": [
         [
-          0.8792,
-          -0.1835,
-          0.1448
+          0.8795,
+          -0.182,
+          0.1434
         ],
         [
-          1.2077,
-          0.2063,
-          0.4015
+          1.207,
+          0.2064,
+          0.4013
         ]
       ],
       "refinado": false
@@ -837,24 +897,25 @@
       "visible_por_defecto": true,
       "coleccion": "Abdominal",
       "sexo_aplicable": "ambos",
+      "envoltura": false,
       "archivo": "obj/ABD_COLON_DORSAL_DER.obj",
-      "n_triangulos": 7440,
+      "n_triangulos": 7404,
       "manifold": true,
-      "volumen_m3": 0.006248,
+      "volumen_m3": 0.006236,
       "centroide": [
         0.9423,
-        -0.1332,
-        0.3159
+        -0.1333,
+        0.316
       ],
       "caja": [
         [
           0.8133,
-          -0.2628,
-          0.1586
+          -0.2627,
+          0.1588
         ],
         [
-          1.0603,
-          -0.0196,
+          1.0604,
+          -0.0197,
           0.4523
         ]
       ],
@@ -874,6 +935,7 @@
       "visible_por_defecto": true,
       "coleccion": "Abdominal",
       "sexo_aplicable": "ambos",
+      "envoltura": false,
       "archivo": "obj/ABD_COLON_TRANSVERSO.obj",
       "n_triangulos": 13804,
       "manifold": true,
@@ -911,10 +973,11 @@
       "visible_por_defecto": true,
       "coleccion": "Abdominal",
       "sexo_aplicable": "ambos",
+      "envoltura": false,
       "archivo": "obj/ABD_COLON_DESCENDENTE.obj",
-      "n_triangulos": 12092,
+      "n_triangulos": 12100,
       "manifold": true,
-      "volumen_m3": 0.007396,
+      "volumen_m3": 0.007395,
       "centroide": [
         0.3987,
         0.0903,
@@ -948,23 +1011,24 @@
       "visible_por_defecto": true,
       "coleccion": "Abdominal",
       "sexo_aplicable": "ambos",
+      "envoltura": false,
       "archivo": "obj/ABD_HIGADO.obj",
       "n_triangulos": 14550,
       "manifold": true,
-      "volumen_m3": 0.014311,
+      "volumen_m3": 0.014078,
       "centroide": [
-        1.0423,
-        -0.0654,
-        0.3953
+        1.0385,
+        -0.0675,
+        0.3981
       ],
       "caja": [
         [
           0.6983,
           -0.2738,
-          0.1697
+          0.1698
         ],
         [
-          1.3385,
+          1.3331,
           0.1873,
           0.5939
         ]
@@ -985,25 +1049,26 @@
       "visible_por_defecto": true,
       "coleccion": "Abdominal",
       "sexo_aplicable": "ambos",
+      "envoltura": false,
       "archivo": "obj/ABD_BAZO.obj",
-      "n_triangulos": 12556,
+      "n_triangulos": 12460,
       "manifold": true,
-      "volumen_m3": 0.001483,
+      "volumen_m3": 0.001601,
       "centroide": [
-        0.8277,
-        0.2516,
-        0.4709
+        0.8227,
+        0.2517,
+        0.4733
       ],
       "caja": [
         [
-          0.6631,
-          0.15,
-          0.2298
+          0.6534,
+          0.1453,
+          0.2329
         ],
         [
-          1.0604,
+          1.0605,
           0.296,
-          0.6444
+          0.6475
         ]
       ],
       "refinado": false
@@ -1022,6 +1087,7 @@
       "visible_por_defecto": true,
       "coleccion": "Abdominal",
       "sexo_aplicable": "ambos",
+      "envoltura": false,
       "archivo": "obj/ABD_PANCREAS.obj",
       "n_triangulos": 13368,
       "manifold": true,
@@ -1059,6 +1125,7 @@
       "visible_por_defecto": true,
       "coleccion": "Abdominal",
       "sexo_aplicable": "ambos",
+      "envoltura": false,
       "archivo": "obj/ABD_RINON_DER.obj",
       "n_triangulos": 12636,
       "manifold": true,
@@ -1096,6 +1163,7 @@
       "visible_por_defecto": true,
       "coleccion": "Abdominal",
       "sexo_aplicable": "ambos",
+      "envoltura": false,
       "archivo": "obj/ABD_RINON_IZQ.obj",
       "n_triangulos": 12668,
       "manifold": true,
@@ -1133,6 +1201,7 @@
       "visible_por_defecto": true,
       "coleccion": "Abdominal",
       "sexo_aplicable": "ambos",
+      "envoltura": false,
       "archivo": "obj/ABD_ADRENAL_DER.obj",
       "n_triangulos": 9720,
       "manifold": true,
@@ -1170,6 +1239,7 @@
       "visible_por_defecto": true,
       "coleccion": "Abdominal",
       "sexo_aplicable": "ambos",
+      "envoltura": false,
       "archivo": "obj/ABD_ADRENAL_IZQ.obj",
       "n_triangulos": 9780,
       "manifold": true,
@@ -1207,6 +1277,7 @@
       "visible_por_defecto": true,
       "coleccion": "Abdominal",
       "sexo_aplicable": "ambos",
+      "envoltura": false,
       "archivo": "obj/ABD_URETER_DER.obj",
       "n_triangulos": 12672,
       "manifold": true,
@@ -1244,6 +1315,7 @@
       "visible_por_defecto": true,
       "coleccion": "Abdominal",
       "sexo_aplicable": "ambos",
+      "envoltura": false,
       "archivo": "obj/ABD_URETER_IZQ.obj",
       "n_triangulos": 13088,
       "manifold": true,
@@ -1281,6 +1353,7 @@
       "visible_por_defecto": true,
       "coleccion": "Abdominal",
       "sexo_aplicable": "ambos",
+      "envoltura": false,
       "archivo": "obj/ABD_AORTA.obj",
       "n_triangulos": 12284,
       "manifold": true,
@@ -1318,6 +1391,7 @@
       "visible_por_defecto": true,
       "coleccion": "Abdominal",
       "sexo_aplicable": "ambos",
+      "envoltura": false,
       "archivo": "obj/ABD_VENA_CAVA_CAUDAL.obj",
       "n_triangulos": 12424,
       "manifold": true,
@@ -1355,6 +1429,7 @@
       "visible_por_defecto": true,
       "coleccion": "Abdominal",
       "sexo_aplicable": "ambos",
+      "envoltura": false,
       "archivo": "obj/ABD_A_MESENTERICA_CRANEAL.obj",
       "n_triangulos": 13168,
       "manifold": true,
@@ -1379,6 +1454,44 @@
       "refinado": false
     },
     {
+      "objeto_id": "ABD_CAVIDAD_ABDOMINAL",
+      "ficha_id": "ABD_CAVIDAD_ABDOMINAL",
+      "nombre": "Cavidad abdominal",
+      "cavidad": "abdominal",
+      "sistema": "limites",
+      "lado": "MED",
+      "color_hex": "#DDC5AE",
+      "opacidad": 1.0,
+      "capa": 0,
+      "seleccionable": true,
+      "visible_por_defecto": false,
+      "coleccion": "Abdominal",
+      "sexo_aplicable": "ambos",
+      "envoltura": true,
+      "archivo": "obj/ABD_CAVIDAD_ABDOMINAL.obj",
+      "n_triangulos": 43650,
+      "manifold": true,
+      "volumen_m3": 0.292112,
+      "centroide": [
+        0.708,
+        -0.0,
+        0.3037
+      ],
+      "caja": [
+        [
+          0.1,
+          -0.31,
+          -0.0385
+        ],
+        [
+          1.3537,
+          0.31,
+          0.6934
+        ]
+      ],
+      "refinado": false
+    },
+    {
       "objeto_id": "PEL_RECTO",
       "ficha_id": "PEL_RECTO",
       "nombre": "Recto",
@@ -1392,6 +1505,7 @@
       "visible_por_defecto": true,
       "coleccion": "Pelvica_referencia",
       "sexo_aplicable": "ambos",
+      "envoltura": false,
       "archivo": "obj/PEL_RECTO.obj",
       "n_triangulos": 12644,
       "manifold": true,
@@ -1429,6 +1543,7 @@
       "visible_por_defecto": true,
       "coleccion": "Pelvica_referencia",
       "sexo_aplicable": "ambos",
+      "envoltura": false,
       "archivo": "obj/PEL_VEJIGA.obj",
       "n_triangulos": 13404,
       "manifold": true,
@@ -1466,6 +1581,7 @@
       "visible_por_defecto": true,
       "coleccion": "Inguinal",
       "sexo_aplicable": "macho",
+      "envoltura": false,
       "archivo": "obj/ING_ANILLO_PROFUNDO_IZQ.obj",
       "n_triangulos": 12188,
       "manifold": true,
@@ -1503,6 +1619,7 @@
       "visible_por_defecto": true,
       "coleccion": "Inguinal",
       "sexo_aplicable": "macho",
+      "envoltura": false,
       "archivo": "obj/ING_CANAL_INGUINAL_IZQ.obj",
       "n_triangulos": 13664,
       "manifold": true,
@@ -1540,6 +1657,7 @@
       "visible_por_defecto": true,
       "coleccion": "Inguinal",
       "sexo_aplicable": "macho",
+      "envoltura": false,
       "archivo": "obj/ING_ANILLO_SUPERFICIAL_IZQ.obj",
       "n_triangulos": 6400,
       "manifold": true,
@@ -1577,25 +1695,26 @@
       "visible_por_defecto": true,
       "coleccion": "Inguinal",
       "sexo_aplicable": "macho",
+      "envoltura": false,
       "archivo": "obj/ING_CORDON_ESPERMATICO_IZQ.obj",
-      "n_triangulos": 13316,
+      "n_triangulos": 13740,
       "manifold": true,
-      "volumen_m3": 0.000392,
+      "volumen_m3": 0.000277,
       "centroide": [
-        0.1763,
-        0.0858,
-        0.0191
+        0.1858,
+        0.0882,
+        0.0802
       ],
       "caja": [
         [
-          0.089,
-          0.0535,
-          -0.1657
+          0.0893,
+          0.0543,
+          -0.0356
         ],
         [
-          0.2876,
+          0.2878,
           0.1276,
-          0.1879
+          0.1877
         ]
       ],
       "refinado": false
@@ -1614,24 +1733,25 @@
       "visible_por_defecto": true,
       "coleccion": "Inguinal",
       "sexo_aplicable": "macho",
+      "envoltura": false,
       "archivo": "obj/ING_CONDUCTO_DEFERENTE_IZQ.obj",
       "n_triangulos": 14550,
       "manifold": true,
-      "volumen_m3": 6.3e-05,
+      "volumen_m3": 5.8e-05,
       "centroide": [
-        0.1366,
-        0.0633,
-        0.2131
+        0.1379,
+        0.0628,
+        0.2477
       ],
       "caja": [
         [
           0.0414,
           0.0183,
-          -0.2085
+          -0.0786
         ],
         [
           0.2693,
-          0.1077,
+          0.1078,
           0.3867
         ]
       ],
@@ -1651,20 +1771,21 @@
       "visible_por_defecto": true,
       "coleccion": "Inguinal",
       "sexo_aplicable": "macho",
+      "envoltura": false,
       "archivo": "obj/ING_VASOS_TESTICULARES_IZQ.obj",
       "n_triangulos": 14550,
       "manifold": true,
-      "volumen_m3": 0.000104,
+      "volumen_m3": 8.4e-05,
       "centroide": [
-        0.276,
-        0.1349,
-        0.184
+        0.3075,
+        0.1488,
+        0.2703
       ],
       "caja": [
         [
           0.0994,
           0.0257,
-          -0.1607
+          -0.0307
         ],
         [
           0.5548,
@@ -1688,25 +1809,26 @@
       "visible_por_defecto": true,
       "coleccion": "Inguinal",
       "sexo_aplicable": "macho",
+      "envoltura": false,
       "archivo": "obj/ING_TESTICULO_IZQ.obj",
-      "n_triangulos": 13316,
+      "n_triangulos": 13304,
       "manifold": true,
       "volumen_m3": 0.000345,
       "centroide": [
         0.1,
         0.07,
-        -0.2
+        -0.07
       ],
       "caja": [
         [
           0.041,
           0.0352,
-          -0.2405
+          -0.1105
         ],
         [
           0.1591,
           0.1048,
-          -0.1595
+          -0.0295
         ]
       ],
       "refinado": false
@@ -1725,25 +1847,26 @@
       "visible_por_defecto": true,
       "coleccion": "Inguinal",
       "sexo_aplicable": "macho",
+      "envoltura": false,
       "archivo": "obj/ING_EPIDIDIMO_IZQ.obj",
-      "n_triangulos": 13264,
+      "n_triangulos": 13284,
       "manifold": true,
       "volumen_m3": 4.8e-05,
       "centroide": [
         0.1005,
         0.0916,
-        -0.1768
+        -0.0468
       ],
       "caja": [
         [
           0.0322,
           0.0713,
-          -0.2077
+          -0.0777
         ],
         [
           0.1688,
           0.1096,
-          -0.1563
+          -0.0264
         ]
       ],
       "refinado": false
@@ -1762,6 +1885,7 @@
       "visible_por_defecto": true,
       "coleccion": "Inguinal",
       "sexo_aplicable": "macho",
+      "envoltura": false,
       "archivo": "obj/ING_ANILLO_PROFUNDO_DER.obj",
       "n_triangulos": 12180,
       "manifold": true,
@@ -1799,6 +1923,7 @@
       "visible_por_defecto": true,
       "coleccion": "Inguinal",
       "sexo_aplicable": "macho",
+      "envoltura": false,
       "archivo": "obj/ING_CANAL_INGUINAL_DER.obj",
       "n_triangulos": 13664,
       "manifold": true,
@@ -1836,6 +1961,7 @@
       "visible_por_defecto": true,
       "coleccion": "Inguinal",
       "sexo_aplicable": "macho",
+      "envoltura": false,
       "archivo": "obj/ING_ANILLO_SUPERFICIAL_DER.obj",
       "n_triangulos": 6404,
       "manifold": true,
@@ -1873,25 +1999,26 @@
       "visible_por_defecto": true,
       "coleccion": "Inguinal",
       "sexo_aplicable": "macho",
+      "envoltura": false,
       "archivo": "obj/ING_CORDON_ESPERMATICO_DER.obj",
-      "n_triangulos": 13316,
+      "n_triangulos": 13740,
       "manifold": true,
-      "volumen_m3": 0.000392,
+      "volumen_m3": 0.000277,
       "centroide": [
-        0.1763,
-        -0.0858,
-        0.0191
+        0.1858,
+        -0.0882,
+        0.0802
       ],
       "caja": [
         [
-          0.089,
+          0.0893,
           -0.1276,
-          -0.1657
+          -0.0356
         ],
         [
-          0.2876,
-          -0.0535,
-          0.1879
+          0.2878,
+          -0.0543,
+          0.1877
         ]
       ],
       "refinado": false
@@ -1910,20 +2037,21 @@
       "visible_por_defecto": true,
       "coleccion": "Inguinal",
       "sexo_aplicable": "macho",
+      "envoltura": false,
       "archivo": "obj/ING_CONDUCTO_DEFERENTE_DER.obj",
       "n_triangulos": 14550,
       "manifold": true,
-      "volumen_m3": 6.3e-05,
+      "volumen_m3": 5.8e-05,
       "centroide": [
-        0.1366,
-        -0.0633,
-        0.2131
+        0.1378,
+        -0.0628,
+        0.2477
       ],
       "caja": [
         [
           0.0414,
-          -0.1077,
-          -0.2084
+          -0.1078,
+          -0.0787
         ],
         [
           0.2693,
@@ -1947,20 +2075,21 @@
       "visible_por_defecto": true,
       "coleccion": "Inguinal",
       "sexo_aplicable": "macho",
+      "envoltura": false,
       "archivo": "obj/ING_VASOS_TESTICULARES_DER.obj",
       "n_triangulos": 14550,
       "manifold": true,
-      "volumen_m3": 0.000104,
+      "volumen_m3": 8.4e-05,
       "centroide": [
-        0.276,
-        -0.1349,
-        0.184
+        0.3074,
+        -0.1488,
+        0.2703
       ],
       "caja": [
         [
-          0.0995,
+          0.0994,
           -0.2625,
-          -0.1607
+          -0.0307
         ],
         [
           0.5548,
@@ -1984,25 +2113,26 @@
       "visible_por_defecto": true,
       "coleccion": "Inguinal",
       "sexo_aplicable": "macho",
+      "envoltura": false,
       "archivo": "obj/ING_TESTICULO_DER.obj",
-      "n_triangulos": 13316,
+      "n_triangulos": 13304,
       "manifold": true,
       "volumen_m3": 0.000345,
       "centroide": [
         0.1,
         -0.07,
-        -0.2
+        -0.07
       ],
       "caja": [
         [
           0.041,
           -0.1048,
-          -0.2405
+          -0.1105
         ],
         [
           0.1591,
           -0.0352,
-          -0.1595
+          -0.0295
         ]
       ],
       "refinado": false
@@ -2021,25 +2151,64 @@
       "visible_por_defecto": true,
       "coleccion": "Inguinal",
       "sexo_aplicable": "macho",
+      "envoltura": false,
       "archivo": "obj/ING_EPIDIDIMO_DER.obj",
-      "n_triangulos": 13264,
+      "n_triangulos": 13284,
       "manifold": true,
       "volumen_m3": 4.8e-05,
       "centroide": [
         0.1005,
         -0.0916,
-        -0.1768
+        -0.0468
       ],
       "caja": [
         [
           0.0322,
-          -0.1097,
-          -0.2077
+          -0.1096,
+          -0.0778
         ],
         [
           0.1688,
           -0.0713,
-          -0.1563
+          -0.0264
+        ]
+      ],
+      "refinado": false
+    },
+    {
+      "objeto_id": "ING_REGION_INGUINAL",
+      "ficha_id": "ING_REGION_INGUINAL",
+      "nombre": "Región inguinal (pared y escroto)",
+      "cavidad": "inguinal",
+      "sistema": "limites",
+      "lado": "MED",
+      "color_hex": "#B98A7E",
+      "opacidad": 1.0,
+      "capa": 0,
+      "seleccionable": true,
+      "visible_por_defecto": false,
+      "coleccion": "Inguinal",
+      "sexo_aplicable": "macho",
+      "envoltura": true,
+      "archivo": "obj/ING_REGION_INGUINAL.obj",
+      "n_triangulos": 43650,
+      "manifold": true,
+      "volumen_m3": 0.010289,
+      "centroide": [
+        0.1869,
+        0.0,
+        0.0847
+      ],
+      "caja": [
+        [
+          0.0198,
+          -0.19,
+          -0.1319
+        ],
+        [
+          0.3799,
+          0.19,
+          0.3898
         ]
       ],
       "refinado": false
@@ -2058,6 +2227,7 @@
       "visible_por_defecto": false,
       "coleccion": "Referencias",
       "sexo_aplicable": "ambos",
+      "envoltura": false,
       "archivo": "obj/REF_ENVOLVENTE.obj",
       "n_triangulos": 10240,
       "manifold": true,
@@ -2095,6 +2265,7 @@
       "visible_por_defecto": false,
       "coleccion": "Referencias",
       "sexo_aplicable": "ambos",
+      "envoltura": false,
       "archivo": "obj/REF_ARCOS_COSTALES.obj",
       "n_triangulos": 13824,
       "manifold": true,
@@ -2132,6 +2303,7 @@
       "visible_por_defecto": false,
       "coleccion": "Referencias",
       "sexo_aplicable": "ambos",
+      "envoltura": false,
       "archivo": "obj/REF_LINEAS_TOPOGRAFICAS.obj",
       "n_triangulos": 7368,
       "manifold": true,

@@ -1,6 +1,6 @@
 # Modelos 3D de las cavidades torácica, abdominal e inguinal del caballo
 
-Recurso del simulador del trabajo de grado. Contiene 58 estructuras independientes con identificador estable, sus fichas anatómicas (JSON y PostgreSQL) y el visor interactivo que las muestra.
+Recurso del simulador del trabajo de grado. Contiene 58 estructuras anatómicas independientes y 3 envolturas de cavidad con identificador estable, sus fichas anatómicas (JSON y PostgreSQL) y el visor interactivo que las muestra.
 
 La fuente de verdad anatómica es [investigacion_anatomica_cavidades_equinas.md](investigacion_anatomica_cavidades_equinas.md). Las fichas marcan con `pendiente_validacion` y `campos_pendientes` todo dato que no proviene de ese documento.
 
@@ -8,7 +8,10 @@ La fuente de verdad anatómica es [investigacion_anatomica_cavidades_equinas.md]
 
 ```
 aplicacion_tres_d/aplicacion_tres_d/
-  cavidades_equinas.py         # punto de entrada que lanza la app Java (script3d)
+  cavidades_equinas.py         # visor general (todas las cavidades)
+  cavidad_toracica.py          # modelo inmersivo de la cavidad torácica
+  cavidad_abdominal.py         # modelo inmersivo de la cavidad abdominal (con la transición pélvica)
+  region_inguinal.py           # modelo inmersivo de la región inguinal
   cavidades/
     anatomia/referencia.py     # sistema de coordenadas, envolvente, costillas, diafragma
     anatomia/catalogo.py       # catálogo de estructuras: fuente única de IDs
@@ -20,7 +23,8 @@ aplicacion_tres_d/aplicacion_tres_d/
     datos/fichas_anatomicas.json, fichas.schema.json, generar_sql.py
     modelos/                   # salida: obj/, escena.glb, cavidades_equinas.blend, manifiesto.json,
                                #         informe_colisiones.md/.json, vistas/*.png
-    visor/                     # escena, selección, repositorio de fichas, visor Qt, capturas
+    visor/                     # escena, selección, despiece (explosion.py), fichas, visor Qt, capturas
+    docs/referencias/bradley_1922/  # láminas de dominio público usadas como guía
     tests/
 db/cavidades_schema.sql        # migración aditiva (tablas nuevas)
 db/cavidades_fichas.sql        # datos generados (idempotente)
@@ -39,8 +43,9 @@ Todos los comandos se ejecutan desde `cavidades/`.
     --python blender/generar_cavidades.py -- --salida modelos/
 #    Opciones: --cavidades toracica,abdominal,pelvica,inguinal,referencia   --sin-glb
 
-# 2. Capturas de revisión (5 vistas)
+# 2. Capturas de revisión (5 vistas) y del despiece de cada modelo inmersivo
 python visor/capturas.py --sufijo todo
+python visor/capturas_inmersivas.py
 
 # 3. Fichas a PostgreSQL
 python datos/generar_sql.py                      # escribe ../../../db/cavidades_fichas.sql
@@ -50,8 +55,11 @@ psql -U postgres -d gestion -f ../../../db/cavidades_fichas.sql
 # 4. Pruebas
 python -m pytest tests
 
-# 5. Visor
-python ../cavidades_equinas.py
+# 5. Visores
+python ../cavidades_equinas.py      # general
+python ../cavidad_toracica.py       # inmersivos
+python ../cavidad_abdominal.py
+python ../region_inguinal.py
 ```
 
 La generación es determinista: semillas fijas y ningún dato aleatorio ni con marca de tiempo. Las mismas entradas producen la misma salida.
@@ -90,6 +98,27 @@ El registro completo, con sus motivos, está en `anatomia/especificacion.py` (`A
 5. **Nombres de tablas** en plural (`cavidades`, `sistemas_anatomicos`, `estructuras_anatomicas`, `modelos_3d`), siguiendo el esquema existente (`usuarios`, `cursos`…).
 6. **Ficha:** se añaden `campos_pendientes` y `sexo_aplicable`, como pide el Anexo J de la tesis.
 
+## Modelos inmersivos por cavidad
+
+Cada cavidad tiene su propio modelo (`cavidad_toracica.py`, `cavidad_abdominal.py` y `region_inguinal.py`) y su script lo lanza la aplicación Java como cualquier otra práctica.
+
+- **De lejos** se ve la cavidad como un todo: su *envoltura*. Para el tórax es el molde interno de la cavidad tapizado por la pleura costal, con las impresiones de las costillas. Para el abdomen, el molde tapizado por el peritoneo, con el arco costal y la línea alba. Para la región inguinal, la pared ventral engrosada alrededor del conducto y el escroto bilobulado. El clic sobre ella muestra la ficha de la cavidad.
+- **Al acercarse** con la rueda del ratón, la envoltura se desvanece y los componentes se separan (despiece por proximidad, `visor/explosion.py`), con etiquetas flotantes que no se solapan. Al alejarse, la cavidad se vuelve a ensamblar. También puede manejarse a mano con el deslizador «Despiece de la cavidad».
+- **Dirección de las piezas.** Siguen vectores anatómicos: pulmones hacia los lados, corazón ventral, tráquea craneal, aorta dorsal, diafragma caudal, hígado craneal, bazo y riñones hacia sus lados. La parte del desplazamiento que iría hacia la cámara se reorienta dentro del plano de la pantalla, para que ninguna pieza tape a las demás desde ningún ángulo.
+- **Campo de visión.** Se abre de 30° a 58° a medida que las piezas se separan: el conjunto sigue a la vista y la sensación es de entrar en la cavidad.
+- **Clic sobre una pieza:** ficha completa (todos los campos anatómicos, estado de validación, referencias) y datos del modelo 3D (identificador, lado, capa, sexo aplicable, medidas y volumen en el modelo, estructuras que comparten ficha). El doble clic o la tecla `F` encuadra la pieza.
+- **Render realista:** materiales PBR con rugosidad por tejido, moteado orgánico por vértice, iluminación de tres puntos, oclusión ambiental (SSAO) y FXAA.
+
+## Fidelidad: referencias usadas
+
+No se encontraron modelos 3D de vísceras equinas con licencia libre y descarga directa: los existentes son comerciales o exigen cuenta. Las formas se ajustaron con las láminas de Bradley (1922), de dominio público ([docs/referencias/bradley_1922/](referencias/bradley_1922/README.md)):
+
+- **Corazón** (fig. 10): cono con surco coronario, surcos interventriculares paraconal y subsinuoso, aurículas aplanadas en la base y tronco pulmonar.
+- **Hígado** (fig. 56): fisuras interlobulares del borde ventral y proceso caudado con impresión renal.
+- **Bazo** (cara medial): triangular, de base ancha (≈24 cm) y extremo ventral estrecho.
+- **Colon y ciego** (fig. 44): colones dorsal y ventral paralelos y contiguos, estrechamiento brusco de la flexura pélvica y ciego en coma con tenias y haustras.
+- **Región inguinal:** escroto con cuello corto. El testículo se sube a z = −0,07; en z = −0,20 (prompt) el cordón medía ~30 cm.
+
 ## Visor
 
 - Un actor por estructura, con `vtkPolyDataNormals` y *depth peeling* para las transparencias.
@@ -116,4 +145,6 @@ En todos los casos, con licencia compatible y con validación del director.
 - Es una base procedural: la topografía, las proporciones, las relaciones y las asimetrías son correctas, pero la forma fina es esquemática.
 - Quedan interpenetraciones residuales entre órganos, listadas en `modelos/informe_colisiones.md`. Destacan el colon dorsal derecho con el hígado (~5 cm) y el colon descendente con el yeyuno (~3 cm, que en el animal se entremezclan). También se listan contactos de vasos finos, que no se corrigen.
 - El esófago se construye en la fase abdominal (se une al cardias relajado); si se generan solo las estructuras torácicas, no aparece.
-- 40 de las 44 fichas tienen algún campo pendiente de validación, sobre todo la irrigación, que el documento de investigación no cubre.
+- 43 de las 47 fichas tienen algún campo pendiente de validación, sobre todo la irrigación, que el documento de investigación no cubre.
+- Con la oclusión ambiental activa, el visor inmersivo ronda los 25-30 fps en el equipo de desarrollo; si un equipo va lento, puede desactivarse en `configurar_render_realista`.
+- La envoltura inguinal es una aproximación: pared engrosada y escroto, sin las capas de la pared (piel, túnica dartos, fascias).

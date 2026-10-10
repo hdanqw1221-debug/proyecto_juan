@@ -64,25 +64,37 @@ def generar(fichas, manifiesto):
         act = ", ".join(f"{c} = EXCLUDED.{c}" for c in cols[1:])
         l.append(f"INSERT INTO modelos_3d ({', '.join(cols)}) VALUES ({', '.join(vals)}) "
                  f"ON CONFLICT (objeto_id) DO UPDATE SET {act};")
-    # Práctica 3D vinculada a la materia de ejemplo (solo si existe y aún no está creada).
-    config = {
-        "habilitado": True, "tema": "cavidades_equinas", "nivel": "intermedio", "script3d": "cavidades_equinas.py",
-        "tiempoMinutos": 45,
-        "objetivos": ["Identificar las visceras de las cavidades toracica y abdominal y de la region inguinal",
-                      "Relacionar cada estructura con su topografia y proyeccion superficial"],
-        "instrucciones": ["Inicia el visor 3D de cavidades", "Haz clic en una estructura para ver su ficha",
-                          "Repite el clic en el mismo punto para llegar a estructuras profundas"],
-        "escenario": {"titulo": "Cavidades del equino", "descripcion": "Exploracion guiada por capas"},
-    }
-    l += ["",
-          "INSERT INTO simulaciones (curso_id, nombre, descripcion, configuracion)",
-          "SELECT c.id, 'Practica 3D: Cavidades toracica, abdominal y region inguinal',",
-          "       'Exploracion de las visceras del equino con seleccion por clic y ficha anatomica.',",
-          f"       {lit(json.dumps(config, ensure_ascii=True))}::jsonb",
-          "FROM cursos c WHERE c.nombre = 'Anatomia Veterinaria Equina I'",
-          "AND NOT EXISTS (SELECT 1 FROM simulaciones s WHERE s.curso_id = c.id",
-          "                AND s.nombre = 'Practica 3D: Cavidades toracica, abdominal y region inguinal');",
-          "", "COMMIT;"]
+    # Prácticas 3D vinculadas a la materia de ejemplo (solo si existe y aún no están creadas).
+    practicas = [
+        ("Practica 3D: Cavidades toracica, abdominal y region inguinal", "cavidades_equinas.py",
+         "Exploracion de las visceras del equino con seleccion por clic y ficha anatomica.",
+         "Identificar las visceras de las cavidades toracica y abdominal y de la region inguinal"),
+        ("Practica 3D inmersiva: Cavidad toracica", "cavidad_toracica.py",
+         "La cavidad toracica se separa en sus componentes al acercarse.",
+         "Reconocer pulmones y corazon junto con grandes vasos y diafragma"),
+        ("Practica 3D inmersiva: Cavidad abdominal", "cavidad_abdominal.py",
+         "La cavidad abdominal se separa en sus componentes al acercarse.",
+         "Reconocer el tubo digestivo con sus glandulas anexas y el aparato urinario"),
+        ("Practica 3D inmersiva: Region inguinal", "region_inguinal.py",
+         "La region inguinal y el escroto se separan en sus componentes al acercarse.",
+         "Reconocer el conducto inguinal y el cordon espermatico hasta el testiculo"),
+    ]
+    for nombre, script, descripcion, objetivo in practicas:
+        config = {
+            "habilitado": True, "tema": "cavidades_equinas", "nivel": "intermedio", "script3d": script,
+            "tiempoMinutos": 45,
+            "objetivos": [objetivo, "Relacionar cada estructura con su topografia y proyeccion superficial"],
+            "instrucciones": ["Inicia el visor 3D", "Acercate con la rueda del raton para separar los componentes",
+                              "Haz clic en una estructura para ver su ficha completa"],
+            "escenario": {"titulo": nombre.split(": ", 1)[1], "descripcion": descripcion},
+        }
+        l += ["",
+              "INSERT INTO simulaciones (curso_id, nombre, descripcion, configuracion)",
+              f"SELECT c.id, {lit(nombre)}, {lit(descripcion)},",
+              f"       {lit(json.dumps(config, ensure_ascii=True))}::jsonb",
+              "FROM cursos c WHERE c.nombre = 'Anatomia Veterinaria Equina I'",
+              f"AND NOT EXISTS (SELECT 1 FROM simulaciones s WHERE s.curso_id = c.id AND s.nombre = {lit(nombre)});"]
+    l += ["", "COMMIT;"]
     return "\n".join(l) + "\n"
 
 

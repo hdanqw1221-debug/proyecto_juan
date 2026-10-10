@@ -49,6 +49,7 @@ Ubicados en `aplicacion_tres_d/aplicacion_tres_d/`:
 4. **Sistema Muscular (`sistema_muscular.py`)**: Grupos musculares superficiales y profundos (masetero, braquiocefálico, dorsal ancho, glúteos, aparato recíproco y tendones flexores).
 5. **Órganos Internos (`sistema_organosinternos.py`)**: Aparato digestivo completo (estómago con margo plicatus, ciego de gran volumen, flexura pélvica, colon mayor y menor), hígado sin vesícula, bazo, tráquea, pulmones y riñones acorazonados.
 6. **Cavidades torácica, abdominal e inguinal (`cavidades_equinas.py`)**: 58 estructuras independientes generadas en Blender por script reproducible, con selección por clic (y clic repetido para llegar a estructuras profundas) y ficha anatómica desde PostgreSQL o JSON. Documentación en [`cavidades/docs/MODELOS_README.md`](aplicacion_tres_d/aplicacion_tres_d/cavidades/docs/MODELOS_README.md); esquema en `db/cavidades_schema.sql` y datos en `db/cavidades_fichas.sql`.
+7. **Cavidad torácica inmersiva (`cavidad_toracica.py`)**, 8. **Cavidad abdominal inmersiva (`cavidad_abdominal.py`)** y 9. **Región inguinal inmersiva (`region_inguinal.py`)**: desde lejos se ve la cavidad completa; al acercarse con la rueda del ratón se separa en sus componentes (corazón, pulmones, tráquea…) con etiquetas, y el clic en cualquiera muestra su ficha completa.
 
 ---
 

@@ -103,6 +103,8 @@ class Resaltador:
         self.quitar()
         prop = actor.GetProperty()
         self._previo = (prop.GetColor(), prop.GetAmbient(), prop.GetOpacity())
+        self._escalares = actor.GetMapper().GetScalarVisibility()
+        actor.GetMapper().ScalarVisibilityOff()  # en modo realista el color viene de los vértices
         prop.SetColor(*COLOR_SELECCION)
         prop.SetAmbient(0.45)
         prop.SetOpacity(max(prop.GetOpacity(), 0.85))
@@ -117,8 +119,14 @@ class Resaltador:
         self._silueta.GetProperty().SetColor(0.1, 0.1, 0.1)
         self._silueta.GetProperty().SetLineWidth(3.0)
         self._silueta.PickableOff()
+        self._silueta.SetPosition(actor.GetPosition())
         self.renderer.AddActor(self._silueta)
         self.actor = actor
+
+    def seguir(self):
+        """Mantiene la silueta sobre la pieza cuando esta se desplaza (despiece)."""
+        if self.actor is not None and self._silueta is not None:
+            self._silueta.SetPosition(self.actor.GetPosition())
 
     def quitar(self):
         if self.actor is not None and self._previo is not None:
@@ -127,6 +135,7 @@ class Resaltador:
             prop.SetColor(*color)
             prop.SetAmbient(ambiente)
             prop.SetOpacity(opacidad)
+            self.actor.GetMapper().SetScalarVisibility(self._escalares)
         if self._silueta is not None:
             self.renderer.RemoveActor(self._silueta)
         self.actor, self._previo, self._silueta = None, None, None

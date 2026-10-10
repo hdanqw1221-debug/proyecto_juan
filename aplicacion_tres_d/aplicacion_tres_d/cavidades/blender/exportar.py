@@ -14,7 +14,7 @@ from anatomia import referencia as ref
 from blender import primitivas as P
 
 CAMPOS_MANIFIESTO = ("objeto_id", "ficha_id", "nombre", "cavidad", "sistema", "lado", "color_hex", "opacidad",
-                     "capa", "seleccionable", "visible_por_defecto", "coleccion", "sexo_aplicable")
+                     "capa", "seleccionable", "visible_por_defecto", "coleccion", "sexo_aplicable", "envoltura")
 
 
 def escribir_obj(ruta, nombre, V, T):

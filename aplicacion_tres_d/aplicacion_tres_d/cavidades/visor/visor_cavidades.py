@@ -1,8 +1,13 @@
-"""Visor interactivo de las cavidades torácica, abdominal e inguinal del caballo (PyQt5 + VTK).
+"""Visor de las cavidades torácica, abdominal e inguinal del caballo (PyQt5 + VTK).
 
-- Clic (sin arrastre) sobre una estructura: la selecciona y muestra su ficha.
-- Clic repetido en el mismo punto: pasa a la estructura siguiente a lo largo del rayo.
-- Eventos en la salida estándar como líneas JSON (inicio, selección, cierre) para la app Java.
+Dos modos:
+- General (`cavidad=None`): todas las estructuras, con conmutadores por cavidad.
+- Inmersivo por cavidad (`cavidad="toracica" | "abdominal" | "inguinal"`): desde lejos se ve la
+  cavidad completa; al acercarse con la rueda del ratón se desvanece su envoltura y los órganos se
+  separan con etiquetas. El doble clic (o la tecla F) encuadra la pieza seleccionada.
+
+En ambos: clic (sin arrastre) para seleccionar y ver la ficha completa; clic repetido para la
+estructura siguiente a lo largo del rayo; eventos JSON por la salida estándar para la app Java.
 """
 import html
 import json
@@ -12,19 +17,30 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
+import numpy as np  # noqa: E402
 import vtk  # noqa: E402
 from PyQt5.QtCore import Qt, QStringListModel  # noqa: E402
 from PyQt5.QtWidgets import (QApplication, QCheckBox, QCompleter, QGridLayout, QGroupBox, QLabel,  # noqa: E402
-                             QLineEdit, QMainWindow, QPushButton, QSplitter, QTextBrowser, QVBoxLayout, QWidget)
+                             QLineEdit, QMainWindow, QPushButton, QSlider, QSplitter, QTextBrowser, QVBoxLayout,
+                             QWidget)
 from vtkmodules.qt.QVTKRenderWindowInteractor import QVTKRenderWindowInteractor  # noqa: E402
 
-from visor.escena import DIR_MODELOS, Escena  # noqa: E402
+from visor.escena import DIR_MODELOS, Escena, configurar_render_realista  # noqa: E402
+from visor.explosion import FIN_DESVANECIDO, ControladorExplosion  # noqa: E402
 from visor.repositorio_fichas import RepositorioFichas  # noqa: E402
 from visor.seleccion import UMBRAL_ARRASTRE_PX, Resaltador, Seleccionador  # noqa: E402
 
 CAVIDADES_TECLA = {"1": "toracica", "2": "abdominal", "3": "inguinal", "4": "pelvica", "5": "referencia"}
 NOMBRES_CAVIDAD = {"toracica": "Torácica", "abdominal": "Abdominal", "inguinal": "Región inguinal",
                    "pelvica": "Pélvica (ref.)", "referencia": "Referencias"}
+# Qué se carga en cada modelo inmersivo (la transición pélvica acompaña al abdomen).
+MODELOS_INMERSIVOS = {
+    "toracica": ("Cavidad torácica", ["toracica"]),
+    "abdominal": ("Cavidad abdominal", ["abdominal", "pelvica"]),
+    "inguinal": ("Región inguinal", ["inguinal"]),
+}
+VISTA_INICIAL = {None: "lateral_izquierda", "toracica": "lateral_izquierda", "abdominal": "lateral_izquierda",
+                 "inguinal": "craneal"}
 VISTAS_TECLA = {"F1": "lateral_izquierda", "F2": "lateral_derecha", "F3": "ventral", "F4": "dorsal", "F5": "craneal"}
 ETIQUETAS_VISTA = {"lateral_izquierda": "Lateral izq.", "lateral_derecha": "Lateral der.", "ventral": "Ventral",
                    "dorsal": "Dorsal", "craneal": "Craneal"}
@@ -34,11 +50,19 @@ CAMPOS_FICHA = [
     ("irrigacion_drenaje", "Irrigación y drenaje"), ("dimensiones", "Dimensiones"),
     ("consideraciones_clinicas", "Consideraciones clínicas"), ("exploracion", "Exploración"),
 ]
+NOMBRE_LADO = {"IZQ": "izquierdo", "DER": "derecho", "MED": "medio / impar"}
+NOMBRE_CAPA = {0: "superficial (límite)", 1: "superficial", 2: "intermedia", 3: "profunda"}
 OPACIDAD_TRANSLUCIDA = 0.15
-LEYENDA = ("<b>Atajos</b><br>Clic: seleccionar · clic repetido: estructura más profunda<br>"
-           "1-5: Torácica / Abdominal / Inguinal / Pélvica / Referencias<br>"
-           "H: ocultar selección · A: mostrar todo · T: resto translúcido<br>"
-           "R: restablecer cámara · Esc: deseleccionar · F1-F5: vistas")
+DOBLE_CLIC_S = 0.35
+LEYENDA_GENERAL = ("<b>Atajos</b><br>Clic: seleccionar · clic repetido: estructura más profunda<br>"
+                   "1-5: Torácica / Abdominal / Inguinal / Pélvica / Referencias<br>"
+                   "H: ocultar selección · A: mostrar todo · T: resto translúcido<br>"
+                   "R: restablecer cámara · Esc: deseleccionar · F1-F5: vistas")
+LEYENDA_INMERSIVA = ("<b>Cómo explorar</b><br>Rueda del ratón: acercarse para separar la cavidad en sus "
+                     "componentes; alejarse para volver a ensamblarla.<br>Clic: ficha completa · clic repetido: "
+                     "estructura más profunda · doble clic o F: encuadrar la pieza<br>"
+                     "L: etiquetas · T: resto translúcido · H: ocultar · A: mostrar todo · R: vista inicial · "
+                     "Esc: deseleccionar · F1-F5: vistas")
 
 
 def emitir(evento, **datos):
@@ -46,14 +70,22 @@ def emitir(evento, **datos):
     print(json.dumps({"evento": evento, "t": round(time.time(), 3), **datos}, ensure_ascii=False), flush=True)
 
 
-def html_ficha(ficha, meta, profundidad):
+def _medidas(meta):
+    caja = np.array(meta["caja"])
+    dims = (caja[1] - caja[0]) * 100.0
+    return (f"{dims[0]:.0f} × {dims[1]:.0f} × {dims[2]:.0f} cm (craneocaudal × transversal × dorsoventral); "
+            f"volumen del modelo ≈ {meta['volumen_m3'] * 1000:.2f} L")
+
+
+def html_ficha(ficha, meta, profundidad, relacionados=()):
+    """Ficha completa de la estructura: todos los campos anatómicos, estado de validación y datos del modelo."""
     if ficha is None:
         return f"<h3>{html.escape(meta['nombre'])}</h3><p><i>Sin ficha anatómica.</i></p>"
     pend = set(ficha.get("campos_pendientes") or [])
     partes = [f"<h2 style='margin-bottom:0'>{html.escape(meta['nombre'])}</h2>",
               f"<p style='margin-top:2px'><i>{html.escape(ficha['nombre_latino'])}</i><br>"
               f"<small>{html.escape(ficha['nombre'])} · {html.escape(ficha['cavidad'])} · "
-              f"{html.escape(ficha['sistema'])} · objeto {html.escape(meta['objeto_id'])}</small></p>"]
+              f"{html.escape(ficha['sistema'])}</small></p>"]
     if ficha.get("pendiente_validacion"):
         partes.append("<p style='background:#FFE082;color:#5D4037;padding:4px'><b>Pendiente de validación</b>"
                       " por un anatomista veterinario.</p>")
@@ -64,16 +96,28 @@ def html_ficha(ficha, meta, profundidad):
         marca = " <small style='color:#B26A00'>(pendiente)</small>" if campo in pend else ""
         partes.append(f"<p><b>{titulo}{marca}:</b> {html.escape(str(ficha.get(campo, 'No aplica')))}</p>")
     partes.append("<p><b>Referencias:</b> " + html.escape("; ".join(ficha.get("referencias", []))) + "</p>")
+    datos = [("Identificador", meta["objeto_id"]), ("Ficha", ficha["ficha_id"]),
+             ("Lado", NOMBRE_LADO.get(meta["lado"], meta["lado"])),
+             ("Capa", NOMBRE_CAPA.get(meta["capa"], str(meta["capa"]))),
+             ("Sexo aplicable", ficha.get("sexo_aplicable", meta.get("sexo_aplicable", "ambos"))),
+             ("Medidas en el modelo", _medidas(meta))]
+    if relacionados:
+        datos.append(("Comparte ficha con", ", ".join(relacionados)))
+    filas = "".join(f"<tr><td><b>{html.escape(k)}</b></td><td>{html.escape(str(v))}</td></tr>" for k, v in datos)
+    partes.append("<h4 style='margin-bottom:2px'>Datos del modelo 3D</h4>"
+                  f"<table cellspacing='2' style='font-size:small'>{filas}</table>"
+                  "<p><small>Las medidas son las del modelo esquemático; las reales figuran en «Dimensiones».</small></p>")
     return "\n".join(partes)
 
 
 class EstiloInteraccion(vtk.vtkInteractorStyleTrackballCamera):
-    """Trackball con distinción clic/arrastre; las teclas las gestiona el visor."""
+    """Trackball con distinción clic/arrastre y doble clic; las teclas las gestiona el visor."""
 
     def __init__(self, visor):
         super().__init__()
         self.visor = visor
         self._inicio = None
+        self._ultimo_clic = (0.0, None)
         self.AddObserver("LeftButtonPressEvent", self._presionar)
         self.AddObserver("LeftButtonReleaseEvent", self._soltar)
         self.AddObserver("CharEvent", lambda o, e: None)  # anula los atajos por defecto de VTK (q, e, w, 3…)
@@ -87,7 +131,14 @@ class EstiloInteraccion(vtk.vtkInteractorStyleTrackballCamera):
         fin = self.GetInteractor().GetEventPosition()
         self.OnLeftButtonUp()
         if self._inicio and max(abs(fin[0] - self._inicio[0]), abs(fin[1] - self._inicio[1])) < UMBRAL_ARRASTRE_PX:
-            self.visor.clic(*fin)
+            ahora = time.time()
+            t_prev, p_prev = self._ultimo_clic
+            if p_prev and ahora - t_prev < DOBLE_CLIC_S and abs(fin[0] - p_prev[0]) + abs(fin[1] - p_prev[1]) < 8:
+                self.visor.encuadrar_seleccion()
+                self._ultimo_clic = (0.0, None)
+            else:
+                self.visor.clic(*fin)
+                self._ultimo_clic = (ahora, fin)
         self._inicio = None
 
     def _tecla(self, obj, evento):
@@ -95,26 +146,34 @@ class EstiloInteraccion(vtk.vtkInteractorStyleTrackballCamera):
 
 
 class VisorCavidades(QMainWindow):
-    def __init__(self, dir_modelos=DIR_MODELOS):
+    def __init__(self, dir_modelos=DIR_MODELOS, cavidad=None):
         super().__init__()
         t0 = time.time()
-        self.setWindowTitle("Simulador 3D - Cavidades torácica, abdominal e inguinal del equino")
+        self.cavidad = cavidad
+        self.inmersivo = cavidad is not None
+        titulo, cargar = MODELOS_INMERSIVOS[cavidad] if self.inmersivo else ("Cavidades", None)
+        self.setWindowTitle(f"Simulador 3D del equino - {titulo}" if self.inmersivo else
+                            "Simulador 3D - Cavidades torácica, abdominal e inguinal del equino")
         self.resize(1400, 860)
         self.vtk_widget = QVTKRenderWindowInteractor(self)
         self.ventana = self.vtk_widget.GetRenderWindow()
         self.ventana.SetAlphaBitPlanes(1)
         self.ventana.SetMultiSamples(0)
         self.renderer = vtk.vtkRenderer()
-        self.renderer.SetBackground(0.16, 0.17, 0.19)
-        self.renderer.SetBackground2(0.30, 0.32, 0.36)
+        self.renderer.SetBackground(0.10, 0.11, 0.13)
+        self.renderer.SetBackground2(0.27, 0.29, 0.33)
         self.renderer.GradientBackgroundOn()
         self.renderer.SetUseDepthPeeling(1)
         self.renderer.SetMaximumNumberOfPeels(8)
         self.ventana.AddRenderer(self.renderer)
-        self.escena = Escena(self.renderer, dir_modelos, decimar_si_supera=None)
+        self.escena = Escena(self.renderer, dir_modelos, cavidades=cargar, realista=self.inmersivo,
+                             mostrar_envolturas=self.inmersivo)
+        if self.inmersivo:
+            configurar_render_realista(self.renderer, self.ventana)
         self.repositorio = RepositorioFichas()
         self.seleccionador = Seleccionador(self.renderer, self.escena)
         self.resaltador = Resaltador(self.renderer)
+        self.explosion = ControladorExplosion(self.renderer, self.escena, cavidad) if self.inmersivo else None
         self.seleccion = None
         self.translucido = False
         self.cavidades_visibles = {c: True for c in CAVIDADES_TECLA.values()}
@@ -122,13 +181,17 @@ class VisorCavidades(QMainWindow):
         self._construir_panel()
         self.interactor = self.ventana.GetInteractor()
         self.interactor.SetInteractorStyle(EstiloInteraccion(self))
-        self.escena.aplicar_vista("lateral_izquierda")
+        self._actualizando = False
+        self.vista(VISTA_INICIAL[cavidad])
+        if self.explosion:
+            self.explosion.calibrar()
+            self.renderer.GetActiveCamera().AddObserver("ModifiedEvent", self._camara_cambiada)
         self.tiempo_carga = time.time() - t0
         self.inicio = time.time()
         self.estado.setText(f"{len(self.escena.actores)} estructuras · fichas desde {self.repositorio.origen} · "
                             f"carga {self.tiempo_carga:.1f} s")
-        emitir("inicio", objetos=len(self.escena.actores), fuente_fichas=self.repositorio.origen,
-               carga_s=round(self.tiempo_carga, 2))
+        emitir("inicio", modelo=cavidad or "general", objetos=len(self.escena.actores),
+               fuente_fichas=self.repositorio.origen, carga_s=round(self.tiempo_carga, 2))
 
     # ------------------------------------------------------------------ interfaz
     def _construir_panel(self):
@@ -147,18 +210,36 @@ class VisorCavidades(QMainWindow):
         lay.addWidget(self.buscador)
         self.ficha = QTextBrowser()
         self.ficha.setOpenExternalLinks(False)
-        self.ficha.setHtml("<p>Haz clic en una estructura para ver su ficha anatómica.</p>")
+        self.ficha.setHtml(self._texto_inicial())
         lay.addWidget(self.ficha, 1)
-        caja = QGroupBox("Cavidades")
-        g = QGridLayout(caja)
         self.checks = {}
-        for i, (tecla, cav) in enumerate(CAVIDADES_TECLA.items()):
-            cb = QCheckBox(f"{tecla} {NOMBRES_CAVIDAD[cav]}")
-            cb.setChecked(self.cavidades_visibles[cav])
-            cb.stateChanged.connect(lambda estado, c=cav: self.mostrar_cavidad(c, bool(estado)))
-            g.addWidget(cb, i // 2, i % 2)
-            self.checks[cav] = cb
-        lay.addWidget(caja)
+        if self.inmersivo:
+            caja = QGroupBox("Despiece de la cavidad")
+            g = QVBoxLayout(caja)
+            self.auto = QCheckBox("Separar al acercar la cámara (automático)")
+            self.auto.setChecked(True)
+            self.auto.stateChanged.connect(self._cambiar_automatico)
+            self.deslizador = QSlider(Qt.Horizontal)
+            self.deslizador.setRange(0, 100)
+            self.deslizador.setEnabled(False)
+            self.deslizador.valueChanged.connect(self._deslizador_movido)
+            self.etiq = QCheckBox("Mostrar etiquetas (L)")
+            self.etiq.setChecked(True)
+            self.etiq.stateChanged.connect(self._cambiar_etiquetas)
+            self.indicador = QLabel("Separación: 0 %")
+            for w in (self.auto, self.deslizador, self.indicador, self.etiq):
+                g.addWidget(w)
+            lay.addWidget(caja)
+        else:
+            caja = QGroupBox("Cavidades")
+            g = QGridLayout(caja)
+            for i, (tecla, cav) in enumerate(CAVIDADES_TECLA.items()):
+                cb = QCheckBox(f"{tecla} {NOMBRES_CAVIDAD[cav]}")
+                cb.setChecked(self.cavidades_visibles[cav])
+                cb.stateChanged.connect(lambda estado, c=cav: self.mostrar_cavidad(c, bool(estado)))
+                g.addWidget(cb, i // 2, i % 2)
+                self.checks[cav] = cb
+            lay.addWidget(caja)
         caja_v = QGroupBox("Vistas")
         gv = QGridLayout(caja_v)
         for i, (tecla, vista) in enumerate(VISTAS_TECLA.items()):
@@ -166,7 +247,7 @@ class VisorCavidades(QMainWindow):
             b.clicked.connect(lambda _, v=vista: self.vista(v))
             gv.addWidget(b, i // 3, i % 3)
         lay.addWidget(caja_v)
-        leyenda = QLabel(LEYENDA)
+        leyenda = QLabel(LEYENDA_INMERSIVA if self.inmersivo else LEYENDA_GENERAL)
         leyenda.setWordWrap(True)
         lay.addWidget(leyenda)
         self.estado = QLabel("")
@@ -175,8 +256,78 @@ class VisorCavidades(QMainWindow):
         div = QSplitter(Qt.Horizontal)
         div.addWidget(self.vtk_widget)
         div.addWidget(panel)
-        div.setSizes([1000, 400])
+        div.setSizes([1000, 420])
         self.setCentralWidget(div)
+
+    def _texto_inicial(self):
+        if self.inmersivo:
+            return ("<p>Haz clic en la cavidad para ver su ficha. Acércate con la rueda del ratón para "
+                    "separarla en sus componentes y haz clic en cualquiera de ellos para ver toda su información.</p>")
+        return "<p>Haz clic en una estructura para ver su ficha anatómica.</p>"
+
+    # ------------------------------------------------------------------ despiece
+    def _camara_cambiada(self, obj, evento):
+        if self._actualizando or not self.explosion or not self.explosion.automatico:
+            return
+        self._actualizando = True
+        try:
+            self._refrescar_despiece()
+        finally:
+            self._actualizando = False
+
+    def _refrescar_despiece(self, t=None):
+        if t is None:
+            self.explosion.actualizar()
+        else:
+            self.explosion.aplicar(t)
+        self.resaltador.seguir()
+        if self.seleccion == self.explosion.envoltura and self.explosion.t > FIN_DESVANECIDO / 2:
+            self.deseleccionar(renderizar=False)  # la envoltura se ha desvanecido
+        self.seleccionador.reiniciar()
+        self.indicador.setText(f"Separación: {100 * self.explosion.e:.0f} %")
+        if self.explosion.automatico:
+            self.deslizador.blockSignals(True)
+            self.deslizador.setValue(int(round(100 * self.explosion.t)))
+            self.deslizador.blockSignals(False)
+        self.renderer.ResetCameraClippingRange()
+
+    def _cambiar_automatico(self, estado):
+        self.explosion.automatico = bool(estado)
+        self.deslizador.setEnabled(not estado)
+        self._refrescar_despiece()
+        self.ventana.Render()
+
+    def _deslizador_movido(self, valor):
+        if not self.explosion.automatico:
+            self._refrescar_despiece(valor / 100.0)
+            self.ventana.Render()
+
+    def _cambiar_etiquetas(self, estado):
+        self.explosion.etiquetas_activas = bool(estado)
+        self._refrescar_despiece(None if self.explosion.automatico else self.explosion.t)
+        self.ventana.Render()
+
+    def encuadrar_seleccion(self):
+        """Acerca la cámara a la pieza seleccionada (en el modo inmersivo esto la separa por completo)."""
+        if not self.seleccion:
+            return
+        m = self.escena.meta[self.seleccion]
+        centro = self.explosion.posicion_actual(self.seleccion) if self.explosion else np.array(m["centroide"])
+        tam = float(np.max(np.array(m["caja"][1]) - np.array(m["caja"][0])))
+        cam = self.renderer.GetActiveCamera()
+        direccion = np.array(cam.GetPosition()) - np.array(cam.GetFocalPoint())
+        direccion /= np.linalg.norm(direccion)
+        distancia = max(2.2 * tam, 0.25)
+        if self.explosion:
+            distancia = min(distancia, self.explosion.d_cerca)
+        cam.SetFocalPoint(*centro)
+        cam.SetPosition(*(centro + direccion * distancia))
+        if self.explosion:  # la pieza se mueve al separarse: se recentra tras aplicar el despiece
+            centro = self.explosion.posicion_actual(self.seleccion)
+            cam.SetFocalPoint(*centro)
+            cam.SetPosition(*(centro + direccion * distancia))
+        self.renderer.ResetCameraClippingRange()
+        self.ventana.Render()
 
     # ------------------------------------------------------------------ acciones
     def clic(self, x, y):
@@ -195,16 +346,20 @@ class VisorCavidades(QMainWindow):
         meta = self.escena.meta[oid]
         ficha = self.repositorio.ficha_de_objeto(oid)
         prof = self.seleccionador.profundidad_actual() if origen == "clic" else (1, 1)
-        self.ficha.setHtml(html_ficha(ficha, meta, prof))
-        emitir("seleccion", objeto_id=oid, ficha_id=meta["ficha_id"], origen=origen, capa=prof[0])
+        relacionados = [self.escena.meta[o]["nombre"] for o in self.escena.meta
+                        if o != oid and self.escena.meta[o]["ficha_id"] == meta["ficha_id"]]
+        self.ficha.setHtml(html_ficha(ficha, meta, prof, relacionados))
+        emitir("seleccion", objeto_id=oid, ficha_id=meta["ficha_id"], origen=origen, capa=prof[0],
+               modelo=self.cavidad or "general")
         self.ventana.Render()
 
-    def deseleccionar(self):
+    def deseleccionar(self, renderizar=True):
         self.resaltador.quitar()
         self.seleccion = None
         self.seleccionador.reiniciar()
-        self.ficha.setHtml("<p>Haz clic en una estructura para ver su ficha anatómica.</p>")
-        self.ventana.Render()
+        self.ficha.setHtml(self._texto_inicial())
+        if renderizar:
+            self.ventana.Render()
 
     def buscar(self, texto):
         texto = texto.strip().lower()
@@ -219,7 +374,7 @@ class VisorCavidades(QMainWindow):
         self.cavidades_visibles[cavidad] = visible
         for oid, actor in self.escena.actores.items():
             m = self.escena.meta[oid]
-            if m["cavidad"] == cavidad:
+            if m["cavidad"] == cavidad and not m["envoltura"]:
                 actor.SetVisibility(visible and (m["visible_por_defecto"] or cavidad == "referencia"))
         if self.seleccion and self.escena.meta[self.seleccion]["cavidad"] == cavidad and not visible:
             self.deseleccionar()
@@ -229,6 +384,8 @@ class VisorCavidades(QMainWindow):
     def alternar_translucido(self):
         self.translucido = not self.translucido
         for oid, actor in self.escena.actores.items():
+            if self.escena.meta[oid]["envoltura"]:
+                continue
             base = self.escena.meta[oid]["opacidad"]
             nueva = min(base, OPACIDAD_TRANSLUCIDA) if self.translucido else base
             if oid == self.seleccion and self.resaltador._previo:
@@ -247,18 +404,29 @@ class VisorCavidades(QMainWindow):
                 self.cavidades_visibles[cav] = True
         for oid, actor in self.escena.actores.items():
             m = self.escena.meta[oid]
-            if m["cavidad"] != "referencia":
+            if m["cavidad"] != "referencia" and not m["envoltura"]:
                 actor.SetVisibility(True)
+        if self.explosion:
+            self._refrescar_despiece(None if self.explosion.automatico else self.explosion.t)
         self.ventana.Render()
 
     def vista(self, nombre):
+        if self.explosion:  # las vistas se calculan con la cavidad ensamblada
+            self._actualizando = True
+            self.explosion.aplicar(0.0)
         self.escena.aplicar_vista(nombre)
+        if nombre == "craneal" and self.cavidad == "inguinal":  # oblicua desde craneoventral
+            self.renderer.GetActiveCamera().Elevation(-25)
+            self.renderer.GetActiveCamera().OrthogonalizeViewUp()
+        if self.explosion:
+            self._actualizando = False
+            self._refrescar_despiece(None if self.explosion.automatico else self.explosion.t)
         self.seleccionador.reiniciar()
         self.ventana.Render()
 
     def tecla(self, simbolo):
         s = simbolo or ""
-        if s in CAVIDADES_TECLA:
+        if s in CAVIDADES_TECLA and not self.inmersivo:
             cb = self.checks[CAVIDADES_TECLA[s]]
             cb.setChecked(not cb.isChecked())
         elif s in VISTAS_TECLA:
@@ -273,19 +441,23 @@ class VisorCavidades(QMainWindow):
         elif s.lower() == "t":
             self.alternar_translucido()
         elif s.lower() == "r":
-            self.vista("lateral_izquierda")
+            self.vista(VISTA_INICIAL[self.cavidad])
+        elif s.lower() == "f":
+            self.encuadrar_seleccion()
+        elif s.lower() == "l" and self.explosion:
+            self.etiq.setChecked(not self.etiq.isChecked())
         elif s == "Escape":
             self.deseleccionar()
 
     def closeEvent(self, evento):
-        emitir("cierre", duracion_s=round(time.time() - self.inicio, 1))
+        emitir("cierre", modelo=self.cavidad or "general", duracion_s=round(time.time() - self.inicio, 1))
         self.vtk_widget.Finalize()
         evento.accept()
 
 
-def main():
+def main(cavidad=None):
     app = QApplication(sys.argv)
-    visor = VisorCavidades()
+    visor = VisorCavidades(cavidad=cavidad)
     visor.show()
     visor.vtk_widget.Initialize()
     visor.vtk_widget.Start()
@@ -293,4 +465,4 @@ def main():
 
 
 if __name__ == "__main__":
-    main()
+    main(sys.argv[1] if len(sys.argv) > 1 else None)

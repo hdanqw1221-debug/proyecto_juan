@@ -19,6 +19,10 @@ PALETA = {
     "vejiga": "#E6C27A",
     "reproductor": "#D7A9C0",
     "serosa": "#D6CFC4",
+    # Envolturas de cavidad (modelos inmersivos): pleura costal, peritoneo parietal y piel del escroto.
+    "pleura": "#E6C3BC",
+    "peritoneo": "#DDC5AE",
+    "escroto": "#B98A7E",
     "referencia": "#888888",
     # Color de resaltado de la selección en el visor.
     "seleccion": "#FFD54F",

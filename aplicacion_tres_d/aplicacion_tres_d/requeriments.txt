@@ -2,3 +2,4 @@ PyQt5==5.15.11
 vtk==9.4.1; python_version < "3.14"
 vtk>=9.6.2,<10; python_version >= "3.14"
 psycopg[binary]>=3.2
+numpy>=1.24

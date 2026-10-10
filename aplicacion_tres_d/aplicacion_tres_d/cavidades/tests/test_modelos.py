@@ -43,7 +43,8 @@ def test_presupuesto_de_triangulos(por_id):
     for oid, o in por_id.items():
         if o["cavidad"] == "referencia":
             continue
-        assert 2000 <= o["n_triangulos"] <= 15000, (oid, o["n_triangulos"])
+        tope = 45000 if o.get("envoltura") else 15000  # las envolturas llevan relieve costal
+        assert 2000 <= o["n_triangulos"] <= tope, (oid, o["n_triangulos"])
 
 
 def test_centroide_en_la_cavidad_correcta(por_id):
@@ -90,6 +91,17 @@ def test_flexura_pelvica_mas_estrecha_que_colon_ventral(por_id):
         V, _ = leer_obj(MODELOS / por_id[oid]["archivo"])
         return np.ptp(V, axis=0).min()
     assert calibre("ABD_FLEXURA_PELVICA") < calibre("ABD_COLON_VENTRAL_IZQ")
+
+
+def test_envolturas_contienen_su_cavidad(por_id):
+    """La envoltura de cada cavidad engloba los centroides de sus estructuras (vista desde lejos)."""
+    for cav in ("toracica", "abdominal"):
+        env = next(o for o in por_id.values() if o["cavidad"] == cav and o.get("envoltura"))
+        (x0, y0, z0), (x1, y1, z1) = env["caja"]
+        for o in por_id.values():
+            if o["cavidad"] == cav and not o.get("envoltura") and o["objeto_id"] != "TOR_DIAFRAGMA":
+                x, y, z = o["centroide"]
+                assert x0 - 0.02 <= x <= x1 + 0.02 and y0 - 0.02 <= y <= y1 + 0.02 and z0 - 0.02 <= z <= z1 + 0.02,                     (env["objeto_id"], o["objeto_id"])
 
 
 def test_glb_conserva_los_identificadores():
