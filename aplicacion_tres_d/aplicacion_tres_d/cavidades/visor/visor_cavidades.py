@@ -456,6 +456,8 @@ class VisorCavidades(QMainWindow):
 
 
 def main(cavidad=None):
+    if hasattr(sys.stdout, "reconfigure"):
+        sys.stdout.reconfigure(encoding="utf-8", errors="replace")  # la app Java lee los eventos en UTF-8
     app = QApplication(sys.argv)
     visor = VisorCavidades(cavidad=cavidad)
     visor.show()

@@ -1968,7 +1968,7 @@ private JPanel buildSimulationPanel() {
     }
 
     private boolean hasSimulationDependencies(List<String> baseCommand) {
-        return executeProbe(baseCommand, "import PyQt5, vtk; print('OK')");
+        return executeProbe(baseCommand, "import PyQt5, vtk, numpy; print('OK')");
     }
 
     private boolean executeProbe(List<String> baseCommand, String pythonSnippet) {

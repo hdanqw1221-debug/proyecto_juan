@@ -57,9 +57,10 @@ Todos se generan en Blender por script reproducible y leen las fichas desde Post
 ### 1. Prerrequisitos de Software
 - **Java Development Kit (JDK 21 o superior)**: Se incluye soporte para JDK 26 local en `oracleJdk-26/` o cualquier JDK 21+ configurado en el `PATH`.
 - **PostgreSQL 14 o superior**: En ejecución en `localhost:5432` con una base de datos creada (por defecto llamada `gestion` o según tu configuración).
-- **Python 3.9 a 3.12** (para los modelos 3D):
-  - Las dependencias se encuentran en `aplicacion_tres_d/aplicacion_tres_d/requeriments.txt` (`PyQt5`, `vtk`).
-  - La aplicación cuenta con un entorno virtual preconfigurado en `aplicacion_tres_d/aplicacion_tres_d/.venv/`.
+- **Python 3.9 o superior** (probado con 3.14) para los modelos 3D:
+  - Las dependencias se encuentran en `aplicacion_tres_d/aplicacion_tres_d/requeriments.txt` (`PyQt5`, `vtk`, `numpy`, `psycopg`).
+  - La aplicación usa el entorno virtual `aplicacion_tres_d/aplicacion_tres_d/.venv/`; si no existe, el panel del estudiante lo crea e instala las dependencias al abrir el primer modelo.
+  - `psycopg` es opcional: sin él, los visores leen las fichas desde `cavidades/datos/fichas_anatomicas.json`.
 
 ### 2. Configuración de Base de Datos
 Edita el archivo [`config/app.properties`](config/app.properties) con las credenciales de tu servidor PostgreSQL:

@@ -2,3 +2,5 @@ aplicacion_tres_d/aplicacion_tres_d/.venv/
 __pycache__/
 .pytest_cache/
 *.blend1
+build/
+oracleJdk-26/

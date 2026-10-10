@@ -52,7 +52,8 @@ function Add-SimulationDirectory {
         return
     }
 
-    & robocopy $Source $Target /E /XD ".venv" /NFL /NDL /NJH /NJS /NC /NS | Out-Null
+    # Solo lo que usan los visores: sin entorno local, pruebas, generador de Blender ni archivos .blend.
+    & robocopy $Source $Target /E /XD ".venv" "__pycache__" ".pytest_cache" "tests" "blender" /XF "*.blend" "*.blend1" /NFL /NDL /NJH /NJS /NC /NS | Out-Null
     if ($LASTEXITCODE -ge 8) {
         throw "No se pudo copiar el modulo de simulaciones 3D."
     }
@@ -109,9 +110,9 @@ Class-Path: lib/jbcrypt-0.4.jar lib/postgresql-42.7.10.jar
     $bundledPythonExe = Join-Path (Join-Path $inputDir "python-runtime") "python.exe"
     if (Test-Path $bundledPythonExe) {
         Write-Host "Validando runtime Python embebido..." -ForegroundColor Cyan
-        & $bundledPythonExe -c "import PyQt5, vtk; print('OK runtime Python embebido')"
+        & $bundledPythonExe -c "import PyQt5, vtk, numpy; print('OK runtime Python embebido')"
         if ($LASTEXITCODE -ne 0) {
-            throw "El runtime Python embebido no tiene dependencias completas (PyQt5/vtk)."
+            throw "El runtime Python embebido no tiene dependencias completas (PyQt5/vtk/numpy)."
         }
     } elseif ($includeBundledPython) {
         throw "El runtime Python indicado no contiene python.exe en la raiz."

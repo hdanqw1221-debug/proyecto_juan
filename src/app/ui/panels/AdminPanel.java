@@ -1448,7 +1448,7 @@ public class AdminPanel extends JPanel {
     }
 
     private boolean hasSimulationDependencies(List<String> command) {
-        return canRunPythonCode(command, "import PyQt5, vtk");
+        return canRunPythonCode(command, "import PyQt5, vtk, numpy");
     }
 
     private boolean canRunPythonCode(List<String> command, String code) {

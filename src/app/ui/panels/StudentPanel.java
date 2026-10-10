@@ -46,6 +46,10 @@ public class StudentPanel extends JPanel {
             "aplicacion_3_D",
             "aplicacion_tres_d"
     };
+    // Visores de cavidades: comparten la escena de cavidades/modelos en lugar de un .glb propio.
+    private static final Set<String> CAVITY_SCRIPTS = Set.of(
+            "cavidad_toracica.py", "cavidad_abdominal.py", "region_inguinal.py", "cavidades_equinas.py");
+    private static final String CAVITY_MANIFEST = "cavidades/modelos/manifiesto.json";
 
     private final SessionManager sessionManager;
     private final AuditService auditService;
@@ -832,20 +836,20 @@ public class StudentPanel extends JPanel {
 
     private String simulationDescription(Path script) {
         String name = script.getFileName().toString().toLowerCase(Locale.ROOT);
-        if (name.contains("cardiovascular")) {
-            return "Recorre el corazon y los principales vasos del sistema circulatorio.";
+        if (name.contains("toracica")) {
+            return "Desde lejos ves la cavidad toracica completa; al acercarte se separa en pulmones, corazon, "
+                    + "traquea, grandes vasos y diafragma. Haz clic en una pieza para ver su ficha.";
         }
-        if (name.contains("muscular")) {
-            return "Identifica grupos musculares y observa su distribucion anatomica.";
+        if (name.contains("abdominal")) {
+            return "Al acercarte la cavidad abdominal se separa en tubo digestivo, higado, bazo, pancreas, "
+                    + "rinones y vejiga. Haz clic en una pieza para ver su ficha.";
         }
-        if (name.contains("oseo")) {
-            return "Explora la estructura osea y reconoce sus componentes principales.";
+        if (name.contains("inguinal")) {
+            return "Explora la pared inguinal y el escroto: anillos inguinales, cordon espermatico, "
+                    + "testiculo y epididimo.";
         }
-        if (name.contains("organos")) {
-            return "Observa la ubicacion y relacion de los organos internos.";
-        }
-        if (name.contains("piel")) {
-            return "Examina las capas y estructuras visibles de la piel del caballo.";
+        if (name.contains("cavidades")) {
+            return "Las tres cavidades a la vez, con filtros por cavidad y la ficha anatomica de cada estructura.";
         }
         return "Modelo interactivo para apoyar tu practica y aprendizaje.";
     }
@@ -1077,7 +1081,10 @@ public class StudentPanel extends JPanel {
             return false;
         }
         String modelName = fileName.substring(0, fileName.length() - 3) + ".glb";
-        return Files.isRegularFile(scriptsFolder.resolve(modelName));
+        if (Files.isRegularFile(scriptsFolder.resolve(modelName))) {
+            return true;
+        }
+        return CAVITY_SCRIPTS.contains(fileName) && Files.isRegularFile(scriptsFolder.resolve(CAVITY_MANIFEST));
     }
 
     private String simulationDisplayName(Path script) {
@@ -1152,7 +1159,7 @@ public class StudentPanel extends JPanel {
     }
 
     private boolean hasSimulationDependencies(List<String> command) {
-        return canRunPythonCode(command, "import PyQt5, vtk");
+        return canRunPythonCode(command, "import PyQt5, vtk, numpy");
     }
 
     private boolean canRunPythonCode(List<String> command, String code) {
