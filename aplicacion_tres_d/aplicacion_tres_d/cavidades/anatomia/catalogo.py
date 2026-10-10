@@ -184,3 +184,25 @@ def fichas_ids():
 
 def objetos_de_ficha(ficha_id):
     return [o["objeto_id"] for o in OBJETOS if o["ficha_id"] == ficha_id]
+
+
+# Pares de estructuras que se tocan o se continúan por anatomía: no se tratan como colisiones.
+UNIONES = {frozenset(p) for p in [
+    ("ABD_ESTOMAGO", "ABD_DUODENO"), ("ABD_DUODENO", "ABD_YEYUNO"), ("ABD_YEYUNO", "ABD_ILEON"),
+    ("ABD_ILEON", "ABD_CIEGO"), ("ABD_CIEGO", "ABD_COLON_VENTRAL_DER"),
+    ("ABD_COLON_VENTRAL_DER", "ABD_FLEXURA_ESTERNAL"), ("ABD_FLEXURA_ESTERNAL", "ABD_COLON_VENTRAL_IZQ"),
+    ("ABD_COLON_VENTRAL_IZQ", "ABD_FLEXURA_PELVICA"), ("ABD_FLEXURA_PELVICA", "ABD_COLON_DORSAL_IZQ"),
+    ("ABD_COLON_DORSAL_IZQ", "ABD_FLEXURA_DIAFRAGMATICA"), ("ABD_FLEXURA_DIAFRAGMATICA", "ABD_COLON_DORSAL_DER"),
+    ("ABD_COLON_DORSAL_DER", "ABD_COLON_TRANSVERSO"), ("ABD_COLON_TRANSVERSO", "ABD_COLON_DESCENDENTE"),
+    ("ABD_COLON_DESCENDENTE", "PEL_RECTO"), ("TOR_ESOFAGO", "ABD_ESTOMAGO"), ("TOR_CORAZON", "TOR_PERICARDIO"),
+    ("ABD_URETER_DER", "ABD_RINON_DER"), ("ABD_URETER_IZQ", "ABD_RINON_IZQ"),
+    ("ABD_URETER_DER", "PEL_VEJIGA"), ("ABD_URETER_IZQ", "PEL_VEJIGA"),
+    ("TOR_AORTA", "TOR_CORAZON"), ("TOR_VENA_CAVA_CRANEAL", "TOR_CORAZON"), ("TOR_VENA_CAVA_CAUDAL", "TOR_CORAZON"),
+    ("TOR_AORTA", "ABD_AORTA"), ("TOR_VENA_CAVA_CAUDAL", "ABD_VENA_CAVA_CAUDAL"),
+    ("ABD_A_MESENTERICA_CRANEAL", "ABD_AORTA"),
+    # Los bronquios principales penetran en el pulmón por el hilio.
+    ("TOR_TRAQUEA", "TOR_PULMON_DER"), ("TOR_TRAQUEA", "TOR_PULMON_IZQ"),
+    # Estructuras que atraviesan las aberturas del diafragma.
+    ("TOR_AORTA", "TOR_DIAFRAGMA"), ("ABD_AORTA", "TOR_DIAFRAGMA"), ("TOR_ESOFAGO", "TOR_DIAFRAGMA"),
+    ("TOR_VENA_CAVA_CAUDAL", "TOR_DIAFRAGMA"), ("ABD_VENA_CAVA_CAUDAL", "TOR_DIAFRAGMA"),
+]}

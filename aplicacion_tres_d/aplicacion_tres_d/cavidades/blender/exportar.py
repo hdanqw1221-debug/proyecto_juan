@@ -110,13 +110,36 @@ def exportar_todo(salida, mallas, colisiones, desplazamientos, ajustes, con_glb=
     log(f"Exportados {len(objetos)} objetos")
 
 
+def exportar_contexto(salida, ctx):
+    """Líneas medias relajadas (y esófago prolongado) para que el prototipador reproduzca el contexto."""
+    def a_lista(curvas):
+        return [{"curva": np.round(np.asarray(c), 5).tolist(), "radios": np.round(np.asarray(r), 5).tolist()}
+                for c, r in curvas]
+    datos = {"lineas": {oid: a_lista([cr])[0] for oid, cr in ctx.lineas.items()},
+             "esofago_final": a_lista(ctx.esofago_final or [])}
+    (Path(salida) / "contexto_organos.json").write_text(json.dumps(datos), encoding="utf-8")
+
+
+def leer_contexto(dir_modelos):
+    """Contexto de los órganos guardado por exportar_contexto (vacío si no existe)."""
+    from anatomia.organos.contexto import Contexto
+
+    ruta = Path(dir_modelos) / "contexto_organos.json"
+    if not ruta.exists():
+        return Contexto()
+    datos = json.loads(ruta.read_text(encoding="utf-8"))
+    lineas = {oid: (np.array(d["curva"]), np.array(d["radios"])) for oid, d in datos["lineas"].items()}
+    esofago = [(np.array(d["curva"]), np.array(d["radios"])) for d in datos["esofago_final"]]
+    return Contexto(lineas, esofago or None)
+
+
 def _informe_md(inf):
     l = ["# Informe de colisiones y ajustes", "",
          "Generado automáticamente por `blender/generar_cavidades.py`. Profundidades en metros.", "",
          "## Interpenetraciones > 1 cm entre estructuras no contiguas", "",
          "| A | B | Profundidad inicial | Corregida | Deformado | Profundidad final |", "|---|---|---|---|---|---|"]
     for c in inf["colisiones"]:
-        l.append(f"| {c['a']} | {c['b']} | {c['profundidad_inicial_m']} | {'sí' if c['corregida'] else 'no (conducto fino: solo informe)'} "
+        l.append(f"| {c['a']} | {c['b']} | {c['profundidad_inicial_m']} | {'sí' if c['corregida'] else 'no (' + c.get('motivo', 'sin mejora') + ': solo informe)'} "
                  f"| {c.get('deformado', '')} | {c.get('profundidad_final_m', '')} |")
     l += ["", "## Desplazamiento de las líneas medias digestivas tras la relajación", "",
           "| Objeto | Máximo (m) | Medio (m) |", "|---|---|---|"]
