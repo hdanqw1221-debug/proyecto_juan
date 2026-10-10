@@ -35,6 +35,7 @@ from blender.exportar import escribir_obj, leer_contexto, leer_obj  # noqa: E402
 
 DIR_MODELOS = RAIZ / "modelos"
 TRIS_MAX = 15000
+REMALLADO = {}  # objeto_id -> tamaño de vóxel con el que Blender remallará la pieza (m)
 
 
 # ----------------------------------------------------------------------------
@@ -70,9 +71,19 @@ def mallar(oid, ctx, h=None):
         raise SystemExit(f"{oid} no es un órgano macizo de anatomia/organos (los tubos no se prototipan aquí)")
     pz = ctx.pieza(oid)
     mn, mx = pz["caja"]
-    V, F = P.superficie_por_campo(lambda p: mod.campo(oid, p, ctx), mn, mx, h or pz["h"], sigma=pz.get("sigma", 1.0))
+    h = h or pz["h"]
+    funcion = lambda p: mod.campo(oid, p, ctx)  # noqa: E731
+    V, F = P.superficie_por_campo(funcion, mn, mx, h, sigma=pz.get("sigma", 1.0))
     if len(F) == 0:
         raise SystemExit(f"{oid}: el campo no produjo superficie dentro de la caja {pz['caja']}")
+    # Blender remalla por vóxeles de tamaño v (materializar en generar_cavidades.py): si v es mayor que el
+    # paso de la rejilla, el detalle fino se pierde. Se imita extrayendo de nuevo la superficie a ese paso.
+    radio_min = pz.get("radio_min") or 3 * h
+    v = pz.get("voxel") or min(np.sqrt(2.0 * P.area_malla(V, F) / 9000), radio_min / 2.2)
+    v = max(v, 0.0012)
+    REMALLADO[oid] = round(float(v), 4)
+    if v > 1.15 * h:
+        V, F = P.superficie_por_campo(funcion, mn, mx, v, sigma=pz.get("sigma", 1.0))
     V, T = compactar(V, triangular(F))
     A = aristas(T)
     if pz.get("taubin", 4):
@@ -95,9 +106,10 @@ def a_polydata(V, T):
     pts = vtk.vtkPoints()
     pts.SetData(numpy_to_vtk(np.ascontiguousarray(V, dtype=float), deep=True))
     pd.SetPoints(pts)
-    celdas = np.hstack([np.full((len(T), 1), 3), T]).astype(np.int64).ravel()
+    desplazamientos = numpy_to_vtkIdTypeArray(np.arange(0, 3 * len(T) + 1, 3, dtype=np.int64), deep=True)
+    conectividad = numpy_to_vtkIdTypeArray(np.ascontiguousarray(T, dtype=np.int64).ravel(), deep=True)
     ca = vtk.vtkCellArray()
-    ca.SetCells(len(T), numpy_to_vtkIdTypeArray(celdas, deep=True))
+    ca.SetData(desplazamientos, conectividad)
     pd.SetPolys(ca)
     return pd
 
@@ -175,12 +187,15 @@ def metricas(V, T, oid, ctx, vecinos):
         "dimensiones_cm": [round(float(d) * 100, 1) for d in np.ptp(V, axis=0)],
         "cavidad_del_centroide": cav_centroide,
         "cavidad_esperada": meta["cavidad"],
+        # Resolución real de la malla final: Blender remalla por vóxeles de este tamaño antes de diezmar.
+        # Para conservar bordes finos o surcos, fije "voxel" en PIEZAS (p. ej., 0.004).
+        "voxel_remallado_m": REMALLADO.get(oid),
         "penetracion_en_vecinos": vecinos,
     }
     return m
 
 
-def penetracion(V, T, por_id, dir_modelos, excluir, umbral=0.003):
+def penetracion(V, T, por_id, excluir, umbral=0.003):
     """Profundidad máxima (m) de la malla dentro de las estructuras actuales cuya caja se solapa con ella."""
     import vtk
 
@@ -193,7 +208,7 @@ def penetracion(V, T, por_id, dir_modelos, excluir, umbral=0.003):
         (bmn, bmx) = (np.array(o["caja"][0]), np.array(o["caja"][1]))
         if np.any(bmn > mx) or np.any(mn > bmx):
             continue
-        Vb, Tb = leer_obj(Path(dir_modelos) / o["archivo"])
+        Vb, Tb = leer_obj(o["archivo"])
         superficie = a_polydata(Vb, Tb)
         muestra = V[:: max(1, len(V) // 4000)]
         # Dentro / fuera por rayos (robusto en mallas cerradas); profundidad = distancia a la superficie.
@@ -236,10 +251,20 @@ def main():
     ap.add_argument("--sin-hoja", action="store_true")
     ap.add_argument("--sin-diezmar", action="store_true")
     ap.add_argument("--antes", action="store_true", help="hoja de la malla actual para comparar")
+    ap.add_argument("--reemplazos", default="",
+                    help="carpetas de otros prototipos (separadas por comas) cuyas mallas sustituyen a las actuales "
+                         "como vecinas (penetración y hoja), p. ej. prototipos/corazon")
     a = ap.parse_args()
 
     manifiesto = json.loads((DIR_MODELOS / "manifiesto.json").read_text(encoding="utf-8"))
+    for o in manifiesto["objetos"]:
+        o["archivo"] = str((DIR_MODELOS / o["archivo"]).resolve())
     por_id = {o["objeto_id"]: o for o in manifiesto["objetos"]}
+    for carpeta in [c for c in a.reemplazos.split(",") if c]:
+        carpeta = Path(carpeta) if Path(carpeta).is_absolute() else (Path.cwd() / carpeta)
+        for m in json.loads((carpeta / "metricas.json").read_text(encoding="utf-8")):
+            por_id[m["objeto_id"]].update({"archivo": str((carpeta / "obj" / f"{m['objeto_id']}.obj").resolve()),
+                                           "caja": m["caja"], "centroide": m["centroide"]})
     salida = Path(a.salida or (RAIZ / "prototipos" / "_".join(a.ids)))
     (salida / "obj").mkdir(parents=True, exist_ok=True)
     ctx = leer_contexto(DIR_MODELOS)
@@ -252,7 +277,7 @@ def main():
             V, T = diezmar(V, T)
         escribir_obj(salida / "obj" / f"{oid}.obj", oid, V, T)
         excluir = {oid} | {b for par in cat.UNIONES if oid in par for b in par} | set(a.ids)
-        vec = penetracion(V, T, por_id, DIR_MODELOS, excluir)
+        vec = penetracion(V, T, por_id, excluir)
         m = metricas(V, T, oid, ctx, vec)
         m["segundos"] = round(time.time() - t0, 1)
         todas_metricas.append(m)
@@ -261,13 +286,11 @@ def main():
     # Manifiesto de la carpeta: las piezas nuevas y, como contexto, las actuales (rutas absolutas).
     objetos = []
     for o in manifiesto["objetos"]:
-        o = dict(o)
+        o = dict(por_id[o["objeto_id"]])
         if o["objeto_id"] in nuevos:
             m = nuevos[o["objeto_id"]]
             o.update({"archivo": f"obj/{o['objeto_id']}.obj", "n_triangulos": m["triangulos"],
                       "centroide": m["centroide"], "caja": m["caja"]})
-        else:
-            o["archivo"] = str((DIR_MODELOS / o["archivo"]).resolve())
         objetos.append(o)
     (salida / "manifiesto.json").write_text(json.dumps({**manifiesto, "objetos": objetos}, ensure_ascii=False),
                                             encoding="utf-8")
