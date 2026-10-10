@@ -1,0 +1,16 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "type": "java",
+      "name": "Run app.Main",
+      "request": "launch",
+      "mainClass": "app.Main",
+      "classPaths": [
+        "${workspaceFolder}/out",
+        "${workspaceFolder}/lib/*"
+      ],
+      "preLaunchTask": "build"
+    }
+  ]
+}

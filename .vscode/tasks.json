@@ -1,0 +1,33 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "build",
+      "type": "shell",
+      "command": "powershell",
+      "args": [
+        "-NoProfile",
+        "-ExecutionPolicy",
+        "Bypass",
+        "-Command",
+        "$javac = $null; if ($env:JAVA_HOME -and (Test-Path \"$env:JAVA_HOME\\bin\\javac.exe\")) { $javac = \"$env:JAVA_HOME\\bin\\javac.exe\" } elseif (Test-Path \"C:\\Program Files\\Eclipse Adoptium\") { $latestJdk = Get-ChildItem \"C:\\Program Files\\Eclipse Adoptium\" -Directory | Sort-Object Name -Descending | Select-Object -First 1; if ($latestJdk -and (Test-Path \"$($latestJdk.FullName)\\bin\\javac.exe\")) { $javac = \"$($latestJdk.FullName)\\bin\\javac.exe\" } }; if (-not $javac) { throw 'No se encontró javac. Instala un JDK o configura JAVA_HOME.' }; if (!(Test-Path out)) { New-Item -ItemType Directory out | Out-Null }; $files = Get-ChildItem -Recurse -Filter *.java src | ForEach-Object { $_.FullName }; & $javac -cp \"lib/*\" -d out $files"
+      ],
+      "group": {"kind": "build", "isDefault": true},
+      "problemMatcher": ["$javac"]
+    },
+    {
+      "label": "run",
+      "type": "shell",
+      "command": "powershell",
+      "args": [
+        "-NoProfile",
+        "-ExecutionPolicy",
+        "Bypass",
+        "-Command",
+        "$java = $null; if ($env:JAVA_HOME -and (Test-Path \"$env:JAVA_HOME\\bin\\java.exe\")) { $java = \"$env:JAVA_HOME\\bin\\java.exe\" } elseif (Test-Path \"C:\\Program Files\\Eclipse Adoptium\") { $latestJdk = Get-ChildItem \"C:\\Program Files\\Eclipse Adoptium\" -Directory | Sort-Object Name -Descending | Select-Object -First 1; if ($latestJdk -and (Test-Path \"$($latestJdk.FullName)\\bin\\java.exe\")) { $java = \"$($latestJdk.FullName)\\bin\\java.exe\" } }; if (-not $java) { throw 'No se encontró java. Instala un JDK o configura JAVA_HOME.' }; & $java -cp \"out;lib/*\" app.Main"
+      ],
+      "dependsOn": "build",
+      "group": {"kind": "test", "isDefault": true}
+    }
+  ]
+}
