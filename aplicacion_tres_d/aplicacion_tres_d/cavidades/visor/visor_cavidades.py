@@ -19,14 +19,15 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
 import numpy as np  # noqa: E402
 import vtk  # noqa: E402
-from PyQt5.QtCore import Qt, QStringListModel  # noqa: E402
+from PyQt5.QtCore import Qt, QStringListModel, QTimer  # noqa: E402
 from PyQt5.QtWidgets import (QApplication, QCheckBox, QCompleter, QGridLayout, QGroupBox, QLabel,  # noqa: E402
                              QLineEdit, QMainWindow, QPushButton, QSlider, QSplitter, QTextBrowser, QVBoxLayout,
                              QWidget)
 from vtkmodules.qt.QVTKRenderWindowInteractor import QVTKRenderWindowInteractor  # noqa: E402
 
 from visor.escena import DIR_MODELOS, Escena, configurar_render_realista  # noqa: E402
-from visor.explosion import FIN_DESVANECIDO, ControladorExplosion  # noqa: E402
+from visor.explosion import (ANGULO_VISTA, DURACION_TRANSICION, FACTOR_RUEDA, FIN_DESVANECIDO,  # noqa: E402
+                             ControladorExplosion, acercar_hacia, punto_bajo_cursor)
 from visor.repositorio_fichas import RepositorioFichas  # noqa: E402
 from visor.seleccion import UMBRAL_ARRASTRE_PX, Resaltador, Seleccionador  # noqa: E402
 
@@ -54,12 +55,14 @@ NOMBRE_LADO = {"IZQ": "izquierdo", "DER": "derecho", "MED": "medio / impar"}
 NOMBRE_CAPA = {0: "superficial (límite)", 1: "superficial", 2: "intermedia", 3: "profunda"}
 OPACIDAD_TRANSLUCIDA = 0.15
 DOBLE_CLIC_S = 0.35
-LEYENDA_GENERAL = ("<b>Atajos</b><br>Clic: seleccionar · clic repetido: estructura más profunda<br>"
+LEYENDA_GENERAL = ("<b>Atajos</b><br>Rueda del ratón: acercarse hacia el cursor<br>"
+                   "Clic: seleccionar · clic repetido: estructura más profunda<br>"
                    "1-5: Torácica / Abdominal / Inguinal / Pélvica / Referencias<br>"
                    "H: ocultar selección · A: mostrar todo · T: resto translúcido<br>"
                    "R: restablecer cámara · Esc: deseleccionar · F1-F5: vistas")
-LEYENDA_INMERSIVA = ("<b>Cómo explorar</b><br>Rueda del ratón: acercarse para separar la cavidad en sus "
-                     "componentes; alejarse para volver a ensamblarla.<br>Clic: ficha completa · clic repetido: "
+LEYENDA_INMERSIVA = ("<b>Cómo explorar</b><br>Rueda del ratón: acercarse hacia el cursor. Al acercarse, la "
+                     "cavidad se separa en sus componentes, que quedan fijos para poder acercarse a cualquiera; "
+                     "al alejarse se vuelve a ensamblar.<br>Clic: ficha completa · clic repetido: "
                      "estructura más profunda · doble clic o F: encuadrar la pieza<br>"
                      "L: etiquetas · T: resto translúcido · H: ocultar · A: mostrar todo · R: vista inicial · "
                      "Esc: deseleccionar · F1-F5: vistas")
@@ -111,26 +114,43 @@ def html_ficha(ficha, meta, profundidad, relacionados=()):
 
 
 class EstiloInteraccion(vtk.vtkInteractorStyleTrackballCamera):
-    """Trackball con distinción clic/arrastre y doble clic; las teclas las gestiona el visor."""
+    """Trackball con distinción clic/arrastre, doble clic y rueda hacia el cursor; las teclas las gestiona el visor."""
 
     def __init__(self, visor):
         super().__init__()
         self.visor = visor
         self._inicio = None
+        self._girando = False
         self._ultimo_clic = (0.0, None)
         self.AddObserver("LeftButtonPressEvent", self._presionar)
         self.AddObserver("LeftButtonReleaseEvent", self._soltar)
+        self.AddObserver("MouseMoveEvent", self._mover)
+        self.AddObserver("MouseWheelForwardEvent", lambda o, e: self._rueda(1))
+        self.AddObserver("MouseWheelBackwardEvent", lambda o, e: self._rueda(-1))
         self.AddObserver("CharEvent", lambda o, e: None)  # anula los atajos por defecto de VTK (q, e, w, 3…)
         self.AddObserver("KeyPressEvent", self._tecla)
 
     def _presionar(self, obj, evento):
+        # El giro empieza al arrastrar: un clic no mueve la cámara (ni, por tanto, el despiece).
         self._inicio = self.GetInteractor().GetEventPosition()
-        self.OnLeftButtonDown()
+        self._girando = False
+
+    def _mover(self, obj, evento):
+        if self._inicio and not self._girando:
+            x, y = self.GetInteractor().GetEventPosition()
+            if max(abs(x - self._inicio[0]), abs(y - self._inicio[1])) >= UMBRAL_ARRASTRE_PX:
+                self._girando = True
+                self.OnLeftButtonDown()
+        self.OnMouseMove()
+
+    def _rueda(self, sentido):
+        self.visor.rueda(*self.GetInteractor().GetEventPosition(), sentido)
 
     def _soltar(self, obj, evento):
         fin = self.GetInteractor().GetEventPosition()
-        self.OnLeftButtonUp()
-        if self._inicio and max(abs(fin[0] - self._inicio[0]), abs(fin[1] - self._inicio[1])) < UMBRAL_ARRASTRE_PX:
+        if self._girando:
+            self.OnLeftButtonUp()
+        elif self._inicio:
             ahora = time.time()
             t_prev, p_prev = self._ultimo_clic
             if p_prev and ahora - t_prev < DOBLE_CLIC_S and abs(fin[0] - p_prev[0]) + abs(fin[1] - p_prev[1]) < 8:
@@ -140,6 +160,7 @@ class EstiloInteraccion(vtk.vtkInteractorStyleTrackballCamera):
                 self.visor.clic(*fin)
                 self._ultimo_clic = (ahora, fin)
         self._inicio = None
+        self._girando = False
 
     def _tecla(self, obj, evento):
         self.visor.tecla(self.GetInteractor().GetKeySym())
@@ -182,9 +203,14 @@ class VisorCavidades(QMainWindow):
         self.interactor = self.ventana.GetInteractor()
         self.interactor.SetInteractorStyle(EstiloInteraccion(self))
         self._actualizando = False
+        # Transición animada entre la cavidad ensamblada y separada.
+        self.temporizador = QTimer(self)
+        self.temporizador.setInterval(15)
+        self.temporizador.timeout.connect(self._paso_transicion)
+        self._seguir = None
+        self._t_previo = 0.0
         self.vista(VISTA_INICIAL[cavidad])
         if self.explosion:
-            self.explosion.calibrar()
             self.renderer.GetActiveCamera().AddObserver("ModifiedEvent", self._camara_cambiada)
         self.tiempo_carga = time.time() - t0
         self.inicio = time.time()
@@ -267,23 +293,60 @@ class VisorCavidades(QMainWindow):
 
     # ------------------------------------------------------------------ despiece
     def _camara_cambiada(self, obj, evento):
-        if self._actualizando or not self.explosion or not self.explosion.automatico:
+        if not self._actualizando:
+            self._tras_mover_camara()
+
+    def _tras_mover_camara(self, seguir=None):
+        """Tras mover la cámara: etiquetas y, si se cruza un umbral, transición entre ensamblada y separada.
+
+        Girar o acercarse sin cruzar un umbral no mueve las piezas. `seguir` es la pieza que la cámara
+        acompaña durante la transición (la que estaba bajo el cursor o la encuadrada).
+        """
+        if not self.explosion:
             return
         self._actualizando = True
         try:
-            self._refrescar_despiece()
+            self.explosion.colocar_etiquetas()
+            self.seleccionador.reiniciar()
+            if self.explosion.automatico:
+                objetivo = self.explosion.objetivo_segun_distancia()
+                if objetivo != self.explosion.objetivo or (self.explosion.t != objetivo
+                                                           and not self.temporizador.isActive()):
+                    self._iniciar_transicion(objetivo, seguir)
         finally:
             self._actualizando = False
 
-    def _refrescar_despiece(self, t=None):
-        if t is None:
-            self.explosion.actualizar()
-        else:
-            self.explosion.aplicar(t)
+    def _iniciar_transicion(self, objetivo, seguir=None):
+        self.explosion.objetivo = objetivo
+        self._seguir = seguir if objetivo > 0.5 else None
+        self._t_previo = time.time()
+        if not self.temporizador.isActive():
+            self.temporizador.start()
+
+    def _paso_transicion(self):
+        ahora = time.time()
+        paso = (ahora - self._t_previo) / DURACION_TRANSICION
+        self._t_previo = ahora
+        t0, objetivo = self.explosion.t, self.explosion.objetivo
+        t = min(t0 + paso, objetivo) if objetivo > t0 else max(t0 - paso, objetivo)
+        self._actualizando = True
+        try:
+            if t < t0:  # al ensamblarse, la cavidad vuelve al centro de la vista
+                self.explosion.recentrar((t0 - t) / t0)
+            self.explosion.aplicar(t, seguir=self._seguir)
+            self._refrescar_interfaz()
+        finally:
+            self._actualizando = False
+        if t == objetivo:
+            self.temporizador.stop()
+            self._seguir = None
+            self.seleccionador.reiniciar()
+        self.ventana.Render()
+
+    def _refrescar_interfaz(self):
         self.resaltador.seguir()
         if self.seleccion == self.explosion.envoltura and self.explosion.t > FIN_DESVANECIDO / 2:
             self.deseleccionar(renderizar=False)  # la envoltura se ha desvanecido
-        self.seleccionador.reiniciar()
         self.indicador.setText(f"Separación: {100 * self.explosion.e:.0f} %")
         if self.explosion.automatico:
             self.deslizador.blockSignals(True)
@@ -294,21 +357,49 @@ class VisorCavidades(QMainWindow):
     def _cambiar_automatico(self, estado):
         self.explosion.automatico = bool(estado)
         self.deslizador.setEnabled(not estado)
-        self._refrescar_despiece()
+        if estado:
+            self._tras_mover_camara()  # vuelve al estado que corresponde a la distancia
+        else:
+            self.temporizador.stop()
         self.ventana.Render()
 
     def _deslizador_movido(self, valor):
         if not self.explosion.automatico:
-            self._refrescar_despiece(valor / 100.0)
+            self._actualizando = True
+            try:
+                self.explosion.aplicar(valor / 100.0)
+                self.explosion.objetivo = 1.0 if self.explosion.t >= 0.5 else 0.0
+                self._refrescar_interfaz()
+            finally:
+                self._actualizando = False
+            self.seleccionador.reiniciar()
             self.ventana.Render()
 
     def _cambiar_etiquetas(self, estado):
         self.explosion.etiquetas_activas = bool(estado)
-        self._refrescar_despiece(None if self.explosion.automatico else self.explosion.t)
+        self.explosion.colocar_etiquetas()
+        self.ventana.Render()
+
+    def rueda(self, x, y, sentido):
+        """Acerca o aleja la cámara hacia el punto bajo el cursor.
+
+        Si al acercarse la cavidad se separa, la cámara acompaña a la pieza que estaba bajo el cursor.
+        """
+        envoltura = [self.explosion.envoltura] if self.explosion and self.explosion.envoltura else []
+        oid, punto = self.seleccionador.punto_en(x, y, envoltura)
+        if punto is None:
+            punto = punto_bajo_cursor(self.renderer, x, y)
+        self._actualizando = True
+        try:
+            acercar_hacia(self.renderer.GetActiveCamera(), punto, FACTOR_RUEDA if sentido > 0 else 1.0 / FACTOR_RUEDA)
+        finally:
+            self._actualizando = False
+        self._tras_mover_camara(seguir=oid)
+        self.renderer.ResetCameraClippingRange()
         self.ventana.Render()
 
     def encuadrar_seleccion(self):
-        """Acerca la cámara a la pieza seleccionada (en el modo inmersivo esto la separa por completo)."""
+        """Acerca la cámara a la pieza seleccionada; en el modo inmersivo la cavidad se abre y la cámara la acompaña."""
         if not self.seleccion:
             return
         m = self.escena.meta[self.seleccion]
@@ -317,15 +408,18 @@ class VisorCavidades(QMainWindow):
         cam = self.renderer.GetActiveCamera()
         direccion = np.array(cam.GetPosition()) - np.array(cam.GetFocalPoint())
         direccion /= np.linalg.norm(direccion)
-        distancia = max(2.2 * tam, 0.25)
-        if self.explosion:
-            distancia = min(distancia, self.explosion.d_cerca)
-        cam.SetFocalPoint(*centro)
-        cam.SetPosition(*(centro + direccion * distancia))
-        if self.explosion:  # la pieza se mueve al separarse: se recentra tras aplicar el despiece
-            centro = self.explosion.posicion_actual(self.seleccion)
+        abrir = bool(self.explosion and self.explosion.automatico and self.seleccion != self.explosion.envoltura)
+        angulo = ANGULO_VISTA[1] if abrir else cam.GetViewAngle()
+        distancia = max(0.6 * tam / np.tan(np.radians(angulo) / 2), 0.12)
+        if abrir:  # por debajo del umbral de separación: la cavidad se abre (o sigue abierta)
+            distancia = min(distancia, 0.95 * self.explosion.umbral_separar)
+        self._actualizando = True
+        try:
             cam.SetFocalPoint(*centro)
             cam.SetPosition(*(centro + direccion * distancia))
+        finally:
+            self._actualizando = False
+        self._tras_mover_camara(seguir=self.seleccion)
         self.renderer.ResetCameraClippingRange()
         self.ventana.Render()
 
@@ -407,20 +501,30 @@ class VisorCavidades(QMainWindow):
             if m["cavidad"] != "referencia" and not m["envoltura"]:
                 actor.SetVisibility(True)
         if self.explosion:
-            self._refrescar_despiece(None if self.explosion.automatico else self.explosion.t)
+            self.explosion.colocar_etiquetas()
+            self._refrescar_interfaz()
         self.ventana.Render()
 
     def vista(self, nombre):
+        manual = None
         if self.explosion:  # las vistas se calculan con la cavidad ensamblada
+            self.temporizador.stop()
+            self._seguir = None
+            manual = None if self.explosion.automatico else self.explosion.t
             self._actualizando = True
+            self.explosion.objetivo = 0.0
             self.explosion.aplicar(0.0)
         self.escena.aplicar_vista(nombre)
         if nombre == "craneal" and self.cavidad == "inguinal":  # oblicua desde craneoventral
             self.renderer.GetActiveCamera().Elevation(-25)
             self.renderer.GetActiveCamera().OrthogonalizeViewUp()
         if self.explosion:
+            self.explosion.calibrar()
+            if manual:
+                self.explosion.aplicar(manual)
+                self.explosion.objetivo = 1.0 if manual >= 0.5 else 0.0
+            self._refrescar_interfaz()
             self._actualizando = False
-            self._refrescar_despiece(None if self.explosion.automatico else self.explosion.t)
         self.seleccionador.reiniciar()
         self.ventana.Render()
 

@@ -85,8 +85,74 @@ def test_de_cerca_se_despieza(toracica):
 def test_al_alejarse_se_vuelve_a_ensamblar(toracica):
     ren, ventana, escena, ctl = toracica
     _acercar(ren, ctl, 0.55)
-    _acercar(ren, ctl, 1.0)
+    _acercar(ren, ctl, 0.95)  # histéresis: todavía separada
+    assert ctl.e == pytest.approx(1.0)
+    _acercar(ren, ctl, 1.2)
     assert ctl.e == 0.0 and escena.actores[ctl.envoltura].GetVisibility()
+
+
+def _posiciones(escena, ctl):
+    return {o: np.array(escena.actores[o].GetPosition()) for o in ctl.desplazamiento}
+
+
+def test_abierta_las_piezas_no_se_mueven_al_acercarse_ni_al_girar(toracica):
+    """Con la cavidad separada, acercarse a una pieza o girar la cámara no la desplaza."""
+    ren, _, escena, ctl = toracica
+    _acercar(ren, ctl, 1.2)
+    _acercar(ren, ctl, 0.6)
+    antes, angulo = _posiciones(escena, ctl), ren.GetActiveCamera().GetViewAngle()
+    for factor in (0.4, 0.2, 0.1, 0.9):
+        _acercar(ren, ctl, factor)
+        assert ren.GetActiveCamera().GetViewAngle() == pytest.approx(angulo)
+    cam = ren.GetActiveCamera()
+    for grados in (3.0, 40.0, -75.0):  # incluye giros pequeños, como el de un clic
+        cam.Azimuth(grados)
+        cam.Elevation(grados / 3)
+        cam.OrthogonalizeViewUp()
+        ctl.actualizar()
+    despues = _posiciones(escena, ctl)
+    assert all(np.allclose(antes[o], despues[o]) for o in antes)
+    ctl.objetivo = 0.0  # vuelve a la vista lateral con la cavidad ensamblada
+    ctl.aplicar(0.0)
+    escena.aplicar_vista("lateral_izquierda")
+    ctl.calibrar()
+
+
+def test_la_camara_acompana_a_la_pieza_al_separarse(toracica):
+    """La pieza que se sigue conserva su píxel durante la transición (no «se escapa» al acercarse)."""
+    ren, ventana, escena, ctl = toracica
+    _acercar(ren, ctl, 1.2)
+    _acercar(ren, ctl, 0.9)
+    assert ctl.t == 0.0
+    oid = "TOR_PULMON_IZQ"
+    inicio = np.array(_a_pantalla(ren, ctl.posicion_actual(oid)))
+    for t in np.linspace(0.05, 1.0, 20):
+        ctl.aplicar(t, seguir=oid)
+        assert np.abs(np.array(_a_pantalla(ren, ctl.posicion_actual(oid))) - inicio).max() <= 2
+    assert np.linalg.norm(escena.actores[oid].GetPosition()) > 0.2
+
+
+def test_acercar_hacia_el_cursor(toracica):
+    """La rueda acerca la cámara hacia el punto bajo el cursor sin que este cambie de píxel."""
+    from visor.explosion import acercar_hacia, punto_bajo_cursor
+
+    ren, _, escena, ctl = toracica
+    _acercar(ren, ctl, 1.2)
+    cam = ren.GetActiveCamera()
+    punto = np.array(escena.meta["TOR_CORAZON"]["centroide"])
+    pixel = np.array(_a_pantalla(ren, punto))
+    d0 = cam.GetDistance()
+    for _ in range(5):
+        assert acercar_hacia(cam, punto, 1.2)
+        assert np.abs(np.array(_a_pantalla(ren, punto)) - pixel).max() <= 1
+    assert cam.GetDistance() == pytest.approx(d0 / 1.2 ** 5)
+    # Nunca atraviesa el punto: se detiene a la distancia mínima.
+    for _ in range(200):
+        acercar_hacia(cam, punto, 1.2)
+    assert np.linalg.norm(np.array(cam.GetPosition()) - punto) >= 0.03 - 1e-9
+    # El punto del plano focal bajo un píxel está en ese píxel.
+    q = punto_bajo_cursor(ren, 300, 200)
+    assert np.abs(np.array(_a_pantalla(ren, q)) - (300, 200)).max() <= 1
 
 
 def test_despiece_no_va_hacia_la_camara(toracica):

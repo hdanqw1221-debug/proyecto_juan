@@ -3,7 +3,8 @@
 Desde lejos se ve la cavidad como un todo (su envoltura). Al acercar la cámara
 la envoltura se desvanece y los componentes se separan siguiendo vectores
 anatómicos (pulmones hacia los lados, corazón ventral, diafragma caudal…),
-con una etiqueta flotante sobre cada uno.
+con una etiqueta flotante sobre cada uno. Una vez abierta, las piezas quedan
+fijas: se puede girar y acercarse a cualquiera de ellas sin que se desplace.
 """
 import numpy as np
 import vtk
@@ -38,13 +39,21 @@ EXTRA_INGUINAL = {
     "ING_CONDUCTO_DEFERENTE": (0.0, -0.02, 0.08),
 }
 
-# Tramos del factor de proximidad t (0 lejos, 1 cerca).
+# Despiece en dos estados (cavidad ensamblada / separada) con histéresis sobre la distancia de la cámara:
+# se separa al acercarse por debajo de RELACION_SEPARAR y se vuelve a ensamblar al alejarse por encima de
+# RELACION_ENSAMBLAR (fracciones de la distancia de la vista completa). Entre ambos, acercarse, alejarse o
+# girar no mueve las piezas.
+RELACION_SEPARAR = 0.85
+RELACION_ENSAMBLAR = 1.0
+DURACION_TRANSICION = 0.6  # s que dura la animación entre los dos estados
+# Tramos del punto de la transición t (0 ensamblada, 1 separada).
 FIN_DESVANECIDO = 0.40   # la envoltura desaparece entre t = 0 y este valor
 INICIO_DESPIECE = 0.20   # los componentes empiezan a separarse
 UMBRAL_ETIQUETAS = 0.35  # factor de despiece a partir del cual se muestran las etiquetas
-RELACION_CERCA = 0.60    # distancia "cerca" respecto a la distancia de la vista completa
 ANGULO_VISTA = (30.0, 58.0)  # el campo de visión se abre al separarse las piezas (inmersión)
 PROFUNDIDAD_CONSERVADA = 0.25  # fracción del desplazamiento hacia/desde la cámara que se mantiene
+FACTOR_RUEDA = 1.2       # acercamiento por cada paso de la rueda del ratón
+DISTANCIA_MINIMA = 0.03  # m: la cámara no se acerca más que esto al punto bajo el cursor
 
 
 def texto_etiqueta(nombre):
@@ -62,6 +71,36 @@ def suave(x):
     return x * x * (3.0 - 2.0 * x)
 
 
+def acercar_hacia(camara, punto, factor, distancia_minima=DISTANCIA_MINIMA):
+    """Acerca (factor > 1) o aleja la cámara hacia `punto` sin que este cambie de sitio en pantalla.
+
+    La cámara avanza por la recta que la une con el punto, sin girar, y la distancia al foco se divide
+    por `factor`: lo que está bajo el cursor sigue bajo el cursor (acercamiento hacia el cursor).
+    """
+    pos = np.array(camara.GetPosition())
+    foco = np.array(camara.GetFocalPoint())
+    punto = np.asarray(punto, dtype=float)
+    if factor > 1.0:
+        factor = min(factor, np.linalg.norm(punto - pos) / distancia_minima)
+        if factor <= 1.0:
+            return False
+    nueva = punto + (pos - punto) / factor
+    camara.SetPosition(*nueva)
+    camara.SetFocalPoint(*(nueva + (foco - pos) / factor))
+    return True
+
+
+def punto_bajo_cursor(renderer, x, y):
+    """Punto del plano focal que está bajo el píxel (x, y)."""
+    foco = renderer.GetActiveCamera().GetFocalPoint()
+    renderer.SetWorldPoint(foco[0], foco[1], foco[2], 1.0)
+    renderer.WorldToDisplay()
+    renderer.SetDisplayPoint(x, y, renderer.GetDisplayPoint()[2])
+    renderer.DisplayToWorld()
+    w = renderer.GetWorldPoint()
+    return np.array(w[:3]) / w[3]
+
+
 class ControladorExplosion:
     def __init__(self, renderer, escena, cavidad, etiquetas=True):
         self.renderer = renderer
@@ -72,8 +111,10 @@ class ControladorExplosion:
         self.etiquetas_activas = etiquetas
         self.t = 0.0
         self.e = 0.0
+        self.objetivo = 0.0  # estado hacia el que va el despiece (0 ensamblada, 1 separada)
         self.d_lejos = None
-        self.d_cerca = None
+        self.umbral_separar = None
+        self.umbral_ensamblar = None
         meta_env = escena.meta.get(self.envoltura)
         if meta_env:
             self.centro = np.array(meta_env["centroide"])
@@ -128,24 +169,40 @@ class ControladorExplosion:
     # ------------------------------------------------------------------ cámara
     def calibrar(self):
         """Toma la distancia actual de la cámara como la vista completa (cavidad ensamblada)."""
-        cam = self.renderer.GetActiveCamera()
-        self.d_lejos = cam.GetDistance()
-        self.d_cerca = RELACION_CERCA * self.d_lejos
+        self.d_lejos = self.renderer.GetActiveCamera().GetDistance()
+        self.umbral_separar = RELACION_SEPARAR * self.d_lejos
+        self.umbral_ensamblar = RELACION_ENSAMBLAR * self.d_lejos
 
-    def factor_proximidad(self):
+    def objetivo_segun_distancia(self):
+        """Estado que corresponde a la distancia de la cámara, con histéresis."""
         if not self.d_lejos:
-            return 0.0
+            return self.objetivo
         d = self.renderer.GetActiveCamera().GetDistance()
-        return float(np.clip((self.d_lejos - d) / (self.d_lejos - self.d_cerca), 0.0, 1.0))
+        if self.objetivo < 0.5 and d < self.umbral_separar:
+            return 1.0
+        if self.objetivo >= 0.5 and d > self.umbral_ensamblar:
+            return 0.0
+        return self.objetivo
 
     def actualizar(self):
-        """Recalcula el despiece a partir de la distancia de la cámara (modo automático)."""
+        """Aplica sin animación el estado que corresponde a la distancia (capturas y pruebas)."""
         if self.automatico:
-            self.aplicar(self.factor_proximidad())
+            self.objetivo = self.objetivo_segun_distancia()
+            self.aplicar(self.objetivo)
 
     # ------------------------------------------------------------------ despiece
-    def aplicar(self, t):
-        self.t = float(np.clip(t, 0.0, 1.0))
+    def aplicar(self, t, seguir=None):
+        """Coloca el despiece en el punto t de la transición (0 ensamblada, 1 separada).
+
+        Las direcciones de separación se fijan al empezar a separarse y no cambian mientras la cavidad
+        está abierta: girar la cámara o acercarse a una pieza no la mueve.
+        seguir: objeto_id que conserva su posición en pantalla (la cámara lo acompaña al desplazarse).
+        """
+        t = float(np.clip(t, 0.0, 1.0))
+        if self.t <= 0.0 < t:
+            self._vectores_pantalla()
+        antes = self._en_camara(seguir) if seguir in self.desplazamiento else None
+        self.t = t
         a = suave(self.t / FIN_DESVANECIDO)
         if self.envoltura:
             actor = self.escena.actores[self.envoltura]
@@ -155,14 +212,50 @@ class ControladorExplosion:
             actor.SetVisibility(opacidad > 0.02)
             actor.SetPickable(opacidad > 0.5)  # desde lejos el clic informa sobre la cavidad completa
         self.e = suave((self.t - INICIO_DESPIECE) / (1.0 - INICIO_DESPIECE))
-        self._vectores_pantalla()
         # Al separarse las piezas ocupan más que la cavidad ensamblada: se abre el campo de visión.
         self.renderer.GetActiveCamera().SetViewAngle(ANGULO_VISTA[0] + (ANGULO_VISTA[1] - ANGULO_VISTA[0]) * self.e)
         for oid, v in self.en_pantalla.items():
             self.escena.actores[oid].SetPosition(*(v * self.e))
-        self._colocar_etiquetas()
+        if antes is not None:
+            self._conservar_en_pantalla(seguir, antes)
+        self.colocar_etiquetas()
 
-    def _colocar_etiquetas(self):
+    def recentrar(self, fraccion):
+        """Desplaza la cámara, sin girarla, una fracción del camino hacia el centro de la cavidad."""
+        cam = self.renderer.GetActiveCamera()
+        delta = (self.centro - np.array(cam.GetFocalPoint())) * float(np.clip(fraccion, 0.0, 1.0))
+        cam.SetFocalPoint(*(np.array(cam.GetFocalPoint()) + delta))
+        cam.SetPosition(*(np.array(cam.GetPosition()) + delta))
+
+    def _base_camara(self):
+        cam = self.renderer.GetActiveCamera()
+        pos = np.array(cam.GetPosition())
+        adelante = np.array(cam.GetFocalPoint()) - pos
+        distancia = np.linalg.norm(adelante)
+        adelante /= distancia
+        arriba = np.array(cam.GetViewUp())
+        arriba = arriba - np.dot(arriba, adelante) * adelante
+        arriba /= np.linalg.norm(arriba)
+        return pos, adelante, arriba, np.cross(adelante, arriba), distancia
+
+    def _en_camara(self, oid):
+        """Profundidad y desplazamiento lateral de una pieza respecto a la cámara."""
+        pos, adelante, arriba, derecha, _ = self._base_camara()
+        rel = self.posicion_actual(oid) - pos
+        tangente = np.tan(np.radians(self.renderer.GetActiveCamera().GetViewAngle()) / 2)
+        return np.dot(rel, adelante), np.dot(rel, derecha), np.dot(rel, arriba), tangente
+
+    def _conservar_en_pantalla(self, oid, antes):
+        """Traslada la cámara para que la pieza siga en el mismo píxel y a la misma profundidad."""
+        z, a, b, tangente = antes
+        cam = self.renderer.GetActiveCamera()
+        _, adelante, arriba, derecha, distancia = self._base_camara()
+        k = np.tan(np.radians(cam.GetViewAngle()) / 2) / tangente  # el campo de visión puede haber cambiado
+        nueva = self.posicion_actual(oid) - z * adelante - k * (a * derecha + b * arriba)
+        cam.SetPosition(*nueva)
+        cam.SetFocalPoint(*(nueva + distancia * adelante))
+
+    def colocar_etiquetas(self):
         """Muestra las etiquetas que caben sin solaparse en pantalla, empezando por las piezas más grandes."""
         ocupadas = []
         opacidad = min(1.0, (self.e - UMBRAL_ETIQUETAS) / 0.25)
