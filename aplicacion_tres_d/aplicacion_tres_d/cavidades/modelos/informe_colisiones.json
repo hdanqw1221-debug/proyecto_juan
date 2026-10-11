@@ -1,72 +1,58 @@
 {
   "colisiones": [
     {
-      "a": "ABD_AORTA",
-      "b": "ABD_COLON_DESCENDENTE",
-      "profundidad_inicial_m": 0.0104,
-      "corregida": false,
-      "motivo": "amoldado en el campo"
-    },
-    {
       "a": "ABD_A_MESENTERICA_CRANEAL",
       "b": "ABD_DUODENO",
-      "profundidad_inicial_m": 0.014,
+      "profundidad_inicial_m": 0.0239,
       "corregida": false,
       "motivo": "amoldado en el campo"
     },
     {
       "a": "ABD_COLON_DESCENDENTE",
       "b": "ABD_URETER_IZQ",
-      "profundidad_inicial_m": 0.011,
+      "profundidad_inicial_m": 0.0115,
       "corregida": false,
       "motivo": "amoldado en el campo"
     },
     {
       "a": "ABD_COLON_DESCENDENTE",
       "b": "ABD_YEYUNO",
-      "profundidad_inicial_m": 0.0326,
+      "profundidad_inicial_m": 0.0302,
       "corregida": false,
       "motivo": "amoldado en el campo"
     },
     {
       "a": "ABD_COLON_DORSAL_DER",
       "b": "ABD_COLON_VENTRAL_DER",
-      "profundidad_inicial_m": 0.0194,
+      "profundidad_inicial_m": 0.0176,
       "corregida": false,
       "motivo": "amoldado en el campo"
     },
     {
       "a": "ABD_COLON_TRANSVERSO",
-      "b": "ABD_DUODENO",
-      "profundidad_inicial_m": 0.0198,
+      "b": "ABD_YEYUNO",
+      "profundidad_inicial_m": 0.0459,
       "corregida": false,
       "motivo": "amoldado en el campo"
     },
     {
       "a": "ABD_COLON_VENTRAL_DER",
       "b": "ABD_ILEON",
-      "profundidad_inicial_m": 0.0176,
+      "profundidad_inicial_m": 0.0188,
       "corregida": false,
       "motivo": "amoldado en el campo"
     },
     {
       "a": "ABD_DUODENO",
-      "b": "ABD_RINON_IZQ",
-      "profundidad_inicial_m": 0.0198,
-      "corregida": false,
-      "motivo": "amoldado en el campo"
-    },
-    {
-      "a": "ABD_DUODENO",
-      "b": "ABD_URETER_IZQ",
-      "profundidad_inicial_m": 0.0131,
+      "b": "ABD_HIGADO",
+      "profundidad_inicial_m": 0.0179,
       "corregida": false,
       "motivo": "amoldado en el campo"
     },
     {
       "a": "ABD_VENA_CAVA_CAUDAL",
       "b": "TOR_PULMON_DER",
-      "profundidad_inicial_m": 0.0146,
+      "profundidad_inicial_m": 0.0153,
       "corregida": false,
       "motivo": "conducto fino"
     },
@@ -199,59 +185,59 @@
   ],
   "desplazamientos_lineas_medias": {
     "ABD_ESTOMAGO": {
-      "max_m": 0.12,
-      "medio_m": 0.07
+      "max_m": 0.103,
+      "medio_m": 0.061
     },
     "ABD_DUODENO": {
-      "max_m": 0.211,
-      "medio_m": 0.108
+      "max_m": 0.173,
+      "medio_m": 0.084
     },
     "ABD_YEYUNO": {
-      "max_m": 0.169,
-      "medio_m": 0.069
+      "max_m": 0.17,
+      "medio_m": 0.074
     },
     "ABD_ILEON": {
-      "max_m": 0.056,
-      "medio_m": 0.044
-    },
-    "ABD_CIEGO": {
-      "max_m": 0.112,
-      "medio_m": 0.037
-    },
-    "ABD_COLON_VENTRAL_DER": {
-      "max_m": 0.35,
-      "medio_m": 0.151
-    },
-    "ABD_FLEXURA_ESTERNAL": {
-      "max_m": 0.221,
-      "medio_m": 0.139
-    },
-    "ABD_COLON_VENTRAL_IZQ": {
-      "max_m": 0.228,
-      "medio_m": 0.095
-    },
-    "ABD_FLEXURA_PELVICA": {
-      "max_m": 0.094,
-      "medio_m": 0.059
-    },
-    "ABD_COLON_DORSAL_IZQ": {
-      "max_m": 0.2,
+      "max_m": 0.078,
       "medio_m": 0.056
     },
+    "ABD_CIEGO": {
+      "max_m": 0.119,
+      "medio_m": 0.038
+    },
+    "ABD_COLON_VENTRAL_DER": {
+      "max_m": 0.351,
+      "medio_m": 0.154
+    },
+    "ABD_FLEXURA_ESTERNAL": {
+      "max_m": 0.223,
+      "medio_m": 0.146
+    },
+    "ABD_COLON_VENTRAL_IZQ": {
+      "max_m": 0.242,
+      "medio_m": 0.091
+    },
+    "ABD_FLEXURA_PELVICA": {
+      "max_m": 0.099,
+      "medio_m": 0.066
+    },
+    "ABD_COLON_DORSAL_IZQ": {
+      "max_m": 0.185,
+      "medio_m": 0.058
+    },
     "ABD_FLEXURA_DIAFRAGMATICA": {
-      "max_m": 0.147,
-      "medio_m": 0.106
+      "max_m": 0.194,
+      "medio_m": 0.12
     },
     "ABD_COLON_DORSAL_DER": {
-      "max_m": 0.182,
-      "medio_m": 0.116
+      "max_m": 0.168,
+      "medio_m": 0.112
     },
     "ABD_COLON_TRANSVERSO": {
-      "max_m": 0.107,
-      "medio_m": 0.079
+      "max_m": 0.143,
+      "medio_m": 0.117
     },
     "ABD_COLON_DESCENDENTE": {
-      "max_m": 0.14,
+      "max_m": 0.141,
       "medio_m": 0.053
     }
   },
@@ -330,6 +316,11 @@
       "objeto": "ING_VASOS_TESTICULARES",
       "cambio": "Trayecto pegado a la pared dorsolateral (retroperitoneal).",
       "motivo": "El trayecto recto cruzaba el colon izquierdo y la flexura pélvica."
+    },
+    {
+      "objeto": "ABD_DUODENO",
+      "cambio": "Porción ascendente a z ≈ 0,53 (antes 0,57–0,58), caudal a la raíz de la a. mesentérica craneal.",
+      "motivo": "Pasa ventral al riñón izquierdo sin solaparlo (antes 2 cm) y caudal a la raíz del mesenterio, como en el animal."
     },
     {
       "objeto": "ESTOMAGO_CIEGO_COLON_MAYOR",

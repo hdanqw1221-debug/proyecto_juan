@@ -311,6 +311,10 @@ def construir_diafragma():
     cv, cf = diafragma.cortadores()
     _booleano(obj, cv, cf, "DIFFERENCE")
     aplicar_modificador(obj, "TRIANGULATE")
+    n_tris = len(malla_a_numpy(obj.data)[1])
+    if n_tris > TRIS_MAX:  # los pilares suman triángulos a la lámina
+        aplicar_modificador(obj, "DECIMATE", decimate_type="COLLAPSE", ratio=(TRIS_MAX * 0.97) / n_tris)
+        aplicar_modificador(obj, "TRIANGULATE")
     configurar_objeto(obj, meta)
 
 
@@ -427,7 +431,11 @@ def lineas_finales():
         curva = finales[oid][0]
         antes = tubos.holgura_entre_asas(curva, r_ext[oid]) if tubos.en_meandro(oid) else np.inf
         if antes < 0.012:
-            curva = tubos.separar_asas(curva, r_ext[oid], restriccion=tubos.restriccion_relajacion)
+            # Pasadas sucesivas: el suavizado de cada una frena la separación de las asas más apretadas.
+            for _ in range(3):
+                curva = tubos.separar_asas(curva, r_ext[oid], restriccion=tubos.restriccion_relajacion)
+                if tubos.holgura_entre_asas(curva, r_ext[oid]) >= 0.012:
+                    break
             finales[oid] = (curva, finales[oid][1])
             log(f"{oid}: asas separadas (holgura mínima {antes * 100:.1f} -> "
                 f"{tubos.holgura_entre_asas(curva, r_ext[oid]) * 100:.1f} cm)")
@@ -482,12 +490,13 @@ def cardias_relajado():
 
 
 def construir_abdominal():
-    construir_macizos_abdominales()
+    # La relajación solo usa la forma de los órganos macizos (obstáculos); sus mallas se construyen
+    # después de los tubos para que puedan tallar las impresiones que declaran (p. ej., el bazo la del
+    # estómago y el páncreas la del duodeno).
     relajar_cadenas()
     ESTADO["ctx"].lineas.update(lineas_finales())
-    construir_tubos_digestivos()
-    if estomago.USAR_CAMPO:
-        construir_organo("ABD_ESTOMAGO")
+    construir_tubos_digestivos()  # incluye el estómago
+    construir_macizos_abdominales()
     # Esófago torácico prolongado hasta el cardias relajado.
     cardias = cardias_relajado()
     spec = {"recorte": E.TUBOS["TOR_ESOFAGO"]["recorte"], "partes": [dict(E.TUBOS["TOR_ESOFAGO"]["partes"][0])]}
