@@ -205,4 +205,18 @@ UNIONES = {frozenset(p) for p in [
     # Estructuras que atraviesan las aberturas del diafragma.
     ("TOR_AORTA", "TOR_DIAFRAGMA"), ("ABD_AORTA", "TOR_DIAFRAGMA"), ("TOR_ESOFAGO", "TOR_DIAFRAGMA"),
     ("TOR_VENA_CAVA_CAUDAL", "TOR_DIAFRAGMA"), ("ABD_VENA_CAVA_CAUDAL", "TOR_DIAFRAGMA"),
+] + [
+    # Región inguinal: el cordón espermático (con la túnica vaginal) contiene los vasos testiculares y el
+    # conducto deferente, pasa por el conducto y los anillos inguinales y se une al testículo y al epidídimo.
+    (f"{a}_{lado}", f"{b}_{lado}") for lado in ("IZQ", "DER") for a, b in [
+        ("ING_CORDON_ESPERMATICO", "ING_VASOS_TESTICULARES"), ("ING_CORDON_ESPERMATICO", "ING_CONDUCTO_DEFERENTE"),
+        ("ING_CORDON_ESPERMATICO", "ING_CANAL_INGUINAL"), ("ING_CORDON_ESPERMATICO", "ING_ANILLO_PROFUNDO"),
+        ("ING_CORDON_ESPERMATICO", "ING_ANILLO_SUPERFICIAL"), ("ING_CORDON_ESPERMATICO", "ING_TESTICULO"),
+        ("ING_CORDON_ESPERMATICO", "ING_EPIDIDIMO"), ("ING_CANAL_INGUINAL", "ING_VASOS_TESTICULARES"),
+        ("ING_CANAL_INGUINAL", "ING_CONDUCTO_DEFERENTE"), ("ING_CANAL_INGUINAL", "ING_ANILLO_PROFUNDO"),
+        ("ING_CANAL_INGUINAL", "ING_ANILLO_SUPERFICIAL"), ("ING_EPIDIDIMO", "ING_TESTICULO"),
+        ("ING_EPIDIDIMO", "ING_CONDUCTO_DEFERENTE"), ("ING_VASOS_TESTICULARES", "ING_TESTICULO"),
+        ("ING_CONDUCTO_DEFERENTE", "ING_TESTICULO"), ("ING_VASOS_TESTICULARES", "ING_ANILLO_PROFUNDO"),
+        ("ING_VASOS_TESTICULARES", "ING_ANILLO_SUPERFICIAL"), ("ING_CONDUCTO_DEFERENTE", "ING_ANILLO_PROFUNDO"),
+        ("ING_CONDUCTO_DEFERENTE", "ING_ANILLO_SUPERFICIAL")]
 ]}

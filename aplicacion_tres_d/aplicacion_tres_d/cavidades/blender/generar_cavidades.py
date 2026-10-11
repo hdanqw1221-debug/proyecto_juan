@@ -533,15 +533,11 @@ def construir_inguinal():
                                                                 t["radio_menor"], esc),
                              t["centro"] - ext, t["centro"] + ext, 0.0012, sigma=0.6, radio_min=t["radio_menor"])
         for clave, oid in (("canal", "ING_CANAL_INGUINAL"), ("cordon", "ING_CORDON_ESPERMATICO"),
-                           ("deferente", "ING_CONDUCTO_DEFERENTE"), ("vasos", "ING_VASOS_TESTICULARES"),
-                           ("epididimo", "ING_EPIDIDIMO")):
+                           ("deferente", "ING_CONDUCTO_DEFERENTE"), ("vasos", "ING_VASOS_TESTICULARES")):
             construir_tubo(f"{oid}_{lado}", {"recorte": None, "partes": [g[clave]]})
-        t = g["testiculo"]
-        ang = np.radians(t["inclinacion_grados"])
-        rot = np.array([[np.cos(ang), 0, -np.sin(ang)], [0, 1, 0], [np.sin(ang), 0, np.cos(ang)]])
-        c = np.asarray(t["centro"])
-        organo_por_campo(f"ING_TESTICULO_{lado}", lambda p, c=c, rot=rot, t=t: P.sdf_elipsoide(p, c, t["semiejes"], rot),
-                         c - 0.07, c + 0.07, 0.003, sigma=0.8)
+        # Testículo y epidídimo amoldado a él (anatomia/organos/inguinal.py).
+        construir_organo(f"ING_TESTICULO_{lado}")
+        construir_organo(f"ING_EPIDIDIMO_{lado}")
 
 
 def construir_referencias():
@@ -679,10 +675,13 @@ def construir_envoltura(cavidad):
             grosor = cfg_p["grosor"] + cfg_p["engrosamiento"] * np.exp(
                 -((x - 0.22) / 0.06) ** 2 - ((np.abs(y) - 0.10) / 0.05) ** 2)
             zc, _ = ref.centro_y_semialtura(np.clip(x, ref.X_MIN_ENVOLVENTE, None))
-            pared = np.maximum(np.maximum(-d, d - grosor), P.sdf_caja(
-                p, (cfg_p["x"][0], -cfg_p["y_max"], -1.0), (cfg_p["x"][1], cfg_p["y_max"], 1.0)))
-            pared = np.maximum(pared, z - zc)
-            return P.smin(F, pared, k=0.025)
+            # Placa de contorno redondeado (superelipse en x, y) con los bordes romos.
+            xc, ax = 0.5 * (cfg_p["x"][0] + cfg_p["x"][1]), 0.5 * (cfg_p["x"][1] - cfg_p["x"][0])
+            contorno = ((np.abs(x - xc) / ax) ** 3 + (np.abs(y) / cfg_p["y_max"]) ** 3) ** (1 / 3) - 1.0
+            pared = np.maximum(-d, d - grosor)
+            pared = -P.smin(-pared, -contorno * min(ax, cfg_p["y_max"]), 0.03)
+            pared = -P.smin(-pared, -(z - zc), 0.03)
+            return P.smin(F, pared, k=0.03)
         organo_por_campo(oid, f, (0.0, -0.25, -0.17), (0.42, 0.25, 0.40), 0.006, sigma=1.0, voxel=0.005,
                          tris_max=TRIS_MAX_ENVOLTURA, taubin=3)
 

@@ -28,11 +28,11 @@ DESPLAZAMIENTOS = {
     },
 }
 # Escala anisótropa del despiece radial para el resto (x, y, z) y desplazamiento extra por capa.
-ESCALAS = {"toracica": (0.8, 1.4, 1.0), "abdominal": (0.9, 1.7, 1.2), "inguinal": (1.1, 2.4, 1.3)}
+ESCALAS = {"toracica": (0.8, 1.4, 1.0), "abdominal": (0.9, 1.7, 1.2), "inguinal": (1.1, 2.2, 0.9)}
 EXTRA_POR_CAPA_Z = {"toracica": 0.0, "abdominal": 0.07, "inguinal": 0.0}
 # Inguinal: separaciones adicionales por tipo de estructura, en el sentido de su lado (y).
 EXTRA_INGUINAL = {
-    "ING_TESTICULO": (0.0, 0.06, -0.10), "ING_EPIDIDIMO": (0.0, 0.12, -0.08), "ING_CORDON_ESPERMATICO": (0.0, 0.08, -0.03),
+    "ING_TESTICULO": (0.0, 0.05, -0.02), "ING_EPIDIDIMO": (0.0, 0.13, 0.0), "ING_CORDON_ESPERMATICO": (0.0, 0.08, 0.0),
     "ING_CANAL_INGUINAL": (0.0, 0.05, 0.05), "ING_ANILLO_PROFUNDO": (0.03, 0.05, 0.09),
     "ING_ANILLO_SUPERFICIAL": (-0.03, 0.05, 0.02), "ING_VASOS_TESTICULARES": (0.0, 0.03, 0.12),
     "ING_CONDUCTO_DEFERENTE": (0.0, -0.02, 0.08),

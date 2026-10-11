@@ -85,9 +85,9 @@ La generación es determinista: semillas fijas y ningún dato aleatorio ni con m
 
 | Tipo | Estructuras | Método |
 |---|---|---|
-| Órganos macizos | corazón, pericardio, pulmones, hígado, estómago, bazo, páncreas, riñones, adrenales, vejiga | Un módulo por órgano en `anatomia/organos/` con su forma base (`forma`) y su forma final con las impresiones de los vecinos (`campo`) → *surface nets* sobre rejilla regular |
+| Órganos macizos | corazón, pericardio, pulmones, hígado, estómago, bazo, páncreas, riñones, adrenales, vejiga, testículos, epidídimos | Un módulo por órgano en `anatomia/organos/` con su forma base (`forma`) y su forma final con las impresiones de los vecinos (`campo`) → *surface nets* sobre rejilla regular |
 | Tubos digestivos | duodeno, yeyuno, íleon, ciego, colon mayor y menor | Campo alrededor de la línea media relajada (haustras y tenias); cada tubo talla con suavidad a los vecinos ya construidos (`anatomia/organos/tubos.py`) y las asas del yeyuno y del colon descendente se separan antes de mallar |
-| Otros tubos | tráquea, esófago, vasos, uréteres, conductos inguinales | Catmull-Rom remuestreado + tubo con radio variable (anillos) |
+| Otros tubos | tráquea, esófago, vasos, uréteres, conducto inguinal, cordón espermático, conducto deferente, vasos testiculares | Catmull-Rom remuestreado + tubo con radio variable (anillos) |
 | Diafragma | — | Lámina sobre `x = f(y, z)` (centro tendinoso fino, periferia muscular gruesa) más los pilares, unidos y con los tres hiatos restados por booleano exacto |
 
 Todas pasan por **remallado por vóxeles** (malla manifold), **suavizado de Taubin**, **recorte a la cavidad** con suavizado Laplaciano, y **diezmado** al presupuesto de triángulos.
@@ -136,7 +136,7 @@ No se encontraron modelos 3D de vísceras equinas con licencia libre y descarga 
 - **Vejiga**: piriforme, con el cuello y un muñón de uretra, apoyada en el suelo de la pelvis.
 - **Diafragma**: centro tendinoso, periferia muscular y pilares lumbares a los lados de la aorta.
 - **Colon y ciego** (fig. 44): colones dorsal y ventral paralelos y contiguos, estrechamiento brusco de la flexura pélvica y ciego en coma con tenias y haustras.
-- **Región inguinal:** escroto con cuello corto. El testículo se sube a z = −0,07; en z = −0,20 (prompt) el cordón medía ~30 cm.
+- **Región inguinal:** testículo ovoide (~12 × 6,5 × 8 cm) comprimido lateralmente y algo más ancho en el polo craneal; epidídimo amoldado a su borde dorsolateral, con la cabeza sobre el polo craneal, el cuerpo estrecho y la cola voluminosa en el polo caudal, de donde sale el conducto deferente. Cordón espermático cónico (estrecho en el anillo profundo, ancho sobre el testículo por el plexo pampiniforme) que contiene los vasos testiculares y el deferente. Anillos inguinales en hendidura, el profundo más largo. Pared de contorno redondeado y escroto bilobulado con cuello corto: el testículo se sube a z = −0,07; en z = −0,20 (prompt) el cordón medía ~30 cm.
 
 ## Visor
 
