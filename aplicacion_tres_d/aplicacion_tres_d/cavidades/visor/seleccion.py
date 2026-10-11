@@ -44,6 +44,11 @@ class Seleccionador:
             for actor in desactivados:
                 actor.PickableOn()
 
+    def punto_en(self, x, y, excluidos=()):
+        """(objeto_id, punto 3D) de la primera estructura bajo el píxel, o (None, None)."""
+        oid = self._siguiente(x, y, excluidos)
+        return (oid, self.picker.GetPickPosition()) if oid else (None, None)
+
     def estructuras_en(self, x, y):
         """objeto_id de todas las estructuras visibles y seleccionables bajo el píxel, de la más cercana a la más profunda."""
         pila = []

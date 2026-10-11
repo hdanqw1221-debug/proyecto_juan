@@ -16,7 +16,8 @@ from visor.escena import DIR_MODELOS, Escena, configurar_render_realista  # noqa
 from visor.explosion import ControladorExplosion  # noqa: E402
 from visor.visor_cavidades import MODELOS_INMERSIVOS, VISTA_INICIAL  # noqa: E402
 
-DISTANCIAS = {"lejos": 1.0, "medio": 0.8, "cerca": 0.6}
+# (fracción de la distancia de la vista completa, punto de la transición: 0 ensamblada, 1 separada)
+DISTANCIAS = {"lejos": (1.0, 0.0), "medio": (0.8, 0.5), "cerca": (0.6, 1.0)}
 
 
 def capturar(dir_modelos, cavidad, tam=(1200, 900)):
@@ -45,10 +46,10 @@ def capturar(dir_modelos, cavidad, tam=(1200, 900)):
     salida = Path(dir_modelos) / "vistas"
     salida.mkdir(parents=True, exist_ok=True)
     rutas = []
-    for nombre, factor in DISTANCIAS.items():
+    for nombre, (factor, t) in DISTANCIAS.items():
         f, p = np.array(cam.GetFocalPoint()), np.array(cam.GetPosition())
         cam.SetPosition(*(f + (p - f) / np.linalg.norm(p - f) * ctl.d_lejos * factor))
-        ctl.actualizar()
+        ctl.aplicar(t)
         ren.ResetCameraClippingRange()
         ventana.Render()
         w2i = vtk.vtkWindowToImageFilter()
