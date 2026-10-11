@@ -24,6 +24,8 @@ MODULO_DE = {
     "ABD_ADRENAL_DER": "rinones", "ABD_ADRENAL_IZQ": "rinones",
     "PEL_VEJIGA": "vejiga",
     "ABD_ESTOMAGO": "estomago",
+    "ING_TESTICULO_IZQ": "inguinal", "ING_TESTICULO_DER": "inguinal",
+    "ING_EPIDIDIMO_IZQ": "inguinal", "ING_EPIDIDIMO_DER": "inguinal",
 }
 
 

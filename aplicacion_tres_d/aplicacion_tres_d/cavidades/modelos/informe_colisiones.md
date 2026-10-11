@@ -14,22 +14,6 @@ Generado automáticamente por `blender/generar_cavidades.py`. Profundidades en m
 | ABD_COLON_VENTRAL_DER | ABD_ILEON | 0.0188 | no (amoldado en el campo: solo informe) |  |  |
 | ABD_DUODENO | ABD_HIGADO | 0.0179 | no (amoldado en el campo: solo informe) |  |  |
 | ABD_VENA_CAVA_CAUDAL | TOR_PULMON_DER | 0.0153 | no (conducto fino: solo informe) |  |  |
-| ING_ANILLO_SUPERFICIAL_DER | ING_CANAL_INGUINAL_DER | 0.0125 | no (conducto fino: solo informe) |  |  |
-| ING_ANILLO_SUPERFICIAL_DER | ING_CORDON_ESPERMATICO_DER | 0.0106 | no (conducto fino: solo informe) |  |  |
-| ING_ANILLO_SUPERFICIAL_IZQ | ING_CANAL_INGUINAL_IZQ | 0.0125 | no (conducto fino: solo informe) |  |  |
-| ING_ANILLO_SUPERFICIAL_IZQ | ING_CORDON_ESPERMATICO_IZQ | 0.0106 | no (conducto fino: solo informe) |  |  |
-| ING_CANAL_INGUINAL_DER | ING_CONDUCTO_DEFERENTE_DER | 0.0196 | no (conducto fino: solo informe) |  |  |
-| ING_CANAL_INGUINAL_DER | ING_CORDON_ESPERMATICO_DER | 0.0171 | no (conducto fino: solo informe) |  |  |
-| ING_CANAL_INGUINAL_DER | ING_VASOS_TESTICULARES_DER | 0.0194 | no (conducto fino: solo informe) |  |  |
-| ING_CANAL_INGUINAL_IZQ | ING_CONDUCTO_DEFERENTE_IZQ | 0.0197 | no (conducto fino: solo informe) |  |  |
-| ING_CANAL_INGUINAL_IZQ | ING_CORDON_ESPERMATICO_IZQ | 0.0171 | no (conducto fino: solo informe) |  |  |
-| ING_CANAL_INGUINAL_IZQ | ING_VASOS_TESTICULARES_IZQ | 0.0197 | no (conducto fino: solo informe) |  |  |
-| ING_CONDUCTO_DEFERENTE_DER | ING_CORDON_ESPERMATICO_DER | 0.0177 | no (conducto fino: solo informe) |  |  |
-| ING_CONDUCTO_DEFERENTE_IZQ | ING_CORDON_ESPERMATICO_IZQ | 0.0176 | no (conducto fino: solo informe) |  |  |
-| ING_CORDON_ESPERMATICO_DER | ING_VASOS_TESTICULARES_DER | 0.0176 | no (conducto fino: solo informe) |  |  |
-| ING_CORDON_ESPERMATICO_IZQ | ING_VASOS_TESTICULARES_IZQ | 0.0177 | no (conducto fino: solo informe) |  |  |
-| ING_EPIDIDIMO_DER | ING_TESTICULO_DER | 0.0102 | no (conducto fino: solo informe) |  |  |
-| ING_EPIDIDIMO_IZQ | ING_TESTICULO_IZQ | 0.0102 | no (conducto fino: solo informe) |  |  |
 | TOR_AORTA | TOR_TRAQUEA | 0.0216 | no (conducto fino: solo informe) |  |  |
 | TOR_AORTA | TOR_VENA_CAVA_CRANEAL | 0.0177 | no (conducto fino: solo informe) |  |  |
 

@@ -153,12 +153,16 @@ def inguinal(lado):
     testiculo = np.array([0.10, 0.07 * s, zt])
     polo_dorsal = testiculo + np.array([0.0, 0.0, 0.04])
     return {
-        "anillo_profundo": {"centro": anillo_prof, "eje": eje_canal, "radio_mayor": 0.025, "radio_menor": 0.006},
-        "anillo_superficial": {"centro": anillo_sup, "eje": eje_canal, "radio_mayor": 0.025, "radio_menor": 0.005,
+        # Anillos en hendidura (el profundo, más largo): toroides aplanados en su plano.
+        "anillo_profundo": {"centro": anillo_prof, "eje": eje_canal, "radio_mayor": 0.032, "radio_menor": 0.006,
+                            "escala_plano": (1.0, 0.55)},
+        "anillo_superficial": {"centro": anillo_sup, "eje": eje_canal, "radio_mayor": 0.028, "radio_menor": 0.005,
                                "escala_plano": (1.0, 0.4)},
         "canal": {"puntos": [anillo_prof, (anillo_prof + anillo_sup) / 2, anillo_sup], "radios": 0.02},
+        # Cordón espermático con la túnica vaginal: cónico, estrecho en el anillo vaginal y ancho sobre el
+        # testículo, donde el plexo pampiniforme forma el cono vascular.
         "cordon": {"puntos": [anillo_prof, anillo_sup, (0.14, 0.078 * s, 0.03), polo_dorsal + (0.005, 0, 0.01)],
-                   "radios": [0.018, 0.018, 0.019, 0.016]},
+                   "radios": [0.012, 0.015, 0.021, 0.026]},
         # Tras el anillo vaginal gira caudomedialmente (pliegue genital), lateral y luego dorsal a la vejiga.
         "deferente": {"puntos": [(0.045, 0.082 * s, zt - 0.005), (0.07, 0.066 * s, zt + 0.05), (0.12, 0.068 * s, 0.04),
                                  (0.18, 0.082 * s, 0.09), (0.265, 0.104 * s, 0.17), (0.215, 0.088 * s, 0.185),
@@ -170,10 +174,8 @@ def inguinal(lado):
                   + [anillo_prof + (0, 0, -0.005), anillo_sup + (0, 0, -0.005),
                      (0.14, 0.076 * s, 0.03), (0.11, 0.07 * s, zt + 0.05)],
                   "radios": [0.005, 0.005, 0.005, 0.005, 0.005, 0.005, 0.005, 0.007, 0.011]},
+        # Testículo y epidídimo: forma en anatomia/organos/inguinal.py.
         "testiculo": {"centro": testiculo, "semiejes": (0.06, 0.035, 0.04), "inclinacion_grados": 10.0},
-        "epididimo": {"puntos": [(0.155, 0.085 * s, zt + 0.025), (0.12, 0.10 * s, zt + 0.035),
-                                 (0.08, 0.10 * s, zt + 0.032), (0.045, 0.085 * s, zt + 0.005)],
-                      "radios": [0.014, 0.008, 0.008, 0.013]},
     }
 
 
@@ -317,5 +319,5 @@ ENVOLTURAS = {
     "ancho_surco_costal": 0.011,
     "oblicuidad_costal": 0.10,           # el extremo dorsal de la costilla es más craneal
     "pared_inguinal": {"x": (0.13, 0.38), "y_max": 0.19, "grosor": 0.035, "engrosamiento": 0.09},
-    "escroto": {"holgura": 0.022, "radio_cuello": 0.032},
+    "escroto": {"holgura": 0.022, "radio_cuello": 0.040},
 }
