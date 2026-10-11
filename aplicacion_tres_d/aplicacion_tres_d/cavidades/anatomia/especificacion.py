@@ -41,6 +41,8 @@ AJUSTES = [
      "Escroto con cuello corto, como en el semental; con −0,20 el cordón medía ~30 cm."),
     ("ING_VASOS_TESTICULARES", "Trayecto pegado a la pared dorsolateral (retroperitoneal).",
      "El trayecto recto cruzaba el colon izquierdo y la flexura pélvica."),
+    ("ABD_DUODENO", "Porción ascendente a z ≈ 0,53 (antes 0,57–0,58), caudal a la raíz de la a. mesentérica craneal.",
+     "Pasa ventral al riñón izquierdo sin solaparlo (antes 2 cm) y caudal a la raíz del mesenterio, como en el animal."),
     ("ESTOMAGO_CIEGO_COLON_MAYOR", "Radios ×0,90 (estómago) y ×0,85 (ciego y colon mayor).",
      "Con los radios nominales el tubo digestivo ocuparía ~90 % de la cavidad abdominal; se reduce a ~65 %."),
     ("TODOS_LOS_TUBOS_DIGESTIVOS", "Líneas medias relajadas automáticamente (ver informe de colisiones).",
@@ -220,8 +222,9 @@ CADENAS = [
                         (1.02, -0.01, 0.27), (1.02, -0.09, 0.34)],
              "radios": [0.07, 0.10, 0.12, 0.11, 0.07, 0.04], "cardias_indice": 1},
             {"objeto_id": "ABD_DUODENO",
-             "puntos": [(1.02, -0.09, 0.34), (1.00, -0.17, 0.40), (0.80, -0.20, 0.55), (0.68, -0.16, 0.57),
-                        (0.66, 0.0, 0.58), (0.72, 0.08, 0.57), (0.76, 0.10, 0.55)], "radios": 0.03},
+             "puntos": [(1.02, -0.09, 0.34), (1.00, -0.17, 0.40), (0.80, -0.19, 0.53), (0.67, -0.14, 0.535),
+                        (0.60, -0.04, 0.53), (0.62, 0.06, 0.53), (0.70, 0.09, 0.53), (0.76, 0.10, 0.53)],
+             "radios": 0.03},
             {"objeto_id": "ABD_YEYUNO", "generador": "yeyuno", "radios": 0.025},
             {"objeto_id": "ABD_ILEON", "generador": "ileon", "radios": [0.025, 0.022]},
         ],
@@ -288,7 +291,7 @@ FIN_COLON_DESCENDENTE = (0.15, 0.0, 0.45)
 def generador(nombre):
     """Trayectorias densas de los segmentos largos (semillas fijas)."""
     if nombre == "yeyuno":
-        inicio = (0.76, 0.10, 0.55)
+        inicio = (0.76, 0.10, 0.53)
         m = meandro((0.85, 0.16, 0.51), (0.43, 0.85), [0.16, 0.09, 0.02], [0.51, 0.45, 0.39, 0.33],
                     0.025, 5.9, semilla=11)
         return np.vstack([inicio, m])

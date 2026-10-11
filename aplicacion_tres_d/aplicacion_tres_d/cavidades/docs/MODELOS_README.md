@@ -15,15 +15,21 @@ aplicacion_tres_d/aplicacion_tres_d/
   cavidades/
     anatomia/referencia.py     # sistema de coordenadas, envolvente, costillas, diafragma
     anatomia/catalogo.py       # catálogo de estructuras: fuente única de IDs
-    anatomia/especificacion.py # trayectorias, radios y parámetros; registro de AJUSTES
+    anatomia/especificacion.py # trayectorias, radios y parámetros de los tubos; registro de AJUSTES
+    anatomia/organos/          # forma de cada órgano como campo implícito (un módulo por órgano):
+                               #   corazon, pulmones, higado, estomago, bazo, pancreas, rinones (y adrenales),
+                               #   vejiga, diafragma y tubos (tubos digestivos amoldados); contexto.py da
+                               #   acceso a las formas vecinas
+    herramientas/prototipo_organo.py  # malla un órgano sin Blender, mide su topología y dibuja 8 vistas
     blender/generar_cavidades.py  # script principal de Blender
     blender/primitivas.py      # tubos, campos implícitos, surface nets, suavizado, relajación
     blender/materiales.py      # paleta por sistema (editable)
     blender/exportar.py        # OBJ por objeto, GLB, .blend, manifiesto e informes
     datos/fichas_anatomicas.json, fichas.schema.json, generar_sql.py
     modelos/                   # salida: obj/, escena.glb, cavidades_equinas.blend, manifiesto.json,
-                               #         informe_colisiones.md/.json, vistas/*.png
-    visor/                     # escena, selección, despiece (explosion.py), fichas, visor Qt, capturas
+                               #         informe_colisiones.md/.json, contexto_organos.json, vistas/*.png
+    visor/                     # escena, selección, despiece (explosion.py), fichas, visor Qt, capturas,
+                               # hoja_organo.py (8 vistas de una estructura para revisar su forma)
     docs/referencias/bradley_1922/  # láminas de dominio público usadas como guía
     tests/
 db/cavidades_schema.sql        # migración aditiva (tablas nuevas)
@@ -38,7 +44,7 @@ Requisitos: Blender 4.2 LTS (probado con 4.2.23), Python 3.14 con `vtk`, `PyQt5`
 Todos los comandos se ejecutan desde `cavidades/`.
 
 ```powershell
-# 1. Modelos (≈2,5 min). Blender no está en el PATH en el equipo de desarrollo:
+# 1. Modelos (≈5-9 min). Blender no está en el PATH en el equipo de desarrollo:
 & "C:\Program Files\Blender Foundation\Blender 4.2\blender.exe" --background --factory-startup `
     --python blender/generar_cavidades.py -- --salida modelos/
 #    Opciones: --cavidades toracica,abdominal,pelvica,inguinal,referencia   --sin-glb
@@ -46,6 +52,10 @@ Todos los comandos se ejecutan desde `cavidades/`.
 # 2. Capturas de revisión (5 vistas) y del despiece de cada modelo inmersivo
 python visor/capturas.py --sufijo todo
 python visor/capturas_inmersivas.py
+
+#    Prototipo rápido de un órgano (sin Blender), para iterar su forma:
+python herramientas/prototipo_organo.py ABD_HIGADO --antes --contexto ABD_ESTOMAGO,ABD_RINON_DER
+#    -> prototipos/ABD_HIGADO/hoja.png (nuevo), antes.png (actual) y metricas.json (piezas, túneles, solapes)
 
 # 3. Fichas a PostgreSQL
 python datos/generar_sql.py                      # escribe ../../../db/cavidades_fichas.sql
@@ -75,13 +85,16 @@ La generación es determinista: semillas fijas y ningún dato aleatorio ni con m
 
 | Tipo | Estructuras | Método |
 |---|---|---|
-| Tubos | tráquea, esófago, vasos, uréteres, intestinos, colon, conductos inguinales | Catmull-Rom remuestreado + tubo con radio variable (haustras, tenias, anillos) |
-| Campos implícitos | pulmones, corazón, pericardio, hígado, bazo, páncreas, riñones, adrenales, vejiga, testículos, anillos, mediastino | Campo de distancia aproximada → *surface nets* sobre rejilla regular |
-| Diafragma | — | Lámina sobre `x = f(y, z)` recortada por la envolvente, con los tres hiatos restados por booleano exacto |
+| Órganos macizos | corazón, pericardio, pulmones, hígado, estómago, bazo, páncreas, riñones, adrenales, vejiga | Un módulo por órgano en `anatomia/organos/` con su forma base (`forma`) y su forma final con las impresiones de los vecinos (`campo`) → *surface nets* sobre rejilla regular |
+| Tubos digestivos | duodeno, yeyuno, íleon, ciego, colon mayor y menor | Campo alrededor de la línea media relajada (haustras y tenias); cada tubo talla con suavidad a los vecinos ya construidos (`anatomia/organos/tubos.py`) y las asas del yeyuno y del colon descendente se separan antes de mallar |
+| Otros tubos | tráquea, esófago, vasos, uréteres, conductos inguinales | Catmull-Rom remuestreado + tubo con radio variable (anillos) |
+| Diafragma | — | Lámina sobre `x = f(y, z)` (centro tendinoso fino, periferia muscular gruesa) más los pilares, unidos y con los tres hiatos restados por booleano exacto |
 
-Todas pasan por **remallado por vóxeles** (malla manifold), **suavizado de Taubin**, **recorte a la cavidad** (envolvente y empuje según la normal del diafragma) con suavizado Laplaciano, y **diezmado** al presupuesto de triángulos.
+Todas pasan por **remallado por vóxeles** (malla manifold), **suavizado de Taubin**, **recorte a la cavidad** con suavizado Laplaciano, y **diezmado** al presupuesto de triángulos.
 
-Los pulmones se definen como la región del hemitórax que queda craneal al diafragma y al borde basal (así queda el receso costodiafragmático) y fuera del mediastino, el corazón y los tubos mediastínicos. El pulmón izquierdo tiene además la escotadura cardíaca y el derecho, el lóbulo accesorio.
+**Contactos entre órganos.** Las vísceras se amoldan unas a otras dentro del propio campo, antes de mallar: cada órgano talla las impresiones de sus vecinos (impresión renal y gástrica del hígado, cara gástrica del bazo, impresión duodenal del páncreas, impresión cardíaca de los pulmones…). Un órgano que talla la impresión de otro lo declara en su conjunto `IMPRESIONES`, y ese otro ya no lo talla a él (si lo hicieran los dos quedaría un hueco). Así la revisión de colisiones ya no tiene que apartar vértices a la fuerza, que era lo que dejaba parches rasgados; los solapes residuales solo se informan.
+
+**Revisión de la forma.** `tests/test_topologia.py` exige que cada estructura sea una sola pieza y sin túneles (asas fusionadas, tubos tallados como túneles, fragmentos sueltos), salvo los agujeros anatómicos: los tres hiatos del diafragma, el anillo pancreático (paso de la vena porta) y los anillos inguinales.
 
 ## Decisiones respecto al prompt (revisar con el director)
 
@@ -113,9 +126,15 @@ Cada cavidad tiene su propio modelo (`cavidad_toracica.py`, `cavidad_abdominal.p
 
 No se encontraron modelos 3D de vísceras equinas con licencia libre y descarga directa: los existentes son comerciales o exigen cuenta. Las formas se ajustaron con las láminas de Bradley (1922), de dominio público ([docs/referencias/bradley_1922/](referencias/bradley_1922/README.md)):
 
-- **Corazón** (fig. 10): cono con surco coronario, surcos interventriculares paraconal y subsinuoso, aurículas aplanadas en la base y tronco pulmonar.
-- **Hígado** (fig. 56): fisuras interlobulares del borde ventral y proceso caudado con impresión renal.
-- **Bazo** (cara medial): triangular, de base ancha (≈24 cm) y extremo ventral estrecho.
+- **Corazón** (fig. 10): masa ventricular asimétrica (borde caudal recto, craneal convexo), surcos coronario, paraconal y subsinuoso, cono arterioso, tronco pulmonar con sus dos arterias, bulbo aórtico, aurículas en oreja con el borde festoneado y muñones de las venas cavas y pulmonares. El pericardio es un saco liso que llega al esternón.
+- **Pulmones** (fig. 8): semiconos con vértice romo, borde basal agudo en el receso costodiafragmático, escotadura cardíaca curva (grande en el izquierdo), lengüeta del lóbulo craneal, impresiones costales, cara mediastínica amoldada al pericardio con los surcos de la aorta, el esófago y las cavas, y lóbulo accesorio del pulmón derecho alrededor de la vena cava caudal.
+- **Hígado** (fig. 56): placa única sobre el diafragma con lóbulos lateral y medial izquierdos, cuadrado, lateral derecho y caudado; fisuras del borde ventral, escotadura esofágica, surco de la vena cava, porta hepática e impresiones gástrica, duodenal, cólica y renal.
+- **Estómago** (fig. 52): saco en J aplanado craneocaudalmente, con el saco ciego en continuidad y el anillo del píloro.
+- **Bazo** (fig. 55): hoz aplicada a la pared izquierda, base ancha y truncada, ápice romo, surco del hilio y cara gástrica amoldada al estómago.
+- **Páncreas**: glándula triangular lobulillada (cuerpo, lóbulos derecho e izquierdo) con el anillo pancreático.
+- **Riñones** (fig. 65): derecho cordiforme y más craneal, izquierdo reniforme; hilio medial con el seno renal y la salida del uréter. Adrenales en lengüeta craneomediales.
+- **Vejiga**: piriforme, con el cuello y un muñón de uretra, apoyada en el suelo de la pelvis.
+- **Diafragma**: centro tendinoso, periferia muscular y pilares lumbares a los lados de la aorta.
 - **Colon y ciego** (fig. 44): colones dorsal y ventral paralelos y contiguos, estrechamiento brusco de la flexura pélvica y ciego en coma con tenias y haustras.
 - **Región inguinal:** escroto con cuello corto. El testículo se sube a z = −0,07; en z = −0,20 (prompt) el cordón medía ~30 cm.
 
@@ -143,7 +162,7 @@ En todos los casos, con licencia compatible y con validación del director.
 ## Limitaciones conocidas
 
 - Es una base procedural: la topografía, las proporciones, las relaciones y las asimetrías son correctas, pero la forma fina es esquemática.
-- Quedan interpenetraciones residuales entre órganos, listadas en `modelos/informe_colisiones.md`. Destacan el colon dorsal derecho con el hígado (~5 cm) y el colon descendente con el yeyuno (~3 cm, que en el animal se entremezclan). También se listan contactos de vasos finos, que no se corrigen.
+- Quedan solapes residuales entre vísceras (1-3 cm entre algunos tubos, como el colon descendente y el yeyuno, que en el animal se entremezclan), listados en `modelos/informe_colisiones.md`: el abdomen está muy lleno y la impronta de cada tubo se limita para no partirlo. También se listan contactos de vasos finos, que no se corrigen.
 - El esófago se construye en la fase abdominal (se une al cardias relajado); si se generan solo las estructuras torácicas, no aparece.
 - 43 de las 47 fichas tienen algún campo pendiente de validación, sobre todo la irrigación, que el documento de investigación no cubre.
 - Con la oclusión ambiental activa, el visor inmersivo ronda los 25-30 fps en el equipo de desarrollo; si un equipo va lento, puede desactivarse en `configurar_render_realista`.

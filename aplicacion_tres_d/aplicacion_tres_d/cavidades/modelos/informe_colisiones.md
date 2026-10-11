@@ -6,16 +6,14 @@ Generado automáticamente por `blender/generar_cavidades.py`. Profundidades en m
 
 | A | B | Profundidad inicial | Corregida | Deformado | Profundidad final |
 |---|---|---|---|---|---|
-| ABD_AORTA | ABD_COLON_DESCENDENTE | 0.0104 | no (amoldado en el campo: solo informe) |  |  |
-| ABD_A_MESENTERICA_CRANEAL | ABD_DUODENO | 0.014 | no (amoldado en el campo: solo informe) |  |  |
-| ABD_COLON_DESCENDENTE | ABD_URETER_IZQ | 0.011 | no (amoldado en el campo: solo informe) |  |  |
-| ABD_COLON_DESCENDENTE | ABD_YEYUNO | 0.0326 | no (amoldado en el campo: solo informe) |  |  |
-| ABD_COLON_DORSAL_DER | ABD_COLON_VENTRAL_DER | 0.0194 | no (amoldado en el campo: solo informe) |  |  |
-| ABD_COLON_TRANSVERSO | ABD_DUODENO | 0.0198 | no (amoldado en el campo: solo informe) |  |  |
-| ABD_COLON_VENTRAL_DER | ABD_ILEON | 0.0176 | no (amoldado en el campo: solo informe) |  |  |
-| ABD_DUODENO | ABD_RINON_IZQ | 0.0198 | no (amoldado en el campo: solo informe) |  |  |
-| ABD_DUODENO | ABD_URETER_IZQ | 0.0131 | no (amoldado en el campo: solo informe) |  |  |
-| ABD_VENA_CAVA_CAUDAL | TOR_PULMON_DER | 0.0146 | no (conducto fino: solo informe) |  |  |
+| ABD_A_MESENTERICA_CRANEAL | ABD_DUODENO | 0.0239 | no (amoldado en el campo: solo informe) |  |  |
+| ABD_COLON_DESCENDENTE | ABD_URETER_IZQ | 0.0115 | no (amoldado en el campo: solo informe) |  |  |
+| ABD_COLON_DESCENDENTE | ABD_YEYUNO | 0.0302 | no (amoldado en el campo: solo informe) |  |  |
+| ABD_COLON_DORSAL_DER | ABD_COLON_VENTRAL_DER | 0.0176 | no (amoldado en el campo: solo informe) |  |  |
+| ABD_COLON_TRANSVERSO | ABD_YEYUNO | 0.0459 | no (amoldado en el campo: solo informe) |  |  |
+| ABD_COLON_VENTRAL_DER | ABD_ILEON | 0.0188 | no (amoldado en el campo: solo informe) |  |  |
+| ABD_DUODENO | ABD_HIGADO | 0.0179 | no (amoldado en el campo: solo informe) |  |  |
+| ABD_VENA_CAVA_CAUDAL | TOR_PULMON_DER | 0.0153 | no (conducto fino: solo informe) |  |  |
 | ING_ANILLO_SUPERFICIAL_DER | ING_CANAL_INGUINAL_DER | 0.0125 | no (conducto fino: solo informe) |  |  |
 | ING_ANILLO_SUPERFICIAL_DER | ING_CORDON_ESPERMATICO_DER | 0.0106 | no (conducto fino: solo informe) |  |  |
 | ING_ANILLO_SUPERFICIAL_IZQ | ING_CANAL_INGUINAL_IZQ | 0.0125 | no (conducto fino: solo informe) |  |  |
@@ -39,20 +37,20 @@ Generado automáticamente por `blender/generar_cavidades.py`. Profundidades en m
 
 | Objeto | Máximo (m) | Medio (m) |
 |---|---|---|
-| ABD_ESTOMAGO | 0.12 | 0.07 |
-| ABD_DUODENO | 0.211 | 0.108 |
-| ABD_YEYUNO | 0.169 | 0.069 |
-| ABD_ILEON | 0.056 | 0.044 |
-| ABD_CIEGO | 0.112 | 0.037 |
-| ABD_COLON_VENTRAL_DER | 0.35 | 0.151 |
-| ABD_FLEXURA_ESTERNAL | 0.221 | 0.139 |
-| ABD_COLON_VENTRAL_IZQ | 0.228 | 0.095 |
-| ABD_FLEXURA_PELVICA | 0.094 | 0.059 |
-| ABD_COLON_DORSAL_IZQ | 0.2 | 0.056 |
-| ABD_FLEXURA_DIAFRAGMATICA | 0.147 | 0.106 |
-| ABD_COLON_DORSAL_DER | 0.182 | 0.116 |
-| ABD_COLON_TRANSVERSO | 0.107 | 0.079 |
-| ABD_COLON_DESCENDENTE | 0.14 | 0.053 |
+| ABD_ESTOMAGO | 0.103 | 0.061 |
+| ABD_DUODENO | 0.173 | 0.084 |
+| ABD_YEYUNO | 0.17 | 0.074 |
+| ABD_ILEON | 0.078 | 0.056 |
+| ABD_CIEGO | 0.119 | 0.038 |
+| ABD_COLON_VENTRAL_DER | 0.351 | 0.154 |
+| ABD_FLEXURA_ESTERNAL | 0.223 | 0.146 |
+| ABD_COLON_VENTRAL_IZQ | 0.242 | 0.091 |
+| ABD_FLEXURA_PELVICA | 0.099 | 0.066 |
+| ABD_COLON_DORSAL_IZQ | 0.185 | 0.058 |
+| ABD_FLEXURA_DIAFRAGMATICA | 0.194 | 0.12 |
+| ABD_COLON_DORSAL_DER | 0.168 | 0.112 |
+| ABD_COLON_TRANSVERSO | 0.143 | 0.117 |
+| ABD_COLON_DESCENDENTE | 0.141 | 0.053 |
 
 ## Ajustes respecto a las coordenadas del prompt
 
@@ -73,5 +71,6 @@ Generado automáticamente por `blender/generar_cavidades.py`. Profundidades en m
 | ING_CONDUCTO_DEFERENTE | Ampolla a z = 0,375 (antes 0,32); recorrido caudomedial lateral a la vejiga. | A z = 0,32 quedaba dentro de la vejiga. |
 | ING_TESTICULO | Centro a z = −0,07 (antes −0,20); estructuras escrotales referidas a él. | Escroto con cuello corto, como en el semental; con −0,20 el cordón medía ~30 cm. |
 | ING_VASOS_TESTICULARES | Trayecto pegado a la pared dorsolateral (retroperitoneal). | El trayecto recto cruzaba el colon izquierdo y la flexura pélvica. |
+| ABD_DUODENO | Porción ascendente a z ≈ 0,53 (antes 0,57–0,58), caudal a la raíz de la a. mesentérica craneal. | Pasa ventral al riñón izquierdo sin solaparlo (antes 2 cm) y caudal a la raíz del mesenterio, como en el animal. |
 | ESTOMAGO_CIEGO_COLON_MAYOR | Radios ×0,90 (estómago) y ×0,85 (ciego y colon mayor). | Con los radios nominales el tubo digestivo ocuparía ~90 % de la cavidad abdominal; se reduce a ~65 %. |
 | TODOS_LOS_TUBOS_DIGESTIVOS | Líneas medias relajadas automáticamente (ver informe de colisiones). | Separación determinista por prioridad y ajuste a la cavidad; el desplazamiento de cada órgano se informa. |
