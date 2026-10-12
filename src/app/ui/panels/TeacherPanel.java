@@ -15,6 +15,7 @@ import app.service.CourseService;
 import app.service.ExamAttemptService;
 import app.service.ExamService;
 import app.service.SimulationService;
+import app.service.Visor3DService;
 import app.session.SessionManager;
 import app.ui.QuestionBatchEditorDialog;
 import app.ui.QuestionnairePreviewDialog;
@@ -37,15 +38,6 @@ import java.util.Locale;
 import java.util.concurrent.TimeUnit;
 
 public class TeacherPanel extends JPanel {
-    private static final String[] PYTHON_SIM_DIR_CANDIDATES = {
-            "app/aplicacion_tres_d/aplicacion_tres_d",
-            "app/aplicacion_3_D/aplicacion_3_D",
-            "aplicacion_tres_d/aplicacion_tres_d",
-            "aplicacion_3_D/aplicacion_3_D",
-            "aplicacion_3_D",
-            "aplicacion_tres_d"
-    };
-
     private final SessionManager sessionManager;
     private final AuditService auditService;
     private final CourseService courseService;
@@ -63,13 +55,9 @@ public class TeacherPanel extends JPanel {
             new DefaultTableModel(new Object[]{"ID", "Pregunta", "Correcta", "Contenido"}, 0);
     private final DefaultTableModel gradeModel =
             new DefaultTableModel(new Object[]{"Intento", "Examen", "Estudiante", "Inicio", "Fin", "Puntaje"}, 0);
-    private static final String[] MODEL_3D_OPTIONS = {
-            "(Ninguno)",
-            "cavidad_toracica.py",
-            "cavidad_abdominal.py",
-            "region_inguinal.py",
-            "cavidades_equinas.py"
-    };
+    private static final String[] MODEL_3D_OPTIONS = java.util.stream.Stream.concat(
+            java.util.stream.Stream.of("(Ninguno)"),
+            Visor3DService.MODELOS.stream().map(Visor3DService.Modelo::script)).toArray(String[]::new);
 
     private final DefaultTableModel simulationModel =
             new DefaultTableModel(new Object[]{"ID", "Curso", "Nombre", "Modelo 3D", "Habilitado", "Configuracion"}, 0);
@@ -736,6 +724,11 @@ private JPanel buildSimulationPanel() {
         app.ui.UiTheme.styleButton(create);
         top.add(create);
 
+        JButton addCavities = new JButton("+ Practicas de cavidades 3D");
+        app.ui.UiTheme.styleSecondaryButton(addCavities);
+        addCavities.setToolTipText("Crea en el curso una practica por cada modelo 3D de las cavidades que todavia no tenga");
+        top.add(addCavities);
+
         JTable table = new JTable(simulationModel);
         JPanel pnlTable = buildTableWithSearch("Simulaciones", table, simulationModel, null);
 
@@ -774,6 +767,22 @@ private JPanel buildSimulationPanel() {
             }
         });
 
+        addCavities.addActionListener(e -> {
+            requireTeacher();
+            ComboItem courseItem = selectedItem(simulationCourseSelector);
+            if (courseItem == null) {
+                javax.swing.JOptionPane.showMessageDialog(this, "Selecciona un curso primero.");
+                return;
+            }
+            int created = simulationService.addCavityPractices(courseItem.id);
+            auditService.log(currentTeacherId(), "SIM_CREATE",
+                    created + " practica(s) 3D de cavidades en el curso ID " + courseItem.id);
+            refreshSimulations();
+            javax.swing.JOptionPane.showMessageDialog(this, created == 0
+                    ? "El curso ya tiene una practica para cada modelo 3D de las cavidades."
+                    : "Se crearon " + created + " practica(s) con los modelos 3D de las cavidades.");
+        });
+
         create.addActionListener(e -> {
             requireTeacher();
             ComboItem courseItem = selectedItem(simulationCourseSelector);
@@ -785,24 +794,13 @@ private JPanel buildSimulationPanel() {
             app.ui.FormModal modal = new app.ui.FormModal((java.awt.Frame) javax.swing.SwingUtilities.getWindowAncestor(this), "Crear Simulacion", 540, 460);
             JTextField name = new JTextField(20);
             JTextField desc = new JTextField(20);
-            JComboBox<String> modelCombo = new JComboBox<>(MODEL_3D_OPTIONS);
+            JComboBox<String> modelCombo = model3dCombo();
             modelCombo.setSelectedItem("cavidad_toracica.py");
             JTextArea config = new JTextArea(app.service.SimulationService.defaultConfigJson(), 10, 35);
             config.setLineWrap(true);
             config.setWrapStyleWord(true);
 
-            modelCombo.addActionListener(ev -> {
-                String chosen = (String) modelCombo.getSelectedItem();
-                String txt = config.getText();
-                if (chosen != null && !chosen.equals("(Ninguno)")) {
-                    if (txt.contains("\"script3d\"")) {
-                        txt = txt.replaceAll("\"script3d\"\\s*:\\s*\"[^\"]*\"", "\"script3d\": \"" + chosen + "\"");
-                    } else {
-                        txt = txt.replaceFirst("\\{", "{\\n  \"script3d\": \"" + chosen + "\",");
-                    }
-                    config.setText(txt);
-                }
-            });
+            linkModelToConfig(modelCombo, config);
 
             JPanel c = modal.getContent();
             GridBagConstraints gbc = new GridBagConstraints();
@@ -858,7 +856,7 @@ private JPanel buildSimulationPanel() {
             app.ui.FormModal modal = new app.ui.FormModal((java.awt.Frame) javax.swing.SwingUtilities.getWindowAncestor(this), "Editar Simulacion", 540, 460);
             JTextField name = new JTextField(sim.getName(), 20);
             JTextField desc = new JTextField(sim.getDescription() != null ? sim.getDescription() : "", 20);
-            JComboBox<String> modelCombo = new JComboBox<>(MODEL_3D_OPTIONS);
+            JComboBox<String> modelCombo = model3dCombo();
             String currentScript = SimulationService.getScript3D(sim);
             if (currentScript != null) {
                 for (int i = 0; i < MODEL_3D_OPTIONS.length; i++) {
@@ -872,18 +870,7 @@ private JPanel buildSimulationPanel() {
             config.setLineWrap(true);
             config.setWrapStyleWord(true);
 
-            modelCombo.addActionListener(ev -> {
-                String chosen = (String) modelCombo.getSelectedItem();
-                String txt = config.getText();
-                if (chosen != null && !chosen.equals("(Ninguno)")) {
-                    if (txt.contains("\"script3d\"")) {
-                        txt = txt.replaceAll("\"script3d\"\\s*:\\s*\"[^\"]*\"", "\"script3d\": \"" + chosen + "\"");
-                    } else {
-                        txt = txt.replaceFirst("\\{", "{\\n  \"script3d\": \"" + chosen + "\",");
-                    }
-                    config.setText(txt);
-                }
-            });
+            linkModelToConfig(modelCombo, config);
 
             JPanel c = modal.getContent();
             GridBagConstraints gbc = new GridBagConstraints();
@@ -967,12 +954,8 @@ private JPanel buildSimulationPanel() {
                 } catch (Exception ignored) {}
             }
             if (scriptToRun == null || scriptToRun.isBlank()) {
-                String[] availableModels = {
-                        "cavidad_toracica.py",
-                        "cavidad_abdominal.py",
-                        "region_inguinal.py",
-                        "cavidades_equinas.py"
-                };
+                String[] availableModels = Visor3DService.MODELOS.stream()
+                        .map(Visor3DService.Modelo::titulo).toArray(String[]::new);
                 Object choice = javax.swing.JOptionPane.showInputDialog(
                         this,
                         "Selecciona el modelo 3D que deseas explorar y probar:",
@@ -982,9 +965,14 @@ private JPanel buildSimulationPanel() {
                         availableModels,
                         availableModels[0]
                 );
-                if (choice != null) {
-                    scriptToRun = choice.toString();
-                } else {
+                if (choice == null) {
+                    return;
+                }
+                scriptToRun = Visor3DService.MODELOS.stream()
+                        .filter(model -> model.titulo().equals(choice))
+                        .map(Visor3DService.Modelo::script)
+                        .findFirst().orElse(null);
+                if (scriptToRun == null) {
                     return;
                 }
             }
@@ -1592,7 +1580,7 @@ private JPanel buildSimulationPanel() {
                     simulation.getId(),
                     courseName,
                     simulation.getName(),
-                    script3d != null ? script3d : "Ninguno",
+                    script3d != null ? Visor3DService.titulo(script3d) + " (" + script3d + ")" : "Ninguno",
                     enabled ? "Si" : "No",
                     simulation.getConfigJson()
             });
@@ -1848,8 +1836,49 @@ private JPanel buildSimulationPanel() {
         }
     }
 
+    /** Selector de modelo 3D que muestra el titulo de cada modelo junto al script. */
+    private JComboBox<String> model3dCombo() {
+        JComboBox<String> combo = new JComboBox<>(MODEL_3D_OPTIONS);
+        combo.setRenderer(new DefaultListCellRenderer() {
+            @Override
+            public Component getListCellRendererComponent(JList<?> list, Object value, int index,
+                                                          boolean isSelected, boolean cellHasFocus) {
+                String script = (String) value;
+                String text = script == null || script.equals("(Ninguno)")
+                        ? "(Ninguno)" : Visor3DService.titulo(script) + "  -  " + script;
+                return super.getListCellRendererComponent(list, text, index, isSelected, cellHasFocus);
+            }
+        });
+        return combo;
+    }
+
+    /**
+     * Al cambiar de modelo se actualiza el script3d de la configuracion; si la configuracion sigue siendo
+     * la plantilla del modelo anterior, se sustituye por la del nuevo (objetivos y escenario propios).
+     */
+    private void linkModelToConfig(JComboBox<String> modelCombo, JTextArea config) {
+        String[] previous = {(String) modelCombo.getSelectedItem()};
+        modelCombo.addActionListener(ev -> {
+            String chosen = (String) modelCombo.getSelectedItem();
+            String txt = config.getText();
+            if (chosen != null && !chosen.equals("(Ninguno)")) {
+                boolean untouched = previous[0] != null && !previous[0].equals("(Ninguno)")
+                        && txt.strip().equals(SimulationService.defaultConfigJson(previous[0]).strip());
+                if (untouched) {
+                    txt = SimulationService.defaultConfigJson(chosen);
+                } else if (txt.contains("\"script3d\"")) {
+                    txt = txt.replaceAll("\"script3d\"\\s*:\\s*\"[^\"]*\"", "\"script3d\": \"" + chosen + "\"");
+                } else {
+                    txt = txt.replaceFirst("\\{", "{\\n  \"script3d\": \"" + chosen + "\",");
+                }
+                config.setText(txt);
+            }
+            previous[0] = chosen;
+        });
+    }
+
     private void runTeacherPythonScript(String scriptName) {
-        Path scriptsFolder = resolvePythonScriptsFolder();
+        Path scriptsFolder = Visor3DService.carpetaModelos();
         if (scriptsFolder == null) {
             javax.swing.JOptionPane.showMessageDialog(this, "No pudimos localizar la carpeta de modelos 3D.", "Error", javax.swing.JOptionPane.ERROR_MESSAGE);
             return;
@@ -1859,57 +1888,53 @@ private JPanel buildSimulationPanel() {
             javax.swing.JOptionPane.showMessageDialog(this, "El archivo " + scriptName + " no existe.", "Error", javax.swing.JOptionPane.ERROR_MESSAGE);
             return;
         }
-        PythonCommand pythonCommand = detectPythonCommand();
-        if (pythonCommand == null) {
-            javax.swing.JOptionPane.showMessageDialog(this, "No se detecto un entorno Python compatible con PyQt5 y VTK.", "Python no listo", javax.swing.JOptionPane.WARNING_MESSAGE);
-            return;
-        }
-        auditService.log(currentTeacherId(), "TEACHER_SIM_3D", "Vista previa 3D: " + scriptName);
-        launchSimulation(pythonCommand, scriptPath);
-    }
-
-    private void launchSimulation(PythonCommand pythonCommand, Path scriptPath) {
+        long teacherId = currentTeacherId();
+        auditService.log(teacherId, "TEACHER_SIM_3D", "Vista previa 3D: " + scriptName);
         JDialog progress = progressDialog("Abriendo modelo 3D", "Preparando la ventana interactiva...");
-        List<String> command = pythonCommand.append(scriptPath.getFileName().toString());
 
-        SwingWorker<CommandResult, Void> worker = new SwingWorker<>() {
+        SwingWorker<Visor3DService.Resultado, Void> worker = new SwingWorker<>() {
+            private boolean withoutPython;
+
             @Override
-            protected CommandResult doInBackground() {
-                try {
-                    Process process = new ProcessBuilder(command)
-                            .directory(scriptPath.getParent().toFile())
-                            .redirectErrorStream(true)
-                            .start();
-                    SwingUtilities.invokeLater(progress::dispose);
-                    String output;
-                    try (var input = process.getInputStream()) {
-                        output = new String(input.readAllBytes(), StandardCharsets.UTF_8);
-                    }
-                    return new CommandResult(process.waitFor(), output, null);
-                } catch (Exception ex) {
-                    return new CommandResult(-1, "", ex);
+            protected Visor3DService.Resultado doInBackground() {
+                List<String> python = Visor3DService.python();
+                if (python == null) {
+                    withoutPython = true;
+                    return null;
                 }
+                return Visor3DService.ejecutar(scriptPath, python, () -> SwingUtilities.invokeLater(progress::dispose));
             }
 
             @Override
             protected void done() {
                 progress.dispose();
+                Visor3DService.Resultado result;
                 try {
-                    CommandResult result = get();
-                    if (result.error != null || result.exitCode != 0) {
-                        javax.swing.JOptionPane.showMessageDialog(TeacherPanel.this,
-                                "El modelo no pudo abrirse correctamente.\nVerifica aceleracion grafica y librerias.",
-                                "Aviso", javax.swing.JOptionPane.WARNING_MESSAGE);
-                    }
-                } catch (Exception ignored) {}
+                    result = get();
+                } catch (Exception ex) {
+                    result = null;
+                }
+                if (withoutPython) {
+                    javax.swing.JOptionPane.showMessageDialog(TeacherPanel.this,
+                            "No se detecto un entorno Python con PyQt5, VTK y numpy.\n"
+                                    + "Pide al administrador que instale las dependencias de los modelos 3D.",
+                            "Python no listo", javax.swing.JOptionPane.WARNING_MESSAGE);
+                    return;
+                }
+                if (result == null) {
+                    return;
+                }
+                auditService.log(teacherId, "SIM_3D_SESION", Visor3DService.resumen(scriptPath, result));
+                if (!result.correcto()) {
+                    javax.swing.JOptionPane.showMessageDialog(TeacherPanel.this,
+                            "El modelo no pudo abrirse correctamente.\nVerifica aceleracion grafica y librerias.",
+                            "Aviso", javax.swing.JOptionPane.WARNING_MESSAGE);
+                }
             }
         };
 
         worker.execute();
         progress.setVisible(true);
-        javax.swing.Timer hideProgress = new javax.swing.Timer(1800, e -> progress.dispose());
-        hideProgress.setRepeats(false);
-        hideProgress.start();
     }
 
     private JDialog progressDialog(String title, String message) {
@@ -1926,83 +1951,4 @@ private JPanel buildSimulationPanel() {
         dialog.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
         return dialog;
     }
-
-    private Path resolvePythonScriptsFolder() {
-        Path workspaceRoot = Path.of(System.getProperty("user.dir"));
-        for (String candidate : PYTHON_SIM_DIR_CANDIDATES) {
-            Path folder = workspaceRoot.resolve(candidate).normalize();
-            if (Files.isDirectory(folder)) {
-                return folder;
-            }
-        }
-        return null;
-    }
-
-    private PythonCommand detectPythonCommand() {
-        for (PythonCommand candidate : pythonCommandCandidates()) {
-            if (hasSimulationDependencies(candidate.command)) {
-                return candidate;
-            }
-        }
-        return null;
-    }
-
-    private List<PythonCommand> pythonCommandCandidates() {
-        List<PythonCommand> candidates = new ArrayList<>();
-        Path scriptsFolder = resolvePythonScriptsFolder();
-        if (scriptsFolder != null) {
-            Path venvPython = scriptsFolder.resolve(".venv").resolve("Scripts").resolve("python.exe");
-            if (Files.isRegularFile(venvPython)) {
-                candidates.add(new PythonCommand(List.of(venvPython.toString()), "Entorno local .venv"));
-            }
-        }
-        candidates.addAll(List.of(
-                new PythonCommand(List.of("py", "-3.9"), "py -3.9"),
-                new PythonCommand(List.of("py", "-3.11"), "py -3.11"),
-                new PythonCommand(List.of("py", "-3.10"), "py -3.10"),
-                new PythonCommand(List.of("py", "-3"), "py -3"),
-                new PythonCommand(List.of("python"), "python"),
-                new PythonCommand(List.of("python3"), "python3")
-        ));
-        return candidates;
-    }
-
-    private boolean hasSimulationDependencies(List<String> baseCommand) {
-        return executeProbe(baseCommand, "import PyQt5, vtk, numpy; print('OK')");
-    }
-
-    private boolean executeProbe(List<String> baseCommand, String pythonSnippet) {
-        List<String> command = new ArrayList<>(baseCommand);
-        command.add("-c");
-        command.add(pythonSnippet);
-        try {
-            Process process = new ProcessBuilder(command)
-                    .redirectErrorStream(true)
-                    .start();
-            boolean finished = process.waitFor(2200, TimeUnit.MILLISECONDS);
-            if (!finished) {
-                process.destroyForcibly();
-                return false;
-            }
-            if (process.exitValue() != 0) {
-                return false;
-            }
-            try (var input = process.getInputStream()) {
-                String output = new String(input.readAllBytes(), StandardCharsets.UTF_8).trim();
-                return output.contains("OK");
-            }
-        } catch (Exception ex) {
-            return false;
-        }
-    }
-
-    private record PythonCommand(List<String> command, String label) {
-        List<String> append(String... args) {
-            List<String> full = new ArrayList<>(command);
-            full.addAll(List.of(args));
-            return full;
-        }
-    }
-
-    private record CommandResult(int exitCode, String output, Exception error) {}
 }

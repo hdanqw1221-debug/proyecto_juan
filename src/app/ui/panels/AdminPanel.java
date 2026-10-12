@@ -15,6 +15,7 @@ import app.service.DatabaseBackupService;
 import app.service.RoleService;
 import app.service.UserImportService;
 import app.service.UserService;
+import app.service.Visor3DService;
 import app.session.SessionManager;
 import app.ui.UiTheme;
 
@@ -37,14 +38,6 @@ import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 public class AdminPanel extends JPanel {
-    private static final String[] PYTHON_SIM_DIR_CANDIDATES = {
-            "app/aplicacion_tres_d/aplicacion_tres_d",
-            "app/aplicacion_3_D/aplicacion_3_D",
-            "aplicacion_tres_d/aplicacion_tres_d",
-            "aplicacion_3_D/aplicacion_3_D",
-            "aplicacion_3_D",
-            "aplicacion_tres_d"
-    };
 
     private final SessionManager sessionManager;
     private final AuditService auditService;
@@ -1067,7 +1060,8 @@ public class AdminPanel extends JPanel {
                     List<Course> courses = courseService.listAll();
                     List<StudentCourseAssignment> assignments = courseService.listStudentAssignments();
                     List<LogEntry> activity = auditService.listRecent(8);
-                    boolean modelsReady = resolvePythonScriptsFolder() != null && detectPythonCommand() != null;
+                    boolean modelsReady = !Visor3DService.disponibles(Visor3DService.carpetaModelos()).isEmpty()
+                            && Visor3DService.python() != null;
                     return new SystemSnapshot(users, courses, assignments, activity, modelsReady, null);
                 } catch (Exception ex) {
                     return new SystemSnapshot(List.of(), List.of(), List.of(), List.of(), false, ex);
@@ -1192,6 +1186,11 @@ public class AdminPanel extends JPanel {
             case "USER_UPDATE" -> "Usuario actualizado";
             case "STUDENT_COURSE_ASSIGN" -> "Materia asignada";
             case "STUDENT_COURSE_REMOVE" -> "Materia retirada";
+            case "SIM_RUN" -> "Practica abierta";
+            case "SIM_RUN_PY", "SIM_RUN_3D_PRACTICE", "SIM_RUN_PY_ADMIN" -> "Modelo 3D abierto";
+            case "TEACHER_SIM_3D" -> "Vista previa 3D (docente)";
+            case "SIM_3D_SESION" -> "Sesion en modelo 3D";
+            case "SIM_CREATE" -> "Practica creada";
             default -> action.replace('_', ' ').toLowerCase(Locale.ROOT);
         };
     }
@@ -1252,51 +1251,87 @@ public class AdminPanel extends JPanel {
         pythonScriptsButtonsPanel.removeAll();
 
         Path scriptsFolder = resolvePythonScriptsFolder();
+        List<Visor3DService.Modelo> models = Visor3DService.disponibles(scriptsFolder);
         if (scriptsFolder == null) {
             pythonScriptsSummary.setText("No se encontro carpeta 3D de Python.");
-            pythonScriptsButtonsPanel.revalidate();
-            pythonScriptsButtonsPanel.repaint();
-            return;
+        } else if (models.isEmpty()) {
+            pythonScriptsSummary.setText("No se encontraron los modelos de las cavidades en " + scriptsFolder + ".");
+        } else {
+            for (Visor3DService.Modelo model : models) {
+                JButton button = new JButton(model.titulo());
+                button.setToolTipText(model.script());
+                Path script = scriptsFolder.resolve(model.script());
+                button.addActionListener(e -> runPythonScript(script));
+                pythonScriptsButtonsPanel.add(button);
+            }
+            pythonScriptsSummary.setText("Modelos 3D: " + models.size() + " | Carpeta: " + scriptsFolder);
         }
-
-        List<Path> pythonScripts = listPythonScripts(scriptsFolder);
-        if (pythonScripts.isEmpty()) {
-            pythonScriptsSummary.setText("No se encontraron archivos .py en " + scriptsFolder.getFileName() + ".");
-            pythonScriptsButtonsPanel.revalidate();
-            pythonScriptsButtonsPanel.repaint();
-            return;
-        }
-
-        for (Path script : pythonScripts) {
-            JButton button = new JButton(script.getFileName().toString());
-            button.addActionListener(e -> runPythonScript(script));
-            pythonScriptsButtonsPanel.add(button);
-        }
-
-        pythonScriptsSummary.setText("Scripts Python detectados: " + pythonScripts.size() + " | Carpeta: " + scriptsFolder);
         pythonScriptsButtonsPanel.revalidate();
         pythonScriptsButtonsPanel.repaint();
     }
 
     private void runPythonScript(Path scriptPath) {
         AccessControl.requireRole(sessionManager.getCurrent(), RoleType.ADMINISTRADOR);
-        PythonCommand pythonCommand = detectPythonCommand();
-        if (pythonCommand == null) {
-            JOptionPane.showMessageDialog(this,
-                    "No se encontro un entorno Python con PyQt5 y VTK.\n"
-                            + "Usa la opcion Instalar dependencias y vuelve a intentar.",
-                    "Entorno 3D no disponible",
-                    JOptionPane.ERROR_MESSAGE);
-            return;
-        }
+        long adminId = sessionManager.getCurrent().getUser().getId();
+        auditService.log(adminId, "SIM_RUN_PY_ADMIN", "Script " + scriptPath.getFileName());
 
-        auditService.log(sessionManager.getCurrent().getUser().getId(), "SIM_RUN_PY_ADMIN", "Script " + scriptPath.getFileName());
-        executeExternalCommand(
-                pythonCommand.append(scriptPath.getFileName().toString()),
-                scriptPath.getParent(),
-                "Ejecutando " + scriptPath.getFileName(),
-                "Resultado " + scriptPath.getFileName()
-        );
+        JDialog progress = new JDialog((Frame) SwingUtilities.getWindowAncestor(this),
+                "Abriendo " + Visor3DService.titulo(scriptPath.getFileName().toString()), false);
+        progress.setLayout(new BorderLayout(8, 8));
+        progress.add(new JLabel("  Abriendo el modelo 3D, por favor espera..."), BorderLayout.CENTER);
+        progress.setSize(360, 110);
+        progress.setLocationRelativeTo(this);
+        progress.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
+
+        SwingWorker<Visor3DService.Resultado, Void> worker = new SwingWorker<>() {
+            private boolean withoutPython;
+
+            @Override
+            protected Visor3DService.Resultado doInBackground() {
+                List<String> python = Visor3DService.python();
+                if (python == null) {
+                    withoutPython = true;
+                    return null;
+                }
+                return Visor3DService.ejecutar(scriptPath, python, () -> SwingUtilities.invokeLater(progress::dispose));
+            }
+
+            @Override
+            protected void done() {
+                progress.dispose();
+                Visor3DService.Resultado result;
+                try {
+                    result = get();
+                } catch (Exception ex) {
+                    result = null;
+                }
+                if (withoutPython) {
+                    JOptionPane.showMessageDialog(AdminPanel.this,
+                            "No se encontro un entorno Python con PyQt5, VTK y numpy.\n"
+                                    + "Usa la opcion Instalar dependencias y vuelve a intentar.",
+                            "Entorno 3D no disponible",
+                            JOptionPane.ERROR_MESSAGE);
+                    return;
+                }
+                if (result == null) {
+                    return;
+                }
+                auditService.log(adminId, "SIM_3D_SESION", Visor3DService.resumen(scriptPath, result));
+                if (!result.correcto()) {
+                    String detail = "Codigo de salida: " + result.codigoSalida()
+                            + (result.error() != null ? "\nError: " + result.error().getMessage() : "")
+                            + "\n\n" + (result.salida().isBlank() ? "(Sin salida de consola)" : result.salida());
+                    JTextArea area = new JTextArea(detail, 18, 78);
+                    area.setEditable(false);
+                    area.setCaretPosition(0);
+                    JOptionPane.showMessageDialog(AdminPanel.this, new JScrollPane(area),
+                            "El modelo 3D no se cerro correctamente", JOptionPane.WARNING_MESSAGE);
+                }
+            }
+        };
+
+        worker.execute();
+        progress.setVisible(true);
     }
 
     private void installPythonDependencies() {
@@ -1328,6 +1363,7 @@ public class AdminPanel extends JPanel {
             return;
         }
 
+        Visor3DService.olvidarPython();
         executeExternalCommand(
                 pythonCommand.append("-m", "pip", "install", "-r", requirements.getFileName().toString()),
                 scriptsFolder,
@@ -1361,34 +1397,7 @@ public class AdminPanel extends JPanel {
     }
 
     private Path resolvePythonScriptsFolder() {
-        Path workspaceRoot = Path.of(System.getProperty("user.dir"));
-        for (String candidate : PYTHON_SIM_DIR_CANDIDATES) {
-            Path folder = workspaceRoot.resolve(candidate).normalize();
-            if (Files.isDirectory(folder)) {
-                return folder;
-            }
-        }
-        return null;
-    }
-
-    private List<Path> listPythonScripts(Path scriptsFolder) {
-        try (var paths = Files.list(scriptsFolder)) {
-            return paths
-                    .filter(path -> Files.isRegularFile(path) && path.getFileName().toString().toLowerCase(Locale.ROOT).endsWith(".py"))
-                    .sorted(Comparator.comparing(path -> path.getFileName().toString().toLowerCase(Locale.ROOT)))
-                    .toList();
-        } catch (IOException ex) {
-            return List.of();
-        }
-    }
-
-    private PythonCommand detectPythonCommand() {
-        for (PythonCommand candidate : pythonCommandCandidates()) {
-            if (hasSimulationDependencies(candidate.command)) {
-                return candidate;
-            }
-        }
-        return null;
+        return Visor3DService.carpetaModelos();
     }
 
     private PythonCommand detectPythonInstallerCommand() {
@@ -1401,54 +1410,12 @@ public class AdminPanel extends JPanel {
     }
 
     private List<PythonCommand> pythonCommandCandidates() {
-        List<PythonCommand> candidates = new ArrayList<>(bundledPythonCandidates());
-        candidates.addAll(List.of(
-                new PythonCommand(List.of("py", "-3.9")),
-                new PythonCommand(List.of("py", "-3.11")),
-                new PythonCommand(List.of("py", "-3.10")),
-                new PythonCommand(List.of("py", "-3")),
-                new PythonCommand(List.of("python")),
-                new PythonCommand(List.of("python3"))
-        ));
-        return candidates;
-    }
-
-    private List<PythonCommand> bundledPythonCandidates() {
-        Set<String> candidates = new LinkedHashSet<>();
-        Path cwd = Path.of(System.getProperty("user.dir"));
-        Path scriptsFolder = resolvePythonScriptsFolder();
-        if (scriptsFolder != null) {
-            candidates.add(scriptsFolder.resolve(".venv").resolve("Scripts").resolve("python.exe")
-                    .normalize().toString());
-        }
-        candidates.add(cwd.resolve("python-runtime").resolve("python.exe").normalize().toString());
-        candidates.add(cwd.resolve("app").resolve("python-runtime").resolve("python.exe").normalize().toString());
-
-        String launcherPath = System.getProperty("jpackage.app-path");
-        if (launcherPath != null && !launcherPath.isBlank()) {
-            Path root = Path.of(launcherPath).getParent();
-            if (root != null) {
-                candidates.add(root.resolve("python-runtime").resolve("python.exe").normalize().toString());
-                candidates.add(root.resolve("app").resolve("python-runtime").resolve("python.exe").normalize().toString());
-            }
-        }
-
-        List<PythonCommand> commands = new ArrayList<>();
-        for (String path : candidates) {
-            if (Files.isRegularFile(Path.of(path))) {
-                commands.add(new PythonCommand(List.of(path)));
-            }
-        }
-        return commands;
+        return Visor3DService.candidatosPython().stream().map(PythonCommand::new).toList();
     }
 
     private boolean isCommandAvailable(List<String> command) {
         return canRunPythonCode(command,
                 "import pathlib, sys; raise SystemExit(0 if pathlib.Path(sys.base_prefix, 'Lib').is_dir() else 1)");
-    }
-
-    private boolean hasSimulationDependencies(List<String> command) {
-        return canRunPythonCode(command, "import PyQt5, vtk, numpy");
     }
 
     private boolean canRunPythonCode(List<String> command, String code) {

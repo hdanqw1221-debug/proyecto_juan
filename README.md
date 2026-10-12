@@ -9,7 +9,7 @@ Plataforma integral de gestión del aprendizaje (LMS) y simulación tridimension
 
 - **Capa de Presentación (Java Desktop)**: Java Swing con tema moderno (`UiTheme`), diálogos interactivos, componentes visuales para fechas/horas (`DateTimePicker`), selector de imágenes para cuestionarios, y visor de bitácora/auditoría.
 - **Capa de Persistencia y Negocio**: JDBC estructurado con arquitectura DAO, pools de conexión seguros, transacciones atómicas, validación de configuraciones JSON y hashing de contraseñas con **jBCrypt**.
-- **Motor 3D Interactivo**: Visualizador de modelos GLTF/GLB acelerado por hardware con **VTK** y renderizado interactivo en **PyQt5**. Permite rotación orbital 360°, zoom, oscurecimiento/resaltado de selección y visualización contextual de nombres y descripciones anatómicas veterinarias reales.
+- **Motor 3D Interactivo**: visores de las cavidades torácica, abdominal e inguinal del equino con **VTK** y **PyQt5**: despiece inmersivo al acercarse, zoom hacia el cursor, selección por clic y ficha anatómica completa de cada estructura (desde PostgreSQL).
 - **Base de Datos**: PostgreSQL en 3FN con claves foráneas, restricciones de integridad referencial, índices de optimización y columnas JSONB para configuraciones pedagógicas flexibles y auditoría institucional.
 
 ---
@@ -48,7 +48,14 @@ Ubicados en `aplicacion_tres_d/aplicacion_tres_d/`:
 3. **Región inguinal (`region_inguinal.py`)**: modelo inmersivo de la pared inguinal y el escroto (anillos, conducto inguinal, cordón espermático, conducto deferente, vasos testiculares, testículo y epidídimo).
 4. **Visor general de cavidades (`cavidades_equinas.py`)**: las 58 estructuras a la vez, con conmutadores por cavidad, selección por clic (y clic repetido para llegar a estructuras profundas) y ficha anatómica.
 
-Todos se generan en Blender por script reproducible y leen las fichas desde PostgreSQL o JSON. Documentación en [`cavidades/docs/MODELOS_README.md`](aplicacion_tres_d/aplicacion_tres_d/cavidades/docs/MODELOS_README.md); esquema en `db/cavidades_schema.sql` y datos en `db/cavidades_fichas.sql`.
+Todos se generan en Blender por script reproducible y leen las fichas desde PostgreSQL o JSON.
+
+**Integración con la aplicación Java** (`src/app/service/Visor3DService.java`, común a los paneles del estudiante, el docente y el administrador):
+
+- **Catálogo único** de los cuatro visores, con su título, descripción y plantilla de práctica. La carpeta se localiza por la escena compartida (`cavidades/modelos/manifiesto.json`), tanto en el proyecto como en la aplicación empaquetada.
+- **Python**: primero el entorno `.venv` del proyecto o el runtime embebido del paquete, después el del sistema. Los visores se abren con `pythonw.exe`, sin ventana de consola.
+- **Sesión auditada**: el visor informa por la salida estándar de su apertura, de cada estructura seleccionada y de su cierre. Al cerrarlo se registra `SIM_3D_SESION` con las fichas consultadas y la duración.
+- **Prácticas**: el botón **«+ Practicas de cavidades 3D»** del panel docente crea en el curso una práctica por cada modelo que aún no tenga. Al crear una simulación, elegir el modelo carga su plantilla (objetivos, instrucciones y escenario propios). Documentación en [`cavidades/docs/MODELOS_README.md`](aplicacion_tres_d/aplicacion_tres_d/cavidades/docs/MODELOS_README.md); esquema en `db/cavidades_schema.sql` y datos en `db/cavidades_fichas.sql`.
 
 ---
 

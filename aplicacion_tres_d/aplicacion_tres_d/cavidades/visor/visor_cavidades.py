@@ -11,6 +11,7 @@ estructura siguiente a lo largo del rayo; eventos JSON por la salida estándar p
 """
 import html
 import json
+import os
 import sys
 import time
 from pathlib import Path
@@ -564,10 +565,21 @@ def main(cavidad=None):
         sys.stdout.reconfigure(encoding="utf-8", errors="replace")  # la app Java lee los eventos en UTF-8
     app = QApplication(sys.argv)
     visor = VisorCavidades(cavidad=cavidad)
+    # Ventana dentro de la zona útil de la pantalla (sin la barra de tareas), centrada y al frente.
+    zona = app.primaryScreen().availableGeometry()
+    visor.resize(min(visor.width(), int(zona.width() * 0.95)), min(visor.height(), int(zona.height() * 0.90)))
+    visor.move(zona.x() + (zona.width() - visor.width()) // 2, zona.y() + (zona.height() - visor.height()) // 2)
     visor.show()
+    visor.raise_()
+    visor.activateWindow()
     visor.vtk_widget.Initialize()
     visor.vtk_widget.Start()
-    sys.exit(app.exec_())
+    codigo = app.exec_()
+    # Salida inmediata: la destrucción de los objetos de VTK y Qt al cerrar el intérprete puede fallar
+    # (violación de acceso) y la aplicación Java la tomaría por un error del modelo.
+    if sys.stdout is not None:  # con pythonw sin consola no hay salida estándar
+        sys.stdout.flush()
+    os._exit(codigo)
 
 
 if __name__ == "__main__":

@@ -75,28 +75,62 @@ public class SimulationService {
     }
 
     public static String defaultConfigJson() {
+        return defaultConfigJson(Visor3DService.MODELOS.get(0).script());
+    }
+
+    /** Plantilla de configuracion para una practica con el modelo 3D indicado. */
+    public static String defaultConfigJson(String script3d) {
+        Visor3DService.Modelo modelo = Visor3DService.modelo(script3d);
+        if (modelo == null) {
+            modelo = Visor3DService.MODELOS.get(0);
+        }
+        String explorar = modelo.script().equals("cavidades_equinas.py")
+                ? "Muestra u oculta cada cavidad con las teclas 1 a 5"
+                : "Acercate con la rueda del raton hacia la estructura que quieras ver: la cavidad se separa en sus componentes";
         return """
                 {
                   "habilitado": true,
                   "tema": "cavidades_equinas",
                   "nivel": "intermedio",
-                  "script3d": "cavidad_toracica.py",
+                  "script3d": "%s",
                   "tiempoMinutos": 45,
                   "objetivos": [
-                    "Reconocer pulmones y corazon junto con grandes vasos y diafragma",
+                    "%s",
                     "Relacionar cada estructura con su topografia y proyeccion superficial"
                   ],
                   "instrucciones": [
                     "Inicia el visor 3D de la cavidad",
-                    "Acercate con la rueda del raton para separar los componentes",
+                    "%s",
                     "Haz clic en una estructura para ver su ficha completa"
                   ],
                   "escenario": {
-                    "titulo": "Cavidad toracica del equino",
-                    "descripcion": "La cavidad se separa en sus componentes al acercarse"
+                    "titulo": "%s",
+                    "descripcion": "%s"
                   }
                 }
-                """;
+                """.formatted(modelo.script(), modelo.objetivo(), explorar, modelo.titulo(), modelo.escenario());
+    }
+
+    /**
+     * Crea en el curso una practica por cada modelo 3D de las cavidades que todavia no tenga.
+     *
+     * @return numero de practicas creadas
+     */
+    public int addCavityPractices(long courseId) {
+        List<String> existing = listByCourse(courseId).stream()
+                .map(SimulationService::getScript3D)
+                .filter(script -> script != null)
+                .map(script -> script.toLowerCase(java.util.Locale.ROOT))
+                .toList();
+        int created = 0;
+        for (Visor3DService.Modelo modelo : Visor3DService.MODELOS) {
+            if (!existing.contains(modelo.script().toLowerCase(java.util.Locale.ROOT))) {
+                createSimulation(courseId, "Practica 3D: " + modelo.titulo(), modelo.escenario(),
+                        defaultConfigJson(modelo.script()));
+                created++;
+            }
+        }
+        return created;
     }
 
     public static void validateConfigJson(String configJson) {
