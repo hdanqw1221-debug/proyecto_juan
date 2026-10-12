@@ -16,6 +16,7 @@ import app.service.ExamAttemptService;
 import app.service.ExamService;
 import app.service.ResultService;
 import app.service.SimulationService;
+import app.service.Visor3DService;
 import app.session.SessionManager;
 import app.ui.ExamDialog;
 import app.ui.UiTheme;
@@ -38,18 +39,6 @@ import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 public class StudentPanel extends JPanel {
-    private static final String[] PYTHON_SIM_DIR_CANDIDATES = {
-            "app/aplicacion_tres_d/aplicacion_tres_d",
-            "app/aplicacion_3_D/aplicacion_3_D",
-            "aplicacion_tres_d/aplicacion_tres_d",
-            "aplicacion_3_D/aplicacion_3_D",
-            "aplicacion_3_D",
-            "aplicacion_tres_d"
-    };
-    // Visores de cavidades: comparten la escena de cavidades/modelos en lugar de un .glb propio.
-    private static final Set<String> CAVITY_SCRIPTS = Set.of(
-            "cavidad_toracica.py", "cavidad_abdominal.py", "region_inguinal.py", "cavidades_equinas.py");
-    private static final String CAVITY_MANIFEST = "cavidades/modelos/manifiesto.json";
 
     private final SessionManager sessionManager;
     private final AuditService auditService;
@@ -251,11 +240,11 @@ public class StudentPanel extends JPanel {
         actions.setOpaque(false);
 
         String scriptName = SimulationService.getScript3D(simulation);
-        Path scriptsFolder = resolvePythonScriptsFolder();
+        Path scriptsFolder = Visor3DService.carpetaModelos();
         Path scriptPath = (scriptName != null && scriptsFolder != null) ? scriptsFolder.resolve(scriptName) : null;
 
         if (scriptPath != null && Files.isRegularFile(scriptPath)) {
-            JButton launch3d = new JButton("Abrir Modelo 3D (" + simulationDisplayName(scriptPath) + ")");
+            JButton launch3d = new JButton("Abrir Modelo 3D (" + Visor3DService.titulo(scriptName) + ")");
             UiTheme.styleButton(launch3d);
             launch3d.addActionListener(ev -> {
                 auditService.log(currentStudentId(), "SIM_RUN_3D_PRACTICE", "Simulacion " + simulation.getName() + " -> " + scriptName);
@@ -263,6 +252,10 @@ public class StudentPanel extends JPanel {
                 dialog.dispose();
             });
             actions.add(launch3d);
+        } else if (scriptName != null) {
+            JLabel missing = new JLabel("El modelo 3D de esta practica (" + scriptName + ") no esta disponible en este equipo.");
+            missing.setForeground(UiTheme.WARNING);
+            actions.add(missing);
         }
 
         JButton close = new JButton("Cerrar");
@@ -511,7 +504,7 @@ public class StudentPanel extends JPanel {
                     simulation.getId(),
                     courseItem.label,
                     simulation.getName(),
-                    script3d != null ? script3d : "Teorica",
+                    script3d != null ? Visor3DService.titulo(script3d) : "Teorica",
                     simulation.getDescription()
             });
         }
@@ -777,45 +770,36 @@ public class StudentPanel extends JPanel {
     private void refreshPythonScripts() {
         pythonScriptsButtonsPanel.removeAll();
 
-        Path scriptsFolder = resolvePythonScriptsFolder();
+        Path scriptsFolder = Visor3DService.carpetaModelos();
+        List<Visor3DService.Modelo> models = Visor3DService.disponibles(scriptsFolder);
         if (scriptsFolder == null) {
             pythonScriptsSummary.setText("El catalogo 3D no esta disponible en este equipo.");
-            pythonScriptsButtonsPanel.revalidate();
-            pythonScriptsButtonsPanel.repaint();
-            return;
-        }
-
-        List<Path> pythonScripts = listPythonScripts(scriptsFolder);
-        if (pythonScripts.isEmpty()) {
+        } else if (models.isEmpty()) {
             pythonScriptsSummary.setText("Aun no hay modelos 3D disponibles.");
-            pythonScriptsButtonsPanel.revalidate();
-            pythonScriptsButtonsPanel.repaint();
-            return;
+        } else {
+            boolean environmentReady = Visor3DService.hayPythonPropio();
+            for (Visor3DService.Modelo model : models) {
+                pythonScriptsButtonsPanel.add(simulationCard(model, scriptsFolder.resolve(model.script()), environmentReady));
+            }
+            pythonScriptsSummary.setText(models.size() + " modelos interactivos de las cavidades del equino");
         }
-
-        boolean environmentReady = localEnvironmentPython(scriptsFolder) != null;
-        for (Path script : pythonScripts) {
-            pythonScriptsButtonsPanel.add(simulationCard(script, environmentReady));
-        }
-
-        pythonScriptsSummary.setText(pythonScripts.size() + " modelos interactivos disponibles");
         pythonScriptsButtonsPanel.revalidate();
         pythonScriptsButtonsPanel.repaint();
     }
 
-    private JPanel simulationCard(Path script, boolean environmentReady) {
+    private JPanel simulationCard(Visor3DService.Modelo model, Path script, boolean environmentReady) {
         JPanel card = UiTheme.card(new BorderLayout(12, 12));
 
         JPanel heading = new JPanel(new BorderLayout(8, 0));
         heading.setOpaque(false);
-        JLabel title = UiTheme.title(simulationDisplayName(script), 18f);
+        JLabel title = UiTheme.title(model.titulo(), 18f);
         JLabel type = new JLabel("MODELO 3D");
         type.setForeground(UiTheme.INFO);
         type.setFont(type.getFont().deriveFont(Font.BOLD, 11f));
         heading.add(title, BorderLayout.CENTER);
         heading.add(type, BorderLayout.EAST);
 
-        JLabel description = new JLabel("<html>" + simulationDescription(script) + "</html>");
+        JLabel description = new JLabel("<html>" + model.descripcion() + "</html>");
         description.setForeground(UiTheme.MUTED);
 
         JPanel footer = new JPanel(new BorderLayout(10, 0));
@@ -834,40 +818,14 @@ public class StudentPanel extends JPanel {
         return card;
     }
 
-    private String simulationDescription(Path script) {
-        String name = script.getFileName().toString().toLowerCase(Locale.ROOT);
-        if (name.contains("toracica")) {
-            return "Desde lejos ves la cavidad toracica completa; al acercarte se separa en pulmones, corazon, "
-                    + "traquea, grandes vasos y diafragma. Haz clic en una pieza para ver su ficha.";
-        }
-        if (name.contains("abdominal")) {
-            return "Al acercarte la cavidad abdominal se separa en tubo digestivo, higado, bazo, pancreas, "
-                    + "rinones y vejiga. Haz clic en una pieza para ver su ficha.";
-        }
-        if (name.contains("inguinal")) {
-            return "Explora la pared inguinal y el escroto: anillos inguinales, cordon espermatico, "
-                    + "testiculo y epididimo.";
-        }
-        if (name.contains("cavidades")) {
-            return "Las tres cavidades a la vez, con filtros por cavidad y la ficha anatomica de cada estructura.";
-        }
-        return "Modelo interactivo para apoyar tu practica y aprendizaje.";
-    }
-
     private void runPythonScript(Path scriptPath) {
         requireStudent();
-        PythonCommand pythonCommand = detectPythonCommand();
-        if (pythonCommand == null) {
-            preparePythonEnvironment(scriptPath);
-            return;
-        }
-
         auditService.log(currentStudentId(), "SIM_RUN_PY", "Script " + scriptPath.getFileName());
-        launchSimulation(pythonCommand, scriptPath);
+        launchSimulation(scriptPath, false);
     }
 
     private void preparePythonEnvironment(Path scriptToOpen) {
-        Path scriptsFolder = resolvePythonScriptsFolder();
+        Path scriptsFolder = Visor3DService.carpetaModelos();
         if (scriptsFolder == null) {
             JOptionPane.showMessageDialog(this,
                     "No pudimos localizar los recursos de los modelos 3D.",
@@ -885,7 +843,7 @@ public class StudentPanel extends JPanel {
             return;
         }
 
-        PythonCommand installer = detectPythonInstallerCommand();
+        List<String> installer = Visor3DService.pythonParaInstalar();
         if (installer == null) {
             JOptionPane.showMessageDialog(this,
                     "Este equipo no cuenta con los componentes necesarios para abrir modelos 3D.\n"
@@ -898,7 +856,9 @@ public class StudentPanel extends JPanel {
         Path environmentPython = scriptsFolder.resolve(".venv").resolve("Scripts").resolve("python.exe");
         List<List<String>> commands = new ArrayList<>();
         if (!Files.isRegularFile(environmentPython)) {
-            commands.add(installer.append("-m", "venv", ".venv"));
+            List<String> createVenv = new ArrayList<>(installer);
+            createVenv.addAll(List.of("-m", "venv", ".venv"));
+            commands.add(createVenv);
         }
         commands.add(List.of(
                 environmentPython.toString(), "-m", "pip", "install", "-r",
@@ -932,7 +892,8 @@ public class StudentPanel extends JPanel {
                         return new CommandResult(-1, output.toString(), ex);
                     }
                 }
-                return new CommandResult(0, output.toString(), null);
+                Visor3DService.olvidarPython();
+                return new CommandResult(Visor3DService.python() != null ? 0 : 1, output.toString(), null);
             }
 
             @Override
@@ -940,12 +901,12 @@ public class StudentPanel extends JPanel {
                 progress.dispose();
                 try {
                     CommandResult result = get();
-                    if (result.error != null || result.exitCode != 0 || detectPythonCommand() == null) {
+                    if (result.error != null || result.exitCode != 0) {
                         showPreparationError(scriptToOpen);
                         return;
                     }
                     refreshPythonScripts();
-                    runPythonScript(scriptToOpen);
+                    launchSimulation(scriptToOpen, true);
                 } catch (Exception ex) {
                     showPreparationError(scriptToOpen);
                 }
@@ -970,64 +931,73 @@ public class StudentPanel extends JPanel {
         }
     }
 
-    private void launchSimulation(PythonCommand pythonCommand, Path scriptPath) {
+    /**
+     * Abre el visor en segundo plano. El aviso de progreso se cierra cuando el visor informa de que su
+     * ventana esta abierta; al cerrarlo se registra la sesion (estructuras consultadas y duracion).
+     */
+    private void launchSimulation(Path scriptPath, boolean afterSetup) {
+        long studentId = currentStudentId();
         JDialog progress = progressDialog("Abriendo modelo 3D", "Preparando la ventana interactiva...");
-        List<String> command = pythonCommand.append(scriptPath.getFileName().toString());
 
-        SwingWorker<CommandResult, Void> worker = new SwingWorker<>() {
+        SwingWorker<Visor3DService.Resultado, Void> worker = new SwingWorker<>() {
+            private boolean withoutPython;
+
             @Override
-            protected CommandResult doInBackground() {
-                try {
-                    Process process = new ProcessBuilder(command)
-                            .directory(scriptPath.getParent().toFile())
-                            .redirectErrorStream(true)
-                            .start();
-                    SwingUtilities.invokeLater(progress::dispose);
-                    String output;
-                    try (var input = process.getInputStream()) {
-                        output = new String(input.readAllBytes(), StandardCharsets.UTF_8);
-                    }
-                    return new CommandResult(process.waitFor(), output, null);
-                } catch (Exception ex) {
-                    return new CommandResult(-1, "", ex);
+            protected Visor3DService.Resultado doInBackground() {
+                List<String> python = Visor3DService.python();
+                if (python == null) {
+                    withoutPython = true;
+                    return null;
                 }
+                return Visor3DService.ejecutar(scriptPath, python, () -> SwingUtilities.invokeLater(progress::dispose));
             }
 
             @Override
             protected void done() {
                 progress.dispose();
+                Visor3DService.Resultado result;
                 try {
-                    CommandResult result = get();
-                    if (result.error != null || result.exitCode != 0) {
-                        int option = JOptionPane.showOptionDialog(
-                                StudentPanel.this,
-                                "El modelo no pudo abrirse correctamente.\n"
-                                        + "Verifica que el equipo tenga aceleracion grafica disponible.",
-                                "No se pudo abrir el modelo",
-                                JOptionPane.DEFAULT_OPTION,
-                                JOptionPane.WARNING_MESSAGE,
-                                null,
-                                new Object[]{"Reintentar", "Cerrar"},
-                                "Reintentar"
-                        );
-                        if (option == 0) {
-                            runPythonScript(scriptPath);
-                        }
-                    }
+                    result = get();
                 } catch (Exception ex) {
+                    result = null;
+                }
+                if (withoutPython) {
+                    if (afterSetup) {
+                        showPreparationError(scriptPath);
+                    } else {
+                        preparePythonEnvironment(scriptPath);
+                    }
+                    return;
+                }
+                if (result == null) {
                     JOptionPane.showMessageDialog(StudentPanel.this,
                             "Ocurrio un problema al abrir el modelo. Intenta nuevamente.",
                             "Modelo no disponible",
                             JOptionPane.WARNING_MESSAGE);
+                    return;
+                }
+                auditService.log(studentId, "SIM_3D_SESION", Visor3DService.resumen(scriptPath, result));
+                if (!result.correcto()) {
+                    int option = JOptionPane.showOptionDialog(
+                            StudentPanel.this,
+                            "El modelo no pudo abrirse correctamente.\n"
+                                    + "Verifica que el equipo tenga aceleracion grafica disponible.",
+                            "No se pudo abrir el modelo",
+                            JOptionPane.DEFAULT_OPTION,
+                            JOptionPane.WARNING_MESSAGE,
+                            null,
+                            new Object[]{"Reintentar", "Cerrar"},
+                            "Reintentar"
+                    );
+                    if (option == 0) {
+                        runPythonScript(scriptPath);
+                    }
                 }
             }
         };
 
         worker.execute();
         progress.setVisible(true);
-        javax.swing.Timer hideProgress = new javax.swing.Timer(1800, e -> progress.dispose());
-        hideProgress.setRepeats(false);
-        hideProgress.start();
     }
 
     private JDialog progressDialog(String title, String message) {
@@ -1043,141 +1013,6 @@ public class StudentPanel extends JPanel {
         dialog.setLocationRelativeTo(this);
         dialog.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
         return dialog;
-    }
-
-    private Path localEnvironmentPython(Path scriptsFolder) {
-        Path python = scriptsFolder.resolve(".venv").resolve("Scripts").resolve("python.exe");
-        return Files.isRegularFile(python) ? python : null;
-    }
-
-    private Path resolvePythonScriptsFolder() {
-        Path workspaceRoot = Path.of(System.getProperty("user.dir"));
-        for (String candidate : PYTHON_SIM_DIR_CANDIDATES) {
-            Path folder = workspaceRoot.resolve(candidate).normalize();
-            if (Files.isDirectory(folder)) {
-                return folder;
-            }
-        }
-        return null;
-    }
-
-    private List<Path> listPythonScripts(Path scriptsFolder) {
-        try (var paths = Files.list(scriptsFolder)) {
-            return paths
-                    .filter(path -> isSimulationScript(path, scriptsFolder))
-                    .sorted(Comparator.comparing(path -> path.getFileName().toString().toLowerCase(Locale.ROOT)))
-                    .toList();
-        } catch (IOException ex) {
-            return List.of();
-        }
-    }
-
-    private boolean isSimulationScript(Path path, Path scriptsFolder) {
-        if (!Files.isRegularFile(path)) {
-            return false;
-        }
-        String fileName = path.getFileName().toString();
-        if (!fileName.toLowerCase(Locale.ROOT).endsWith(".py")) {
-            return false;
-        }
-        String modelName = fileName.substring(0, fileName.length() - 3) + ".glb";
-        if (Files.isRegularFile(scriptsFolder.resolve(modelName))) {
-            return true;
-        }
-        return CAVITY_SCRIPTS.contains(fileName) && Files.isRegularFile(scriptsFolder.resolve(CAVITY_MANIFEST));
-    }
-
-    private String simulationDisplayName(Path script) {
-        String fileName = script.getFileName().toString();
-        String name = fileName.substring(0, fileName.length() - 3).replace('_', ' ');
-        return name.isEmpty() ? fileName : Character.toUpperCase(name.charAt(0)) + name.substring(1);
-    }
-
-    private PythonCommand detectPythonCommand() {
-        for (PythonCommand candidate : pythonCommandCandidates()) {
-            if (hasSimulationDependencies(candidate.command)) {
-                return candidate;
-            }
-        }
-        return null;
-    }
-
-    private PythonCommand detectPythonInstallerCommand() {
-        for (PythonCommand candidate : pythonCommandCandidates()) {
-            if (isCommandAvailable(candidate.command)) {
-                return candidate;
-            }
-        }
-        return null;
-    }
-
-    private List<PythonCommand> pythonCommandCandidates() {
-        List<PythonCommand> candidates = new ArrayList<>(bundledPythonCandidates());
-        candidates.addAll(List.of(
-                new PythonCommand(List.of("py", "-3.9"), "py -3.9"),
-                new PythonCommand(List.of("py", "-3.11"), "py -3.11"),
-                new PythonCommand(List.of("py", "-3.10"), "py -3.10"),
-                new PythonCommand(List.of("py", "-3"), "py -3"),
-                new PythonCommand(List.of("python"), "python"),
-                new PythonCommand(List.of("python3"), "python3")
-        ));
-        return candidates;
-    }
-
-    private List<PythonCommand> bundledPythonCandidates() {
-        Set<String> candidates = new LinkedHashSet<>();
-        Path cwd = Path.of(System.getProperty("user.dir"));
-        Path scriptsFolder = resolvePythonScriptsFolder();
-        if (scriptsFolder != null) {
-            candidates.add(scriptsFolder.resolve(".venv").resolve("Scripts").resolve("python.exe")
-                    .normalize().toString());
-        }
-        candidates.add(cwd.resolve("python-runtime").resolve("python.exe").normalize().toString());
-        candidates.add(cwd.resolve("app").resolve("python-runtime").resolve("python.exe").normalize().toString());
-
-        String launcherPath = System.getProperty("jpackage.app-path");
-        if (launcherPath != null && !launcherPath.isBlank()) {
-            Path root = Path.of(launcherPath).getParent();
-            if (root != null) {
-                candidates.add(root.resolve("python-runtime").resolve("python.exe").normalize().toString());
-                candidates.add(root.resolve("app").resolve("python-runtime").resolve("python.exe").normalize().toString());
-            }
-        }
-
-        List<PythonCommand> commands = new ArrayList<>();
-        for (String path : candidates) {
-            if (Files.isRegularFile(Path.of(path))) {
-                commands.add(new PythonCommand(List.of(path), path));
-            }
-        }
-        return commands;
-    }
-
-    private boolean isCommandAvailable(List<String> command) {
-        return canRunPythonCode(command,
-                "import pathlib, sys; raise SystemExit(0 if pathlib.Path(sys.base_prefix, 'Lib').is_dir() else 1)");
-    }
-
-    private boolean hasSimulationDependencies(List<String> command) {
-        return canRunPythonCode(command, "import PyQt5, vtk, numpy");
-    }
-
-    private boolean canRunPythonCode(List<String> command, String code) {
-        List<String> probe = new ArrayList<>(command);
-        probe.addAll(List.of("-c", code));
-        try {
-            Process process = new ProcessBuilder(probe)
-                    .redirectErrorStream(true)
-                    .start();
-            boolean finished = process.waitFor(5, TimeUnit.SECONDS);
-            if (!finished) {
-                process.destroyForcibly();
-                return false;
-            }
-            return process.exitValue() == 0;
-        } catch (Exception ex) {
-            return false;
-        }
     }
 
     private JTextField searchField(String placeholder) {
@@ -1265,22 +1100,6 @@ public class StudentPanel extends JPanel {
             return "N/A";
         }
         return String.format(Locale.US, "%.2f", total / count);
-    }
-
-    private static final class PythonCommand {
-        private final List<String> command;
-
-        private PythonCommand(List<String> command, String ignoredLabel) {
-            this.command = command;
-        }
-
-        private List<String> append(String... args) {
-            List<String> fullCommand = new ArrayList<>(command);
-            for (String arg : args) {
-                fullCommand.add(arg);
-            }
-            return fullCommand;
-        }
     }
 
     private static final class CommandResult {
