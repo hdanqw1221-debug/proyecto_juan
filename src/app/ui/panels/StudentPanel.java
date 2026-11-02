@@ -20,6 +20,7 @@ import app.service.Visor3DService;
 import app.session.SessionManager;
 import app.ui.ExamDialog;
 import app.ui.ModelCatalogPanel;
+import app.ui.SimulationDetailsPanel;
 import app.ui.UiTheme;
 
 import javax.swing.*;
@@ -229,13 +230,9 @@ public class StudentPanel extends JPanel {
         header.add(title, BorderLayout.NORTH);
         header.add(desc, BorderLayout.CENTER);
 
-        JTextArea area = new JTextArea(SimulationService.summarizeSimulation(simulation));
-        area.setEditable(false);
-        area.setLineWrap(true);
-        area.setWrapStyleWord(true);
-        area.setFont(new Font(Font.MONOSPACED, Font.PLAIN, 12));
-        area.setCaretPosition(0);
-        JScrollPane scroll = new JScrollPane(area);
+        JScrollPane scroll = new JScrollPane(new SimulationDetailsPanel(simulation));
+        scroll.setBorder(BorderFactory.createEmptyBorder());
+        scroll.getVerticalScrollBar().setUnitIncrement(16);
 
         JPanel actions = new JPanel(new FlowLayout(FlowLayout.RIGHT, 10, 0));
         actions.setOpaque(false);
@@ -254,7 +251,7 @@ public class StudentPanel extends JPanel {
             });
             actions.add(launch3d);
         } else if (scriptName != null) {
-            JLabel missing = new JLabel("El modelo 3D de esta practica (" + scriptName + ") no esta disponible en este equipo.");
+            JLabel missing = new JLabel("El modelo 3D de esta practica no esta disponible en este equipo.");
             missing.setForeground(UiTheme.WARNING);
             actions.add(missing);
         }

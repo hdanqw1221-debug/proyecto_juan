@@ -19,6 +19,7 @@ import app.service.Visor3DService;
 import app.session.SessionManager;
 import app.ui.QuestionBatchEditorDialog;
 import app.ui.QuestionnairePreviewDialog;
+import app.ui.SimulationFormDialog;
 import app.ui.UiTheme;
 
 import javax.swing.*;
@@ -55,12 +56,8 @@ public class TeacherPanel extends JPanel {
             new DefaultTableModel(new Object[]{"ID", "Pregunta", "Correcta", "Contenido"}, 0);
     private final DefaultTableModel gradeModel =
             new DefaultTableModel(new Object[]{"Intento", "Examen", "Estudiante", "Inicio", "Fin", "Puntaje"}, 0);
-    private static final String[] MODEL_3D_OPTIONS = java.util.stream.Stream.concat(
-            java.util.stream.Stream.of("(Ninguno)"),
-            Visor3DService.MODELOS.stream().map(Visor3DService.Modelo::script)).toArray(String[]::new);
-
     private final DefaultTableModel simulationModel =
-            new DefaultTableModel(new Object[]{"ID", "Curso", "Nombre", "Modelo 3D", "Habilitado", "Configuracion"}, 0);
+            new DefaultTableModel(new Object[]{"ID", "Curso", "Nombre", "Modelo 3D", "Disponible", "Duracion"}, 0);
 
     private final JComboBox<ComboItem> questionnaireCourseFilter = new JComboBox<>();
     private final JComboBox<ComboItem> examCourseSelector = new JComboBox<>();
@@ -720,7 +717,7 @@ private JPanel buildSimulationPanel() {
         top.add(refresh);
         top.add(simulationSummary);
 
-        JButton create = new JButton("+ Crear Simulacion");
+        JButton create = new JButton("+ Crear practica");
         app.ui.UiTheme.styleButton(create);
         top.add(create);
 
@@ -736,19 +733,17 @@ private JPanel buildSimulationPanel() {
         selectedSimulationId.setEditable(false);
         JButton preview3d = new JButton("▶ Probar Modelo 3D");
         app.ui.UiTheme.styleButton(preview3d);
-        JButton editSim = new JButton("Editar Simulacion");
+        JButton editSim = new JButton("Editar practica");
         app.ui.UiTheme.styleSecondaryButton(editSim);
         JButton deleteSim = new JButton("Eliminar");
         app.ui.UiTheme.styleSecondaryButton(deleteSim);
-        JButton loadTemplate = new JButton("Cargar Plantilla");
-        JButton enableJson = new JButton("Habilitar JSON");
-        JButton disableJson = new JButton("Deshabilitar JSON");
+        JButton enableJson = new JButton("Habilitar practica");
+        JButton disableJson = new JButton("Deshabilitar practica");
         bottom.add(new JLabel("Simulacion Seleccionada:"));
         bottom.add(selectedSimulationId);
         bottom.add(preview3d);
         bottom.add(editSim);
         bottom.add(deleteSim);
-        bottom.add(loadTemplate);
         bottom.add(enableJson);
         bottom.add(disableJson);
 
@@ -787,135 +782,47 @@ private JPanel buildSimulationPanel() {
             requireTeacher();
             ComboItem courseItem = selectedItem(simulationCourseSelector);
             if (courseItem == null) {
-                javax.swing.JOptionPane.showMessageDialog(this, "Selecciona un curso primero.");
+                JOptionPane.showMessageDialog(this, "Selecciona un curso primero.");
                 return;
             }
-
-            app.ui.FormModal modal = new app.ui.FormModal((java.awt.Frame) javax.swing.SwingUtilities.getWindowAncestor(this), "Crear Simulacion", 540, 460);
-            JTextField name = new JTextField(20);
-            JTextField desc = new JTextField(20);
-            JComboBox<String> modelCombo = model3dCombo();
-            modelCombo.setSelectedItem("cavidad_toracica.py");
-            JTextArea config = new JTextArea(app.service.SimulationService.defaultConfigJson(), 10, 35);
-            config.setLineWrap(true);
-            config.setWrapStyleWord(true);
-
-            linkModelToConfig(modelCombo, config);
-
-            JPanel c = modal.getContent();
-            GridBagConstraints gbc = new GridBagConstraints();
-            gbc.fill = GridBagConstraints.HORIZONTAL; gbc.insets = new java.awt.Insets(5,5,5,5);
-            gbc.gridx = 0; gbc.gridy = 0; gbc.weightx = 0.0; c.add(new JLabel("Nombre:"), gbc);
-            gbc.gridx = 1; gbc.weightx = 1.0; c.add(name, gbc);
-            gbc.gridx = 0; gbc.gridy = 1; gbc.weightx = 0.0; c.add(new JLabel("Descripcion:"), gbc);
-            gbc.gridx = 1; gbc.weightx = 1.0; c.add(desc, gbc);
-            gbc.gridx = 0; gbc.gridy = 2; gbc.weightx = 0.0; c.add(new JLabel("Modelo 3D:"), gbc);
-            gbc.gridx = 1; gbc.weightx = 1.0; c.add(modelCombo, gbc);
-            gbc.gridx = 0; gbc.gridy = 3; gbc.weightx = 0.0; gbc.weighty = 0.0; c.add(new JLabel("Config JSON:"), gbc);
-            gbc.gridx = 1; gbc.weightx = 1.0; gbc.weighty = 1.0; gbc.fill = GridBagConstraints.BOTH; c.add(new JScrollPane(config), gbc);
-
-            JButton confirm = new JButton("Guardar");
-            app.ui.UiTheme.styleButton(confirm);
-            JButton cancel = new JButton("Cancelar");
-            app.ui.UiTheme.styleSecondaryButton(cancel);
-            modal.addActions(confirm, cancel);
-            modal.setVisible(true);
-
-            if (modal.isConfirmed()) {
-                try {
-                    String json = config.getText();
-                    String chosen = (String) modelCombo.getSelectedItem();
-                    if (chosen != null && !chosen.equals("(Ninguno)")) {
-                        if (!json.contains("\"script3d\"")) {
-                            json = json.replaceFirst("\\{", "{\\n  \"script3d\": \"" + chosen + "\",");
-                        }
-                    }
-                    long id = simulationService.createSimulation(courseItem.id, name.getText().trim(), desc.getText().trim(), json);
-                    auditService.log(currentTeacherId(), "SIM_CREATE", "Simulacion ID " + id);
-                    refreshSimulations();
-                    javax.swing.JOptionPane.showMessageDialog(this, "Simulacion creada con exito. ID: " + id);
-                } catch (IllegalArgumentException ex) {
-                    javax.swing.JOptionPane.showMessageDialog(this, ex.getMessage(), "Validacion JSON", javax.swing.JOptionPane.WARNING_MESSAGE);
-                }
+            SimulationFormDialog.Result result = SimulationFormDialog.show(this, null);
+            if (result == null) return;
+            try {
+                long id = simulationService.createSimulation(courseItem.id,
+                        result.name(), result.description(), result.configJson());
+                auditService.log(currentTeacherId(), "SIM_CREATE", "Simulacion ID " + id);
+                refreshSimulations();
+                JOptionPane.showMessageDialog(this, "Practica creada con exito.");
+            } catch (Exception ex) {
+                JOptionPane.showMessageDialog(this, "No se pudo crear la practica: " + ex.getMessage(),
+                        "Error al guardar", JOptionPane.ERROR_MESSAGE);
             }
         });
 
         editSim.addActionListener(e -> {
             requireTeacher();
             if (selectedSimulationId.getText().isBlank()) {
-                javax.swing.JOptionPane.showMessageDialog(this, "Selecciona una simulacion para editar.");
+                JOptionPane.showMessageDialog(this, "Selecciona una practica para editar.");
                 return;
             }
             long simId = Long.parseLong(selectedSimulationId.getText().trim());
             Simulation sim = simulationService.findById(simId);
             if (sim == null) {
-                javax.swing.JOptionPane.showMessageDialog(this, "No se encontro la simulacion.");
+                JOptionPane.showMessageDialog(this, "No se encontro la practica.");
                 return;
             }
-
-            app.ui.FormModal modal = new app.ui.FormModal((java.awt.Frame) javax.swing.SwingUtilities.getWindowAncestor(this), "Editar Simulacion", 540, 460);
-            JTextField name = new JTextField(sim.getName(), 20);
-            JTextField desc = new JTextField(sim.getDescription() != null ? sim.getDescription() : "", 20);
-            JComboBox<String> modelCombo = model3dCombo();
-            String currentScript = SimulationService.getScript3D(sim);
-            if (currentScript != null) {
-                for (int i = 0; i < MODEL_3D_OPTIONS.length; i++) {
-                    if (MODEL_3D_OPTIONS[i].equalsIgnoreCase(currentScript)) {
-                        modelCombo.setSelectedIndex(i);
-                        break;
-                    }
-                }
+            SimulationFormDialog.Result result = SimulationFormDialog.show(this, sim);
+            if (result == null) return;
+            try {
+                simulationService.updateDetails(simId,
+                        result.name(), result.description(), result.configJson());
+                auditService.log(currentTeacherId(), "SIM_UPDATE_DETAILS", "Simulacion ID " + simId);
+                refreshSimulations();
+                JOptionPane.showMessageDialog(this, "Practica actualizada con exito.");
+            } catch (Exception ex) {
+                JOptionPane.showMessageDialog(this, "No se pudo actualizar la practica: " + ex.getMessage(),
+                        "Error al guardar", JOptionPane.ERROR_MESSAGE);
             }
-            JTextArea config = new JTextArea(sim.getConfigJson() != null ? sim.getConfigJson() : app.service.SimulationService.defaultConfigJson(), 10, 35);
-            config.setLineWrap(true);
-            config.setWrapStyleWord(true);
-
-            linkModelToConfig(modelCombo, config);
-
-            JPanel c = modal.getContent();
-            GridBagConstraints gbc = new GridBagConstraints();
-            gbc.fill = GridBagConstraints.HORIZONTAL; gbc.insets = new java.awt.Insets(5,5,5,5);
-            gbc.gridx = 0; gbc.gridy = 0; gbc.weightx = 0.0; c.add(new JLabel("Nombre:"), gbc);
-            gbc.gridx = 1; gbc.weightx = 1.0; c.add(name, gbc);
-            gbc.gridx = 0; gbc.gridy = 1; gbc.weightx = 0.0; c.add(new JLabel("Descripcion:"), gbc);
-            gbc.gridx = 1; gbc.weightx = 1.0; c.add(desc, gbc);
-            gbc.gridx = 0; gbc.gridy = 2; gbc.weightx = 0.0; c.add(new JLabel("Modelo 3D:"), gbc);
-            gbc.gridx = 1; gbc.weightx = 1.0; c.add(modelCombo, gbc);
-            gbc.gridx = 0; gbc.gridy = 3; gbc.weightx = 0.0; gbc.weighty = 0.0; c.add(new JLabel("Config JSON:"), gbc);
-            gbc.gridx = 1; gbc.weightx = 1.0; gbc.weighty = 1.0; gbc.fill = GridBagConstraints.BOTH; c.add(new JScrollPane(config), gbc);
-
-            JButton confirm = new JButton("Guardar Cambios");
-            app.ui.UiTheme.styleButton(confirm);
-            JButton cancel = new JButton("Cancelar");
-            app.ui.UiTheme.styleSecondaryButton(cancel);
-            modal.addActions(confirm, cancel);
-            modal.setVisible(true);
-
-            if (modal.isConfirmed()) {
-                try {
-                    String json = config.getText();
-                    String chosen = (String) modelCombo.getSelectedItem();
-                    if (chosen != null && !chosen.equals("(Ninguno)")) {
-                        if (!json.contains("\"script3d\"")) {
-                            json = json.replaceFirst("\\{", "{\\n  \"script3d\": \"" + chosen + "\",");
-                        }
-                    }
-                    simulationService.updateDetails(simId, name.getText().trim(), desc.getText().trim(), json);
-                    auditService.log(currentTeacherId(), "SIM_UPDATE_DETAILS", "Simulacion ID " + simId);
-                    refreshSimulations();
-                    javax.swing.JOptionPane.showMessageDialog(this, "Simulacion actualizada con exito.");
-                } catch (IllegalArgumentException ex) {
-                    javax.swing.JOptionPane.showMessageDialog(this, ex.getMessage(), "Validacion JSON", javax.swing.JOptionPane.WARNING_MESSAGE);
-                }
-            }
-        });
-
-        loadTemplate.addActionListener(e -> {
-            // Re-implement if needed, but the original logic updated the inline text area
-            // Now we can just show a modal to see the template
-            JTextArea area = new JTextArea(app.service.SimulationService.defaultConfigJson(), 15, 40);
-            area.setEditable(false);
-            javax.swing.JOptionPane.showMessageDialog(this, new JScrollPane(area), "Plantilla JSON", javax.swing.JOptionPane.INFORMATION_MESSAGE);
         });
 
         deleteSim.addActionListener(e -> {
@@ -1580,27 +1487,22 @@ private JPanel buildSimulationPanel() {
                     simulation.getId(),
                     courseName,
                     simulation.getName(),
-                    script3d != null ? Visor3DService.titulo(script3d) + " (" + script3d + ")" : "Ninguno",
+                    script3d != null ? Visor3DService.titulo(script3d) : "Ninguno",
                     enabled ? "Si" : "No",
-                    simulation.getConfigJson()
+                    simulationDuration(simulation)
             });
         }
-        simulationSummary.setText("Simulaciones: " + simulations.size() + " | JSON habilitado: " + enabledCount);
+        simulationSummary.setText("Practicas: " + simulations.size() + " | Disponibles: " + enabledCount);
     }
 
-    private void updateSimulationJsonStatus(boolean enabled) {
-        requireTeacher();
-        if (selectedSimulationId.getText().isBlank()) {
-            JOptionPane.showMessageDialog(this, "Selecciona una simulacion en la tabla.");
-            return;
+    private String simulationDuration(Simulation simulation) {
+        try {
+            int minutes = app.service.SimulationConfig.fromJson(simulation.getConfigJson())
+                    .integer("tiempoMinutos", 0);
+            return minutes > 0 ? minutes + " min" : "Sin definir";
+        } catch (IllegalArgumentException ex) {
+            return "Sin definir";
         }
-
-        long simulationId = Long.parseLong(selectedSimulationId.getText().trim());
-        simulationService.updateEnabled(simulationId, enabled);
-        auditService.log(currentTeacherId(), enabled ? "SIM_JSON_ENABLE" : "SIM_JSON_DISABLE",
-                "Simulacion ID " + simulationId);
-        refreshSimulations();
-        JOptionPane.showMessageDialog(this, enabled ? "JSON habilitado." : "JSON deshabilitado.");
     }
 
     private void fillCourseCombo(JComboBox<ComboItem> combo, List<Course> courses, boolean includeAll) {
@@ -1834,47 +1736,6 @@ private JPanel buildSimulationPanel() {
             }
             return false;
         }
-    }
-
-    /** Selector de modelo 3D que muestra el titulo de cada modelo junto al script. */
-    private JComboBox<String> model3dCombo() {
-        JComboBox<String> combo = new JComboBox<>(MODEL_3D_OPTIONS);
-        combo.setRenderer(new DefaultListCellRenderer() {
-            @Override
-            public Component getListCellRendererComponent(JList<?> list, Object value, int index,
-                                                          boolean isSelected, boolean cellHasFocus) {
-                String script = (String) value;
-                String text = script == null || script.equals("(Ninguno)")
-                        ? "(Ninguno)" : Visor3DService.titulo(script) + "  -  " + script;
-                return super.getListCellRendererComponent(list, text, index, isSelected, cellHasFocus);
-            }
-        });
-        return combo;
-    }
-
-    /**
-     * Al cambiar de modelo se actualiza el script3d de la configuracion; si la configuracion sigue siendo
-     * la plantilla del modelo anterior, se sustituye por la del nuevo (objetivos y escenario propios).
-     */
-    private void linkModelToConfig(JComboBox<String> modelCombo, JTextArea config) {
-        String[] previous = {(String) modelCombo.getSelectedItem()};
-        modelCombo.addActionListener(ev -> {
-            String chosen = (String) modelCombo.getSelectedItem();
-            String txt = config.getText();
-            if (chosen != null && !chosen.equals("(Ninguno)")) {
-                boolean untouched = previous[0] != null && !previous[0].equals("(Ninguno)")
-                        && txt.strip().equals(SimulationService.defaultConfigJson(previous[0]).strip());
-                if (untouched) {
-                    txt = SimulationService.defaultConfigJson(chosen);
-                } else if (txt.contains("\"script3d\"")) {
-                    txt = txt.replaceAll("\"script3d\"\\s*:\\s*\"[^\"]*\"", "\"script3d\": \"" + chosen + "\"");
-                } else {
-                    txt = txt.replaceFirst("\\{", "{\\n  \"script3d\": \"" + chosen + "\",");
-                }
-                config.setText(txt);
-            }
-            previous[0] = chosen;
-        });
     }
 
     private void runTeacherPythonScript(String scriptName) {
