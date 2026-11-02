@@ -1,0 +1,35 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Fichas anatómicas de las cavidades equinas",
+  "type": "array",
+  "minItems": 1,
+  "items": {
+    "type": "object",
+    "additionalProperties": false,
+    "required": ["ficha_id", "nombre", "nombre_latino", "cavidad", "sistema", "objetos", "descripcion", "topografia",
+                 "proyeccion_superficial", "relaciones", "medios_de_fijacion", "irrigacion_drenaje", "dimensiones",
+                 "consideraciones_clinicas", "exploracion", "referencias", "pendiente_validacion"],
+    "properties": {
+      "ficha_id": {"type": "string", "pattern": "^(TOR|ABD|PEL|ING)_[A-Z0-9_]+$"},
+      "nombre": {"type": "string", "minLength": 2},
+      "nombre_latino": {"type": "string", "minLength": 2},
+      "cavidad": {"enum": ["toracica", "abdominal", "pelvica", "inguinal"]},
+      "sistema": {"enum": ["respiratorio", "cardiovascular", "digestivo", "linfatico", "urinario", "endocrino",
+                           "reproductor", "limites"]},
+      "objetos": {"type": "array", "minItems": 1, "items": {"type": "string"}, "uniqueItems": true},
+      "descripcion": {"type": "string", "minLength": 20},
+      "topografia": {"type": "string", "minLength": 2},
+      "proyeccion_superficial": {"type": "string", "minLength": 2},
+      "relaciones": {"type": "string", "minLength": 2},
+      "medios_de_fijacion": {"type": "string", "minLength": 2},
+      "irrigacion_drenaje": {"type": "string", "minLength": 2},
+      "dimensiones": {"type": "string", "minLength": 2},
+      "consideraciones_clinicas": {"type": "string", "minLength": 2},
+      "exploracion": {"type": "string", "minLength": 2},
+      "referencias": {"type": "array", "minItems": 1, "items": {"type": "string"}},
+      "pendiente_validacion": {"type": "boolean"},
+      "campos_pendientes": {"type": "array", "items": {"type": "string"}, "uniqueItems": true},
+      "sexo_aplicable": {"enum": ["ambos", "macho", "hembra"]}
+    }
+  }
+}

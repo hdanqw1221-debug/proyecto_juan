@@ -1,0 +1,4 @@
+﻿# PostgreSQL local: copia este archivo a app.properties y configura tus credenciales
+app.db.url=jdbc:postgresql://localhost:5432/gestion
+app.db.user=postgres
+app.db.password=

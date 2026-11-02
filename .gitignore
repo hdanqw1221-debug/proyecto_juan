@@ -1,0 +1,16 @@
+aplicacion_tres_d/aplicacion_tres_d/.venv/
+__pycache__/
+.pytest_cache/
+*.blend1
+build/
+oracleJdk-26/
+aplicacion_tres_d/aplicacion_tres_d/cavidades/prototipos/
+previos/
+
+# Archivos locales y generados
+*.rar
+out/
+scratch/
+config/app.properties
+.env
+.env.*
