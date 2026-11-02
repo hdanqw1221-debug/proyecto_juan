@@ -1,0 +1,225 @@
+{
+  "colisiones": [
+    {
+      "a": "ABD_A_MESENTERICA_CRANEAL",
+      "b": "ABD_DUODENO",
+      "profundidad_inicial_m": 0.0239,
+      "corregida": false,
+      "motivo": "amoldado en el campo"
+    },
+    {
+      "a": "ABD_COLON_DESCENDENTE",
+      "b": "ABD_URETER_IZQ",
+      "profundidad_inicial_m": 0.0115,
+      "corregida": false,
+      "motivo": "amoldado en el campo"
+    },
+    {
+      "a": "ABD_COLON_DESCENDENTE",
+      "b": "ABD_YEYUNO",
+      "profundidad_inicial_m": 0.0302,
+      "corregida": false,
+      "motivo": "amoldado en el campo"
+    },
+    {
+      "a": "ABD_COLON_DORSAL_DER",
+      "b": "ABD_COLON_VENTRAL_DER",
+      "profundidad_inicial_m": 0.0176,
+      "corregida": false,
+      "motivo": "amoldado en el campo"
+    },
+    {
+      "a": "ABD_COLON_TRANSVERSO",
+      "b": "ABD_YEYUNO",
+      "profundidad_inicial_m": 0.0459,
+      "corregida": false,
+      "motivo": "amoldado en el campo"
+    },
+    {
+      "a": "ABD_COLON_VENTRAL_DER",
+      "b": "ABD_ILEON",
+      "profundidad_inicial_m": 0.0188,
+      "corregida": false,
+      "motivo": "amoldado en el campo"
+    },
+    {
+      "a": "ABD_DUODENO",
+      "b": "ABD_HIGADO",
+      "profundidad_inicial_m": 0.0179,
+      "corregida": false,
+      "motivo": "amoldado en el campo"
+    },
+    {
+      "a": "ABD_VENA_CAVA_CAUDAL",
+      "b": "TOR_PULMON_DER",
+      "profundidad_inicial_m": 0.0153,
+      "corregida": false,
+      "motivo": "conducto fino"
+    },
+    {
+      "a": "TOR_AORTA",
+      "b": "TOR_TRAQUEA",
+      "profundidad_inicial_m": 0.0216,
+      "corregida": false,
+      "motivo": "conducto fino"
+    },
+    {
+      "a": "TOR_AORTA",
+      "b": "TOR_VENA_CAVA_CRANEAL",
+      "profundidad_inicial_m": 0.0177,
+      "corregida": false,
+      "motivo": "conducto fino"
+    }
+  ],
+  "desplazamientos_lineas_medias": {
+    "ABD_ESTOMAGO": {
+      "max_m": 0.103,
+      "medio_m": 0.061
+    },
+    "ABD_DUODENO": {
+      "max_m": 0.173,
+      "medio_m": 0.084
+    },
+    "ABD_YEYUNO": {
+      "max_m": 0.17,
+      "medio_m": 0.074
+    },
+    "ABD_ILEON": {
+      "max_m": 0.078,
+      "medio_m": 0.056
+    },
+    "ABD_CIEGO": {
+      "max_m": 0.119,
+      "medio_m": 0.038
+    },
+    "ABD_COLON_VENTRAL_DER": {
+      "max_m": 0.351,
+      "medio_m": 0.154
+    },
+    "ABD_FLEXURA_ESTERNAL": {
+      "max_m": 0.223,
+      "medio_m": 0.146
+    },
+    "ABD_COLON_VENTRAL_IZQ": {
+      "max_m": 0.242,
+      "medio_m": 0.091
+    },
+    "ABD_FLEXURA_PELVICA": {
+      "max_m": 0.099,
+      "medio_m": 0.066
+    },
+    "ABD_COLON_DORSAL_IZQ": {
+      "max_m": 0.185,
+      "medio_m": 0.058
+    },
+    "ABD_FLEXURA_DIAFRAGMATICA": {
+      "max_m": 0.194,
+      "medio_m": 0.12
+    },
+    "ABD_COLON_DORSAL_DER": {
+      "max_m": 0.168,
+      "medio_m": 0.112
+    },
+    "ABD_COLON_TRANSVERSO": {
+      "max_m": 0.143,
+      "medio_m": 0.117
+    },
+    "ABD_COLON_DESCENDENTE": {
+      "max_m": 0.141,
+      "medio_m": 0.053
+    }
+  },
+  "ajustes_respecto_al_prompt": [
+    {
+      "objeto": "TOR_AORTA",
+      "cambio": "Arco aórtico desplazado 3–4 cm a la izquierda (y 0,045–0,05).",
+      "motivo": "En el prompt el arco coincidía con el esófago en (1,50; 0,01; 0,50); el documento indica que el esófago pasa a la derecha del arco."
+    },
+    {
+      "objeto": "TOR_ESOFAGO",
+      "cambio": "Trayecto torácico con y ligeramente negativa (−0,005 a −0,012) y continuación hasta el cardias.",
+      "motivo": "Esófago a la derecha del arco aórtico; el hiato se recalcula con x_diafragma (x ≈ 0,92)."
+    },
+    {
+      "objeto": "TOR_AORTA",
+      "cambio": "Tronco braquiocefálico ventral a la tráquea.",
+      "motivo": "Evitar que cruce la luz traqueal (relación anatómica normal)."
+    },
+    {
+      "objeto": "TOR_VENA_CAVA_CAUDAL",
+      "cambio": "Foramen recalculado: x = x_diafragma(−0,04; 0,42) ≈ 1,18.",
+      "motivo": "Indicado en el prompt."
+    },
+    {
+      "objeto": "ABD_ESTOMAGO",
+      "cambio": "Saco ciego bajado a z = 0,52 (antes 0,57).",
+      "motivo": "A z = 0,57 quedaba ~6 cm craneal al diafragma, fuera de la cavidad abdominal."
+    },
+    {
+      "objeto": "ABD_CIEGO",
+      "cambio": "Cuerpo y ápice desplazados hacia el plano medio (y −0,02 a −0,05) y base ligeramente caudal.",
+      "motivo": "En el prompt el cuerpo del ciego ocupaba el mismo volumen que los colones ventral y dorsal derechos (solape de 6–12 cm)."
+    },
+    {
+      "objeto": "ABD_COLON_VENTRAL_DER",
+      "cambio": "Inicio en el orificio cecocólico (0,66; −0,12; 0,42).",
+      "motivo": "Continuidad con la base del ciego."
+    },
+    {
+      "objeto": "ABD_COLON_DORSAL_DER",
+      "cambio": "Extremo caudal en (0,78; −0,15; 0,47).",
+      "motivo": "Separarlo de la base del ciego."
+    },
+    {
+      "objeto": "ABD_COLON_TRANSVERSO",
+      "cambio": "Trayecto (0,78; −0,15; 0,47) → (0,78; −0,05; 0,55) → (0,76; 0,06; 0,55).",
+      "motivo": "Continuidad con el colon dorsal derecho ajustado; sigue craneal a la a. mesentérica craneal (x 0,68)."
+    },
+    {
+      "objeto": "ABD_YEYUNO",
+      "cambio": "Meandro determinista en capas (x 0,43–0,85; y 0,02–0,16; z 0,33–0,51), ~6 m.",
+      "motivo": "Garantiza ausencia de autointersecciones; techo bajado para no invadir riñón izquierdo ni colon transverso."
+    },
+    {
+      "objeto": "ABD_COLON_DESCENDENTE",
+      "cambio": "Meandro en dos capas (x 0,20–0,56; z 0,445–0,53), ≈2,5 m esquemáticos.",
+      "motivo": "Cuadrante dorsal izquierdo; la longitud real (3–3,5 m) se indica en la ficha."
+    },
+    {
+      "objeto": "ABD_HIGADO",
+      "cambio": "Proceso caudado añadido como lóbulo en (y −0,10; z 0,56).",
+      "motivo": "Contacto con el riñón derecho (impresión renal)."
+    },
+    {
+      "objeto": "ING_CONDUCTO_DEFERENTE",
+      "cambio": "Ampolla a z = 0,375 (antes 0,32); recorrido caudomedial lateral a la vejiga.",
+      "motivo": "A z = 0,32 quedaba dentro de la vejiga."
+    },
+    {
+      "objeto": "ING_TESTICULO",
+      "cambio": "Centro a z = −0,07 (antes −0,20); estructuras escrotales referidas a él.",
+      "motivo": "Escroto con cuello corto, como en el semental; con −0,20 el cordón medía ~30 cm."
+    },
+    {
+      "objeto": "ING_VASOS_TESTICULARES",
+      "cambio": "Trayecto pegado a la pared dorsolateral (retroperitoneal).",
+      "motivo": "El trayecto recto cruzaba el colon izquierdo y la flexura pélvica."
+    },
+    {
+      "objeto": "ABD_DUODENO",
+      "cambio": "Porción ascendente a z ≈ 0,53 (antes 0,57–0,58), caudal a la raíz de la a. mesentérica craneal.",
+      "motivo": "Pasa ventral al riñón izquierdo sin solaparlo (antes 2 cm) y caudal a la raíz del mesenterio, como en el animal."
+    },
+    {
+      "objeto": "ESTOMAGO_CIEGO_COLON_MAYOR",
+      "cambio": "Radios ×0,90 (estómago) y ×0,85 (ciego y colon mayor).",
+      "motivo": "Con los radios nominales el tubo digestivo ocuparía ~90 % de la cavidad abdominal; se reduce a ~65 %."
+    },
+    {
+      "objeto": "TODOS_LOS_TUBOS_DIGESTIVOS",
+      "cambio": "Líneas medias relajadas automáticamente (ver informe de colisiones).",
+      "motivo": "Separación determinista por prioridad y ajuste a la cavidad; el desplazamiento de cada órgano se informa."
+    }
+  ],
+  "refinados": []
+}
