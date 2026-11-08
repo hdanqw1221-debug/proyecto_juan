@@ -1,7 +1,19 @@
-﻿# Sistema de Gestión Académica y Simulador Anatómico Equino 3D
+# Sistema de Gestión Académica y Simulador Anatómico Equino 3D
 ### Universidad de Pamplona
 
 Plataforma integral de gestión del aprendizaje (LMS) y simulación tridimensional para la enseñanza de medicina veterinaria y zootecnia, desarrollada con **Java 21 (Swing + JDBC)**, persistencia relacional en **PostgreSQL**, y visores interactivos tridimensionales en **Python (PyQt5 + VTK)**.
+
+---
+
+## 📚 Documentación Oficial del Proyecto
+
+La documentación exhaustiva del proyecto está organizada en la carpeta [`docs/`](docs/):
+
+- 📖 **[Índice General y Guía de Navegación](docs/README.md)**: Resumen institucional y mapa documental.
+- ⚙️ **[Manual Técnico y de Arquitectura](docs/MANUAL_TECNICO.md)**: Diagrama de arquitectura, patrones de diseño (DAO, Service Layer, Factory, SessionManager), protocolo IPC Java-Python con stdout streaming JSON, motor de despiece progresivo y suite de pruebas JUnit 5.
+- 🗄️ **[Manual de Base de Datos y Diccionario de Datos](docs/BASE_DE_DATOS.md)**: Diagrama Entidad-Relación (16 tablas), normalización 3FN, diccionario detallado campo por campo, especificación de columnas JSONB y respaldos.
+- 👥 **[Manual de Usuario y Operación Funcional](docs/MANUAL_USUARIO.md)**: Guía ilustrada para Administrador (usuarios, importación CSV, cursos, auditoría), Profesor (exámenes, banco de preguntas con imágenes, prácticas 3D, notas y CSV), Estudiante (evaluaciones, certificados con hash SHA-256) y manejo de los 4 visores 3D.
+- 🚀 **[Guía de Despliegue, Instalación y Empaquetado](docs/GUIA_DESPLIEGUE.md)**: Requisitos del sistema, instalador todo-en-uno EXE para Windows, configuración del entorno de desarrollo (JDK, PostgreSQL, Python .venv), compilación de producción con `run.ps1 -Mode package` y solución de incidencias.
 
 ---
 
@@ -146,4 +158,3 @@ Si deseas generar nuevas contraseñas con hash BCrypt:
 java -cp "out;lib/*" app.tools.HashTool nueva_clave_123
 ```
 Copia el hash generado e insértalo directamente en la tabla `usuarios`.
-
