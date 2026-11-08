@@ -19,6 +19,8 @@ import app.service.SimulationService;
 import app.service.Visor3DService;
 import app.session.SessionManager;
 import app.ui.ExamDialog;
+import app.ui.ModelCatalogPanel;
+import app.ui.SimulationDetailsPanel;
 import app.ui.UiTheme;
 
 import javax.swing.*;
@@ -71,7 +73,7 @@ public class StudentPanel extends JPanel {
     private final JLabel selectedSimulationName = new JLabel("Selecciona una practica en la tabla.");
     private final JLabel selectedExamName = new JLabel("Selecciona una evaluacion en la tabla.");
     private final JLabel selectedResultName = new JLabel("Selecciona una calificacion en la tabla.");
-    private final JPanel pythonScriptsButtonsPanel = new JPanel(new GridLayout(0, 2, 14, 14));
+    private final ModelCatalogPanel pythonScriptsButtonsPanel = new ModelCatalogPanel();
 
     public StudentPanel(SessionManager sessionManager, AuditService auditService,
                         CourseService courseService, ExamService examService,
@@ -228,13 +230,9 @@ public class StudentPanel extends JPanel {
         header.add(title, BorderLayout.NORTH);
         header.add(desc, BorderLayout.CENTER);
 
-        JTextArea area = new JTextArea(SimulationService.summarizeSimulation(simulation));
-        area.setEditable(false);
-        area.setLineWrap(true);
-        area.setWrapStyleWord(true);
-        area.setFont(new Font(Font.MONOSPACED, Font.PLAIN, 12));
-        area.setCaretPosition(0);
-        JScrollPane scroll = new JScrollPane(area);
+        JScrollPane scroll = new JScrollPane(new SimulationDetailsPanel(simulation));
+        scroll.setBorder(BorderFactory.createEmptyBorder());
+        scroll.getVerticalScrollBar().setUnitIncrement(16);
 
         JPanel actions = new JPanel(new FlowLayout(FlowLayout.RIGHT, 10, 0));
         actions.setOpaque(false);
@@ -253,7 +251,7 @@ public class StudentPanel extends JPanel {
             });
             actions.add(launch3d);
         } else if (scriptName != null) {
-            JLabel missing = new JLabel("El modelo 3D de esta practica (" + scriptName + ") no esta disponible en este equipo.");
+            JLabel missing = new JLabel("El modelo 3D de esta practica no esta disponible en este equipo.");
             missing.setForeground(UiTheme.WARNING);
             actions.add(missing);
         }
@@ -280,8 +278,6 @@ public class StudentPanel extends JPanel {
         header.add(pythonScriptsSummary, BorderLayout.CENTER);
         panel.add(header, BorderLayout.NORTH);
 
-        pythonScriptsButtonsPanel.setOpaque(false);
-        pythonScriptsButtonsPanel.setBorder(BorderFactory.createEmptyBorder(12, 12, 12, 12));
         JScrollPane pythonScriptsScroll = new JScrollPane(pythonScriptsButtonsPanel);
         pythonScriptsScroll.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
         pythonScriptsScroll.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED);
@@ -779,43 +775,13 @@ public class StudentPanel extends JPanel {
         } else {
             boolean environmentReady = Visor3DService.hayPythonPropio();
             for (Visor3DService.Modelo model : models) {
-                pythonScriptsButtonsPanel.add(simulationCard(model, scriptsFolder.resolve(model.script()), environmentReady));
+                pythonScriptsButtonsPanel.addModel(model, environmentReady,
+                        () -> runPythonScript(scriptsFolder.resolve(model.script())));
             }
             pythonScriptsSummary.setText(models.size() + " modelos interactivos de las cavidades del equino");
         }
         pythonScriptsButtonsPanel.revalidate();
         pythonScriptsButtonsPanel.repaint();
-    }
-
-    private JPanel simulationCard(Visor3DService.Modelo model, Path script, boolean environmentReady) {
-        JPanel card = UiTheme.card(new BorderLayout(12, 12));
-
-        JPanel heading = new JPanel(new BorderLayout(8, 0));
-        heading.setOpaque(false);
-        JLabel title = UiTheme.title(model.titulo(), 18f);
-        JLabel type = new JLabel("MODELO 3D");
-        type.setForeground(UiTheme.INFO);
-        type.setFont(type.getFont().deriveFont(Font.BOLD, 11f));
-        heading.add(title, BorderLayout.CENTER);
-        heading.add(type, BorderLayout.EAST);
-
-        JLabel description = new JLabel("<html>" + model.descripcion() + "</html>");
-        description.setForeground(UiTheme.MUTED);
-
-        JPanel footer = new JPanel(new BorderLayout(10, 0));
-        footer.setOpaque(false);
-        JLabel status = new JLabel(environmentReady ? "Listo para explorar" : "Se preparara al abrir");
-        status.setForeground(environmentReady ? UiTheme.SUCCESS : UiTheme.WARNING);
-        JButton open = new JButton("Abrir modelo");
-        open.addActionListener(e -> runPythonScript(script));
-        footer.add(status, BorderLayout.WEST);
-        footer.add(open, BorderLayout.EAST);
-
-        card.add(heading, BorderLayout.NORTH);
-        card.add(description, BorderLayout.CENTER);
-        card.add(footer, BorderLayout.SOUTH);
-        UiTheme.styleTree(card);
-        return card;
     }
 
     private void runPythonScript(Path scriptPath) {

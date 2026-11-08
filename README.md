@@ -5,6 +5,18 @@ Plataforma integral de gestión del aprendizaje (LMS) y simulación tridimension
 
 ---
 
+## 📚 Documentación Oficial del Proyecto
+
+La documentación exhaustiva del proyecto está organizada en la carpeta [`docs/`](docs/):
+
+- 📖 **[Índice General y Guía de Navegación](docs/README.md)**: Resumen institucional y mapa documental.
+- ⚙️ **[Manual Técnico y de Arquitectura](docs/MANUAL_TECNICO.md)**: Diagrama de arquitectura, patrones de diseño (DAO, Service Layer, Factory, SessionManager), protocolo IPC Java-Python con stdout streaming JSON, motor de despiece progresivo y suite de pruebas JUnit 5.
+- 🗄️ **[Manual de Base de Datos y Diccionario de Datos](docs/BASE_DE_DATOS.md)**: Diagrama Entidad-Relación (16 tablas), normalización 3FN, diccionario detallado campo por campo, especificación de columnas JSONB y respaldos.
+- 👥 **[Manual de Usuario y Operación Funcional](docs/MANUAL_USUARIO.md)**: Guía ilustrada para Administrador (usuarios, importación CSV, cursos, auditoría), Profesor (exámenes, banco de preguntas con imágenes, prácticas 3D, notas y CSV), Estudiante (evaluaciones, certificados con hash SHA-256) y manejo de los 4 visores 3D.
+- 🚀 **[Guía de Despliegue, Instalación y Empaquetado](docs/GUIA_DESPLIEGUE.md)**: Requisitos del sistema, instalador todo-en-uno EXE para Windows, configuración del entorno de desarrollo (JDK, PostgreSQL, Python .venv), compilación de producción con `run.ps1 -Mode package` y solución de incidencias.
+
+---
+
 ## 🚀 Arquitectura y Tecnologías
 
 - **Capa de Presentación (Java Desktop)**: Java Swing con tema moderno (`UiTheme`), diálogos interactivos, componentes visuales para fechas/horas (`DateTimePicker`), selector de imágenes para cuestionarios, y visor de bitácora/auditoría.
@@ -59,7 +71,26 @@ Todos se generan en Blender por script reproducible y leen las fichas desde Post
 
 ---
 
-## 🛠️ Instalación y Requisitos
+## 📦 Instalador para Windows (todo incluido)
+
+El instalador `GestionAcademica-<versión>.exe` no necesita nada instalado en el equipo destino: incluye **Java** (runtime de `jpackage`), **Python 3.14** con PyQt5, VTK y numpy (`python-runtime`) y **PostgreSQL 18** (`pgsql`, con el runtime de Visual C++ que necesita).
+
+- **Base de datos embebida** (`app.db.embedded=true` en `app/config/app.properties` del paquete): al abrir la aplicación por primera vez se crea la base en `%LOCALAPPDATA%\GestionAcademica\basedatos` con el esquema de `db/` y los usuarios de prueba (`app.db.embedded.demoData`). Tarda unos segundos. Después se arranca y se detiene con la aplicación, escucha solo en `127.0.0.1` (puerto 15432 o el siguiente libre) y el superusuario tiene una clave aleatoria guardada en esa carpeta. Los datos se conservan al desinstalar.
+- **Servidor externo**: con `app.db.embedded=false` la aplicación usa la conexión `app.db.url`, `app.db.user` y `app.db.password`, como en desarrollo.
+- Los respaldos del panel de administración usan los `pg_dump`/`pg_restore` del paquete.
+
+**Generar el instalador** (en el equipo de desarrollo, que sí necesita el JDK de `oracleJdk-26/`, WiX Toolset 3.14, `build/python-runtime` y una instalación de PostgreSQL de la que copiar los binarios):
+
+```powershell
+.\run.ps1 -Mode package                      # versión por defecto (1.1.0)
+.\run.ps1 -Mode package -Version 1.1.1 -PostgresSource "C:\Program Files\PostgreSQL\18"
+```
+
+El PostgreSQL portable se prepara una vez en `build/pgsql-runtime` (sin pgAdmin, StackBuilder ni documentación); bórralo para volver a copiarlo. El instalador queda en `build/dist/`.
+
+---
+
+## 🛠️ Instalación y Requisitos (desarrollo)
 
 ### 1. Prerrequisitos de Software
 - **Java Development Kit (JDK 21 o superior)**: Se incluye soporte para JDK 26 local en `oracleJdk-26/` o cualquier JDK 21+ configurado en el `PATH`.
@@ -70,12 +101,12 @@ Todos se generan en Blender por script reproducible y leen las fichas desde Post
   - `psycopg` es opcional: sin él, los visores leen las fichas desde `cavidades/datos/fichas_anatomicas.json`.
 
 ### 2. Configuración de Base de Datos
-Edita el archivo [`config/app.properties`](config/app.properties) con las credenciales de tu servidor PostgreSQL:
+Copia [`config/app.properties.example`](config/app.properties.example) a `config/app.properties` y edita este último con las credenciales de tu servidor PostgreSQL:
 
 ```properties
-db.url=jdbc:postgresql://localhost:5432/gestion
-db.user=postgres
-db.password=tu_password_aqui
+app.db.url=jdbc:postgresql://localhost:5432/gestion
+app.db.user=postgres
+app.db.password=tu_password_aqui
 ```
 
 Luego, inicializa la estructura ejecutando los scripts SQL en tu cliente PostgreSQL (pgAdmin, psql, DBeaver):

@@ -1,12 +1,15 @@
 package app.service;
 
 import app.config.AppConfig;
+import app.db.EmbeddedDatabase;
 
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
@@ -282,6 +285,12 @@ public class DatabaseBackupService {
     public String findExecutable(String name) {
         String exeName = name.endsWith(".exe") ? name : name + ".exe";
 
+        // 0. Con la base embebida, los utilitarios de su misma version incluidos en el paquete
+        String bundled = findBundledExecutable(exeName);
+        if (config.isEmbeddedDatabase() && bundled != null) {
+            return bundled;
+        }
+
         // 1. Variable de entorno especifica si existe (ej. PG_BIN o PG_DUMP_PATH)
         String envPath = System.getenv("PG_BIN");
         if (envPath != null && !envPath.isBlank()) {
@@ -324,6 +333,15 @@ public class DatabaseBackupService {
             }
         }
 
+        // 4. Los incluidos en el paquete, aunque se use un servidor externo
+        return bundled;
+    }
+
+    private static String findBundledExecutable(String exeName) {
+        Path bin = EmbeddedDatabase.findBinDir();
+        if (bin != null && Files.isRegularFile(bin.resolve(exeName))) {
+            return bin.resolve(exeName).toString();
+        }
         return null;
     }
 }

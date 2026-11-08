@@ -1,5 +1,7 @@
 package app.config;
 
+import app.db.EmbeddedDatabase;
+
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -85,5 +87,46 @@ public class AppConfig {
 
     public String getDbPassword() {
         return props.getProperty("app.db.password");
+    }
+
+    /** PostgreSQL incluido en el paquete: la aplicacion lo crea y lo arranca (ver app.db.EmbeddedDatabase). */
+    public boolean isEmbeddedDatabase() {
+        return Boolean.parseBoolean(props.getProperty("app.db.embedded", "false").trim());
+    }
+
+    public int getEmbeddedPort() {
+        try {
+            return Integer.parseInt(props.getProperty("app.db.embedded.port", "").trim());
+        } catch (NumberFormatException e) {
+            return EmbeddedDatabase.DEFAULT_PORT;
+        }
+    }
+
+    /** Carpeta de los datos de la base embebida; por defecto %LOCALAPPDATA%\GestionAcademica\basedatos. */
+    public Path getEmbeddedHome() {
+        String configured = props.getProperty("app.db.embedded.dir", "").trim();
+        if (!configured.isEmpty()) {
+            return Paths.get(configured);
+        }
+        String localAppData = System.getenv("LOCALAPPDATA");
+        Path base = localAppData != null && !localAppData.isBlank()
+                ? Paths.get(localAppData)
+                : Paths.get(System.getProperty("user.home"), ".local", "share");
+        return base.resolve("GestionAcademica").resolve("basedatos");
+    }
+
+    /** Cargar los usuarios, la materia y las practicas de prueba (db/test_users.sql) al crear la base embebida. */
+    public boolean isEmbeddedDemoData() {
+        return Boolean.parseBoolean(props.getProperty("app.db.embedded.demoData", "false").trim());
+    }
+
+    /** Copia de esta configuracion con otra conexion a la base de datos. */
+    public AppConfig withDatabase(String url, String user, String password) {
+        Properties copy = new Properties();
+        copy.putAll(props);
+        copy.setProperty("app.db.url", url);
+        copy.setProperty("app.db.user", user);
+        copy.setProperty("app.db.password", password);
+        return new AppConfig(copy);
     }
 }

@@ -1,8 +1,10 @@
 param(
     [ValidateSet("run", "package")]
     [string]$Mode = "run",
-    [string]$Version = "1.0.3",
-    [string]$BundledPythonSource = ""
+    [string]$Version = "1.1.0",
+    [string]$BundledPythonSource = "",
+    # Instalacion de PostgreSQL de la que se toman el servidor y los utilitarios (por defecto, la mas reciente del equipo).
+    [string]$PostgresSource = ""
 )
 
 $ErrorActionPreference = "Stop"
@@ -59,6 +61,96 @@ function Add-SimulationDirectory {
     }
 }
 
+function Remove-Directory {
+    param([string]$Path)
+
+    # Remove-Item -Recurse falla a veces en arboles profundos (python-runtime) mientras el antivirus o el
+    # indexador tienen abierto algun archivo: se reintenta con rmdir.
+    for ($i = 1; $i -le 5 -and (Test-Path $Path); $i++) {
+        & cmd /c "rmdir /s /q `"$Path`" 2>nul"
+        if (Test-Path $Path) { Start-Sleep -Seconds 2 }
+    }
+    if (Test-Path $Path) {
+        throw "No se pudo borrar '$Path'. Cierra la aplicacion o cualquier programa que tenga abiertos archivos de esa carpeta."
+    }
+}
+
+function Invoke-Robocopy {
+    param(
+        [string]$Source,
+        [string]$Target,
+        [string[]]$Options
+    )
+    & robocopy $Source $Target @Options /NFL /NDL /NJH /NJS /NC /NS | Out-Null
+    if ($LASTEXITCODE -ge 8) {
+        throw "No se pudo copiar '$Source'."
+    }
+}
+
+function Find-PostgresInstall {
+    foreach ($root in @("$env:ProgramFiles\PostgreSQL", "${env:ProgramFiles(x86)}\PostgreSQL")) {
+        if (!(Test-Path $root)) { continue }
+        $found = Get-ChildItem $root -Directory |
+            Where-Object { Test-Path (Join-Path $_.FullName "bin\initdb.exe") } |
+            Sort-Object { [int]($_.Name -replace '\D.*$', '') } -Descending |
+            Select-Object -First 1
+        if ($found) { return $found.FullName }
+    }
+    return $null
+}
+
+function Prepare-PostgresRuntime {
+    param([string]$Target)
+
+    if (Test-Path (Join-Path $Target "bin\pg_ctl.exe")) {
+        Write-Host "Incluyendo PostgreSQL embebido desde '$Target'." -ForegroundColor Cyan
+        return
+    }
+
+    $source = $PostgresSource
+    if ([string]::IsNullOrWhiteSpace($source)) { $source = Find-PostgresInstall }
+    if ([string]::IsNullOrWhiteSpace($source) -or !(Test-Path (Join-Path $source "bin\initdb.exe"))) {
+        throw "No se encontro una instalacion de PostgreSQL para embeber. Indica con -PostgresSource la carpeta que contiene bin, lib y share."
+    }
+    Write-Host "Preparando PostgreSQL embebido desde '$source'..." -ForegroundColor Cyan
+
+    # Solo el servidor y los utilitarios de linea de comandos: sin pgAdmin, StackBuilder, documentacion,
+    # cabeceras ni lenguajes procedurales que necesitan Perl, Python o Tcl instalados.
+    $plExternos = @("*plperl*.dll", "*plpython*.dll", "pltcl*.dll")
+    Invoke-Robocopy (Join-Path $source "bin") (Join-Path $Target "bin") (@("*.exe", "*.dll", "/XF", "stackbuilder.exe", "wx*.dll") + $plExternos)
+    Invoke-Robocopy (Join-Path $source "lib") (Join-Path $Target "lib") (@("*.dll", "/XF") + $plExternos)
+    Invoke-Robocopy (Join-Path $source "share") (Join-Path $Target "share") @("/E", "/XD", "doc")
+    Invoke-Robocopy $source $Target @("server_license.txt", "commandlinetools_3rd_party_licenses.txt")
+
+    # postgres.exe usa el runtime de Visual C++, que un equipo limpio no tiene: se despliega junto a los ejecutables.
+    $system = if ([Environment]::Is64BitProcess) { "System32" } else { "Sysnative" }
+    foreach ($dll in "msvcp140.dll", "vcruntime140.dll", "vcruntime140_1.dll") {
+        Copy-Item (Join-Path $env:WINDIR "$system\$dll") (Join-Path $Target "bin") -Force
+    }
+}
+
+function Write-PackagedConfig {
+    param([string]$Path)
+
+    @"
+# Configuracion de la aplicacion instalada.
+#
+# Base de datos PostgreSQL incluida en la aplicacion: la primera vez la crea (con los usuarios, la materia
+# y las practicas de prueba de db/test_users.sql) y despues la arranca y la detiene sola. Solo escucha en
+# 127.0.0.1. Los datos quedan en %LOCALAPPDATA%\GestionAcademica\basedatos (se conservan al desinstalar).
+app.db.embedded=true
+app.db.embedded.port=15432
+app.db.embedded.demoData=true
+# Otra carpeta para los datos (con barras /):
+#app.db.embedded.dir=D:/GestionAcademica/basedatos
+
+# Servidor PostgreSQL externo: pon app.db.embedded=false y completa la conexion.
+app.db.url=jdbc:postgresql://localhost:5432/gestion
+app.db.user=postgres
+app.db.password=
+"@ | Set-Content -Encoding ASCII $Path
+}
+
 function Package-App {
     param([string]$AppVersion)
 
@@ -67,8 +159,8 @@ function Package-App {
     $destDir = Join-Path $buildRoot "dist"
     $manifest = Join-Path $buildRoot "manifest.mf"
 
-    if (Test-Path $inputDir) { Remove-Item $inputDir -Recurse -Force }
-    if (Test-Path $destDir) { Remove-Item $destDir -Recurse -Force }
+    Remove-Directory $inputDir
+    Remove-Directory $destDir
     if (!(Test-Path $buildRoot)) { New-Item -ItemType Directory $buildRoot | Out-Null }
     New-Item -ItemType Directory $inputDir | Out-Null
     New-Item -ItemType Directory $destDir | Out-Null
@@ -87,9 +179,21 @@ Class-Path: lib/jbcrypt-0.4.jar lib/postgresql-42.7.10.jar
     New-Item -ItemType Directory (Join-Path $inputDir "lib") | Out-Null
     Get-ChildItem "lib\*.jar" -Exclude "*junit*" | Copy-Item -Destination (Join-Path $inputDir "lib") -Force
 
-    Add-DirectoryIfExists -Source "config" -Target (Join-Path $inputDir "config")
+    # La configuracion de desarrollo (con su clave) no se empaqueta: el paquete usa la base embebida.
+    New-Item -ItemType Directory (Join-Path $inputDir "config") | Out-Null
+    Write-PackagedConfig -Path (Join-Path $inputDir "config\app.properties")
     Add-DirectoryIfExists -Source "assets" -Target (Join-Path $inputDir "assets")
+    Add-DirectoryIfExists -Source "db" -Target (Join-Path $inputDir "db")
     Add-SimulationDirectory -Source "aplicacion_tres_d" -Target (Join-Path $inputDir "aplicacion_tres_d")
+
+    $postgresRuntime = Join-Path $buildRoot "pgsql-runtime"
+    Prepare-PostgresRuntime -Target $postgresRuntime
+    Add-DirectoryIfExists -Source $postgresRuntime -Target (Join-Path $inputDir "pgsql")
+    Write-Host "Validando PostgreSQL embebido..." -ForegroundColor Cyan
+    & (Join-Path $inputDir "pgsql\bin\postgres.exe") --version
+    if ($LASTEXITCODE -ne 0) {
+        throw "El PostgreSQL embebido no se pudo ejecutar."
+    }
 
     if ([string]::IsNullOrWhiteSpace($BundledPythonSource)) {
         $defaultPythonRuntime = Join-Path $buildRoot "python-runtime"
@@ -117,7 +221,7 @@ Class-Path: lib/jbcrypt-0.4.jar lib/postgresql-42.7.10.jar
     } elseif ($includeBundledPython) {
         throw "El runtime Python indicado no contiene python.exe en la raiz."
     } else {
-        Write-Host "Aviso: no se incluyo runtime Python embebido. Los simuladores requeriran Python instalado en el PC destino." -ForegroundColor Yellow
+        throw "Falta el runtime Python embebido (build\python-runtime con PyQt5, vtk y numpy, o -BundledPythonSource): sin el, los visores 3D necesitarian Python instalado en el equipo destino."
     }
 
     $wixBin1 = "C:\Program Files (x86)\WiX Toolset v3.14\bin"
@@ -146,7 +250,7 @@ Class-Path: lib/jbcrypt-0.4.jar lib/postgresql-42.7.10.jar
         --main-class "app.Main" `
         --app-version $AppVersion `
         --vendor "Universidad de Pamplona" `
-        --description "Sistema de Gestion Academica" `
+        --description "Sistema de Gestion Academica (incluye Java, Python y PostgreSQL)" `
         --win-dir-chooser `
         --win-shortcut `
         --win-menu `
