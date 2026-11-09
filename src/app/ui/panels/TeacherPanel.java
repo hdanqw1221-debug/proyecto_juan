@@ -17,8 +17,10 @@ import app.service.ExamService;
 import app.service.SimulationService;
 import app.service.Visor3DService;
 import app.session.SessionManager;
+import app.ui.ModelCatalogPanel;
 import app.ui.QuestionBatchEditorDialog;
 import app.ui.QuestionnairePreviewDialog;
+import app.ui.SimulationDetailsPanel;
 import app.ui.SimulationFormDialog;
 import app.ui.UiTheme;
 
@@ -75,6 +77,9 @@ public class TeacherPanel extends JPanel {
     private final JTextField selectedSimulationId = new JTextField(8);
     private final JTextField selectedExamId = new JTextField(8);
     private final DateTimePicker availabilityDueAtPicker = createDateTimePicker();
+    private final JTabbedPane tabs = new JTabbedPane();
+    private final ModelCatalogPanel pythonScriptsButtonsPanel = new ModelCatalogPanel();
+    private final JLabel pythonScriptsSummary = new JLabel("Preparando catálogo 3D...");
 
     public TeacherPanel(SessionManager sessionManager, AuditService auditService,
                         CourseService courseService, ExamService examService, SimulationService simulationService,
@@ -98,10 +103,10 @@ public class TeacherPanel extends JPanel {
         setLayout(new BorderLayout());
         setBackground(UiTheme.BACKGROUND);
 
-        JPanel header = buildHeader("Gestion academica", "Cuestionarios, simulaciones, notas y estadisticas.");
-        JTabbedPane tabs = new JTabbedPane();
+        JPanel header = buildHeader("Gestion academica", "Cuestionarios, simulaciones, modelos 3D, notas y estadisticas.");
         tabs.add("Cuestionarios", buildQuestionnairePanel());
         tabs.add("Simulaciones", buildSimulationPanel());
+        tabs.add("Modelos 3D", buildPythonModelsPanel());
         tabs.add("Notas", buildGradesPanel());
         tabs.add("Estadisticas", buildStatsPanel());
 
@@ -196,10 +201,8 @@ public class TeacherPanel extends JPanel {
         ));
         filters.add(questionnaireSummary, BorderLayout.EAST);
 
-        JPanel questionnaireActions = new JPanel(new BorderLayout(12, 0));
+        JPanel questionnaireActions = new JPanel(new FlowLayout(FlowLayout.LEFT, 6, 2));
         questionnaireActions.setOpaque(false);
-        JPanel primaryActions = new JPanel(new FlowLayout(FlowLayout.LEFT, 8, 0));
-        primaryActions.setOpaque(false);
         JButton btnCreateExam = new JButton("+ Crear Examen");
         app.ui.UiTheme.styleButton(btnCreateExam);
         JButton btnEditExam = new JButton("Editar Examen");
@@ -211,22 +214,42 @@ public class TeacherPanel extends JPanel {
         JButton btnPreviewQuestionnaire = new JButton("Vista Previa");
         app.ui.UiTheme.styleSecondaryButton(btnPreviewQuestionnaire);
         JButton btnDeleteQuestionnaire = new JButton("Eliminar Cuestionario");
-        app.ui.UiTheme.styleButton(btnDeleteQuestionnaire);
+        app.ui.UiTheme.styleSecondaryButton(btnDeleteQuestionnaire);
 
-        primaryActions.add(btnCreateExam);
-        primaryActions.add(btnEditExam);
-        primaryActions.add(btnCreateQuestion);
-        primaryActions.add(btnEditQuestionnaire);
-        primaryActions.add(btnPreviewQuestionnaire);
-        questionnaireActions.add(primaryActions, BorderLayout.WEST);
-        questionnaireActions.add(btnDeleteQuestionnaire, BorderLayout.EAST);
+        questionnaireActions.add(btnCreateExam);
+        questionnaireActions.add(btnEditExam);
+        questionnaireActions.add(btnCreateQuestion);
+        questionnaireActions.add(btnEditQuestionnaire);
+        questionnaireActions.add(btnPreviewQuestionnaire);
+        questionnaireActions.add(btnDeleteQuestionnaire);
+
+        JScrollPane questionnaireScroll = new JScrollPane(questionnaireActions) {
+            @Override
+            public void setBorder(javax.swing.border.Border border) {
+                super.setBorder(BorderFactory.createEmptyBorder(0, 0, 2, 0));
+            }
+        };
+        questionnaireScroll.setOpaque(false);
+        questionnaireScroll.getViewport().setOpaque(false);
+        questionnaireScroll.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+        questionnaireScroll.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_NEVER);
+        questionnaireScroll.getHorizontalScrollBar().setPreferredSize(new Dimension(0, 8));
+        questionnaireScroll.getHorizontalScrollBar().setUnitIncrement(22);
+        questionnaireScroll.setMaximumSize(new Dimension(Integer.MAX_VALUE, 58));
+        questionnaireScroll.addMouseWheelListener(e -> {
+            JScrollBar bar = questionnaireScroll.getHorizontalScrollBar();
+            if (bar != null && bar.isVisible()) {
+                int amount = e.getUnitsToScroll() * bar.getUnitIncrement();
+                bar.setValue(bar.getValue() + amount);
+            }
+        });
 
         JPanel toolbarBody = new JPanel();
         toolbarBody.setOpaque(false);
         toolbarBody.setLayout(new BoxLayout(toolbarBody, BoxLayout.Y_AXIS));
         toolbarBody.add(filters);
         toolbarBody.add(Box.createVerticalStrut(9));
-        toolbarBody.add(questionnaireActions);
+        toolbarBody.add(questionnaireScroll);
         topToolbar.add(toolbarHeading, BorderLayout.NORTH);
         topToolbar.add(toolbarBody, BorderLayout.CENTER);
 
@@ -702,57 +725,173 @@ public class TeacherPanel extends JPanel {
         if (value.contains("respuesta")) {
             return "03";
         }
+        if (value.contains("simula")) {
+            return "SIM";
+        }
         return "DATOS";
     }
 
-private JPanel buildSimulationPanel() {
+    private JPanel buildSimulationPanel() {
         JPanel panel = new JPanel(new BorderLayout(10, 10));
-        JPanel top = new JPanel(new FlowLayout(FlowLayout.LEFT, 15, 5));
-        
-        top.add(new JLabel("Curso:"));
-        top.add(simulationCourseSelector);
-        
-        JButton refresh = new JButton("Listar");
+        panel.setOpaque(false);
+
+        JPanel topToolbar = UiTheme.card(new BorderLayout(12, 10));
+        topToolbar.setBorder(BorderFactory.createCompoundBorder(
+                BorderFactory.createMatteBorder(0, 5, 0, 0, UiTheme.INFO),
+                BorderFactory.createEmptyBorder(13, 16, 13, 16)
+        ));
+
+        JPanel toolbarHeading = new JPanel(new BorderLayout(16, 0));
+        toolbarHeading.setOpaque(false);
+        JPanel headingCopy = new JPanel();
+        headingCopy.setOpaque(false);
+        headingCopy.setLayout(new BoxLayout(headingCopy, BoxLayout.Y_AXIS));
+        headingCopy.add(UiTheme.title("Gestión y visualización de simulaciones", 20f));
+        JLabel headingHint = new JLabel("Revisa, previsualiza y administra las prácticas y modelos 3D asociados a cada materia.");
+        headingHint.setForeground(UiTheme.MUTED);
+        headingCopy.add(Box.createVerticalStrut(3));
+        headingCopy.add(headingHint);
+        toolbarHeading.add(headingCopy, BorderLayout.CENTER);
+
+        JPanel filters = new JPanel(new BorderLayout(12, 0));
+        filters.setOpaque(false);
+        JPanel filterControls = new JPanel(new FlowLayout(FlowLayout.LEFT, 10, 0));
+        filterControls.setOpaque(false);
+        JLabel courseLabel = new JLabel("Materia");
+        courseLabel.setFont(courseLabel.getFont().deriveFont(Font.BOLD));
+        filterControls.add(courseLabel);
+        simulationCourseSelector.setPreferredSize(new Dimension(210, 40));
+        filterControls.add(simulationCourseSelector);
+        JButton refresh = new JButton("Ver Simulaciones");
         app.ui.UiTheme.styleSecondaryButton(refresh);
-        top.add(refresh);
-        top.add(simulationSummary);
+        filterControls.add(refresh);
+        filters.add(filterControls, BorderLayout.WEST);
 
-        JButton create = new JButton("+ Crear practica");
+        simulationSummary.setOpaque(true);
+        simulationSummary.setBackground(UiTheme.INFO_SOFT);
+        simulationSummary.setForeground(UiTheme.INFO);
+        simulationSummary.setBorder(BorderFactory.createCompoundBorder(
+                UiTheme.roundedBorder(new Color(UiTheme.INFO.getRed(), UiTheme.INFO.getGreen(),
+                        UiTheme.INFO.getBlue(), 80)),
+                BorderFactory.createEmptyBorder(7, 11, 7, 11)
+        ));
+        filters.add(simulationSummary, BorderLayout.EAST);
+
+        JPanel simulationActions = new JPanel(new FlowLayout(FlowLayout.LEFT, 6, 2));
+        simulationActions.setOpaque(false);
+
+        JButton btnViewSim = new JButton("👁 Ver Simulación");
+        app.ui.UiTheme.styleButton(btnViewSim);
+        JButton preview3d = new JButton("▶ Probar 3D");
+        app.ui.UiTheme.styleSecondaryButton(preview3d);
+        JButton create = new JButton("+ Crear práctica");
         app.ui.UiTheme.styleButton(create);
-        top.add(create);
-
-        JButton addCavities = new JButton("+ Practicas de cavidades 3D");
-        app.ui.UiTheme.styleSecondaryButton(addCavities);
-        addCavities.setToolTipText("Crea en el curso una practica por cada modelo 3D de las cavidades que todavia no tenga");
-        top.add(addCavities);
-
-        JTable table = new JTable(simulationModel);
-        JPanel pnlTable = buildTableWithSearch("Simulaciones", table, simulationModel, null);
-
-        JPanel bottom = new JPanel(new FlowLayout(FlowLayout.LEFT, 8, 4));
-        selectedSimulationId.setEditable(false);
-        JButton preview3d = new JButton("▶ Probar Modelo 3D");
-        app.ui.UiTheme.styleButton(preview3d);
-        JButton editSim = new JButton("Editar practica");
+        JButton editSim = new JButton("Editar práctica");
         app.ui.UiTheme.styleSecondaryButton(editSim);
+        JButton addCavities = new JButton("+ Cavidades 3D");
+        app.ui.UiTheme.styleSecondaryButton(addCavities);
+        addCavities.setToolTipText("Crea en el curso una práctica por cada modelo 3D de las cavidades que todavía no tenga");
+        JButton btnCatalog = new JButton("Catálogo 3D");
+        app.ui.UiTheme.styleSecondaryButton(btnCatalog);
         JButton deleteSim = new JButton("Eliminar");
         app.ui.UiTheme.styleSecondaryButton(deleteSim);
-        JButton enableJson = new JButton("Habilitar practica");
-        JButton disableJson = new JButton("Deshabilitar practica");
-        bottom.add(new JLabel("Simulacion Seleccionada:"));
+
+        simulationActions.add(btnViewSim);
+        simulationActions.add(preview3d);
+        simulationActions.add(create);
+        simulationActions.add(editSim);
+        simulationActions.add(addCavities);
+        simulationActions.add(btnCatalog);
+        simulationActions.add(deleteSim);
+
+        JScrollPane actionsScroll = new JScrollPane(simulationActions) {
+            @Override
+            public void setBorder(javax.swing.border.Border border) {
+                super.setBorder(BorderFactory.createEmptyBorder(0, 0, 2, 0));
+            }
+        };
+        actionsScroll.setOpaque(false);
+        actionsScroll.getViewport().setOpaque(false);
+        actionsScroll.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+        actionsScroll.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_NEVER);
+        actionsScroll.getHorizontalScrollBar().setPreferredSize(new Dimension(0, 8));
+        actionsScroll.getHorizontalScrollBar().setUnitIncrement(22);
+        actionsScroll.setMaximumSize(new Dimension(Integer.MAX_VALUE, 58));
+        actionsScroll.addMouseWheelListener(e -> {
+            JScrollBar bar = actionsScroll.getHorizontalScrollBar();
+            if (bar != null && bar.isVisible()) {
+                int amount = e.getUnitsToScroll() * bar.getUnitIncrement();
+                bar.setValue(bar.getValue() + amount);
+            }
+        });
+
+        JPanel toolbarBody = new JPanel();
+        toolbarBody.setOpaque(false);
+        toolbarBody.setLayout(new BoxLayout(toolbarBody, BoxLayout.Y_AXIS));
+        toolbarBody.add(filters);
+        toolbarBody.add(Box.createVerticalStrut(8));
+        toolbarBody.add(actionsScroll);
+        topToolbar.add(toolbarHeading, BorderLayout.NORTH);
+        topToolbar.add(toolbarBody, BorderLayout.CENTER);
+
+        JTable table = new JTable(simulationModel);
+        table.setToolTipText("Doble clic en una fila para ver los detalles de la simulación");
+        JPanel pnlTable = buildTableWithSearch("Simulaciones", table, simulationModel, null);
+
+        JPanel bottom = new JPanel(new FlowLayout(FlowLayout.LEFT, 6, 2));
+        bottom.setOpaque(false);
+        selectedSimulationId.setEditable(false);
+        JButton btnViewSimBottom = new JButton("👁 Ver Simulación");
+        app.ui.UiTheme.styleButton(btnViewSimBottom);
+        JButton preview3dBottom = new JButton("▶ Probar 3D");
+        app.ui.UiTheme.styleSecondaryButton(preview3dBottom);
+        JButton editSimBottom = new JButton("Editar práctica");
+        app.ui.UiTheme.styleSecondaryButton(editSimBottom);
+        JButton enableJson = new JButton("Habilitar");
+        app.ui.UiTheme.styleSecondaryButton(enableJson);
+        JButton disableJson = new JButton("Deshabilitar");
+        app.ui.UiTheme.styleSecondaryButton(disableJson);
+        JButton deleteSimBottom = new JButton("Eliminar");
+        app.ui.UiTheme.styleSecondaryButton(deleteSimBottom);
+
+        bottom.add(new JLabel("Simulación Seleccionada:"));
         bottom.add(selectedSimulationId);
-        bottom.add(preview3d);
-        bottom.add(editSim);
-        bottom.add(deleteSim);
+        bottom.add(btnViewSimBottom);
+        bottom.add(preview3dBottom);
+        bottom.add(editSimBottom);
         bottom.add(enableJson);
         bottom.add(disableJson);
+        bottom.add(deleteSimBottom);
 
-        panel.add(top, BorderLayout.NORTH);
+        JScrollPane bottomScroll = new JScrollPane(bottom) {
+            @Override
+            public void setBorder(javax.swing.border.Border border) {
+                super.setBorder(BorderFactory.createEmptyBorder());
+            }
+        };
+        bottomScroll.setOpaque(false);
+        bottomScroll.getViewport().setOpaque(false);
+        bottomScroll.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+        bottomScroll.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_NEVER);
+        bottomScroll.getHorizontalScrollBar().setPreferredSize(new Dimension(0, 8));
+        bottomScroll.getHorizontalScrollBar().setUnitIncrement(22);
+        bottomScroll.setMaximumSize(new Dimension(Integer.MAX_VALUE, 50));
+        bottomScroll.addMouseWheelListener(e -> {
+            JScrollBar bar = bottomScroll.getHorizontalScrollBar();
+            if (bar != null && bar.isVisible()) {
+                int amount = e.getUnitsToScroll() * bar.getUnitIncrement();
+                bar.setValue(bar.getValue() + amount);
+            }
+        });
+
+        panel.add(topToolbar, BorderLayout.NORTH);
         panel.add(pnlTable, BorderLayout.CENTER);
-        panel.add(bottom, BorderLayout.SOUTH);
+        panel.add(bottomScroll, BorderLayout.SOUTH);
 
-        refresh.addActionListener(e -> refreshTeacherData());
-        
+        // Listeners
+        simulationCourseSelector.addActionListener(e -> refreshSimulations());
+        refresh.addActionListener(e -> refreshSimulations());
+
         table.getSelectionModel().addListSelectionListener(e -> {
             if (!e.getValueIsAdjusting()) {
                 int row = table.getSelectedRow();
@@ -762,27 +901,57 @@ private JPanel buildSimulationPanel() {
             }
         });
 
+        table.addMouseListener(new java.awt.event.MouseAdapter() {
+            @Override
+            public void mouseClicked(java.awt.event.MouseEvent e) {
+                if (e.getClickCount() == 2 && table.getSelectedRow() >= 0) {
+                    viewSelectedSimulation();
+                }
+            }
+        });
+
+        btnViewSim.addActionListener(e -> viewSelectedSimulation());
+        btnViewSimBottom.addActionListener(e -> viewSelectedSimulation());
+
+        btnCatalog.addActionListener(e -> tabs.setSelectedIndex(2));
+
+        preview3d.addActionListener(e -> testSimulation3D());
+        preview3dBottom.addActionListener(e -> testSimulation3D());
+
+        editSim.addActionListener(e -> editSelectedSimulation());
+        editSimBottom.addActionListener(e -> editSelectedSimulation());
+
+        deleteSim.addActionListener(e -> deleteSelectedSimulation());
+        deleteSimBottom.addActionListener(e -> deleteSelectedSimulation());
+
+        enableJson.addActionListener(e -> toggleSimulationStatus(true));
+        disableJson.addActionListener(e -> toggleSimulationStatus(false));
+
         addCavities.addActionListener(e -> {
             requireTeacher();
             ComboItem courseItem = selectedItem(simulationCourseSelector);
-            if (courseItem == null) {
-                javax.swing.JOptionPane.showMessageDialog(this, "Selecciona un curso primero.");
+            if (courseItem == null || courseItem.isAll) {
+                JOptionPane.showMessageDialog(this,
+                        "Selecciona una materia específica primero (no 'Todos').",
+                        "Seleccionar materia", JOptionPane.WARNING_MESSAGE);
                 return;
             }
             int created = simulationService.addCavityPractices(courseItem.id);
             auditService.log(currentTeacherId(), "SIM_CREATE",
                     created + " practica(s) 3D de cavidades en el curso ID " + courseItem.id);
             refreshSimulations();
-            javax.swing.JOptionPane.showMessageDialog(this, created == 0
-                    ? "El curso ya tiene una practica para cada modelo 3D de las cavidades."
-                    : "Se crearon " + created + " practica(s) con los modelos 3D de las cavidades.");
+            JOptionPane.showMessageDialog(this, created == 0
+                    ? "El curso ya tiene una práctica para cada modelo 3D de las cavidades."
+                    : "Se crearon " + created + " práctica(s) con los modelos 3D de las cavidades.");
         });
 
         create.addActionListener(e -> {
             requireTeacher();
             ComboItem courseItem = selectedItem(simulationCourseSelector);
-            if (courseItem == null) {
-                JOptionPane.showMessageDialog(this, "Selecciona un curso primero.");
+            if (courseItem == null || courseItem.isAll) {
+                JOptionPane.showMessageDialog(this,
+                        "Selecciona una materia específica primero (no 'Todos').",
+                        "Seleccionar materia", JOptionPane.WARNING_MESSAGE);
                 return;
             }
             SimulationFormDialog.Result result = SimulationFormDialog.show(this, null);
@@ -792,104 +961,308 @@ private JPanel buildSimulationPanel() {
                         result.name(), result.description(), result.configJson());
                 auditService.log(currentTeacherId(), "SIM_CREATE", "Simulacion ID " + id);
                 refreshSimulations();
-                JOptionPane.showMessageDialog(this, "Practica creada con exito.");
+                JOptionPane.showMessageDialog(this, "Práctica creada con éxito.");
             } catch (Exception ex) {
-                JOptionPane.showMessageDialog(this, "No se pudo crear la practica: " + ex.getMessage(),
+                JOptionPane.showMessageDialog(this, "No se pudo crear la práctica: " + ex.getMessage(),
                         "Error al guardar", JOptionPane.ERROR_MESSAGE);
             }
         });
 
-        editSim.addActionListener(e -> {
-            requireTeacher();
-            if (selectedSimulationId.getText().isBlank()) {
-                JOptionPane.showMessageDialog(this, "Selecciona una practica para editar.");
-                return;
-            }
+        return panel;
+    }
+
+    private void viewSelectedSimulation() {
+        requireTeacher();
+        if (selectedSimulationId.getText().isBlank()) {
+            JOptionPane.showMessageDialog(this, "Selecciona una simulación en la tabla para ver sus detalles.",
+                    "Ver Simulación", JOptionPane.INFORMATION_MESSAGE);
+            return;
+        }
+        try {
             long simId = Long.parseLong(selectedSimulationId.getText().trim());
             Simulation sim = simulationService.findById(simId);
             if (sim == null) {
-                JOptionPane.showMessageDialog(this, "No se encontro la practica.");
+                JOptionPane.showMessageDialog(this, "No se encontró la simulación con ID: " + simId,
+                        "Error", JOptionPane.ERROR_MESSAGE);
                 return;
             }
-            SimulationFormDialog.Result result = SimulationFormDialog.show(this, sim);
-            if (result == null) return;
-            try {
-                simulationService.updateDetails(simId,
-                        result.name(), result.description(), result.configJson());
-                auditService.log(currentTeacherId(), "SIM_UPDATE_DETAILS", "Simulacion ID " + simId);
-                refreshSimulations();
-                JOptionPane.showMessageDialog(this, "Practica actualizada con exito.");
-            } catch (Exception ex) {
-                JOptionPane.showMessageDialog(this, "No se pudo actualizar la practica: " + ex.getMessage(),
-                        "Error al guardar", JOptionPane.ERROR_MESSAGE);
-            }
-        });
+            showSimulationDetailsDialog(sim);
+        } catch (NumberFormatException ex) {
+            JOptionPane.showMessageDialog(this, "ID de simulación inválido.", "Error", JOptionPane.ERROR_MESSAGE);
+        }
+    }
 
-        deleteSim.addActionListener(e -> {
-            requireTeacher();
-            if (selectedSimulationId.getText().isBlank()) {
-                javax.swing.JOptionPane.showMessageDialog(this, "Selecciona una simulacion para eliminar.");
-                return;
-            }
+    private void showSimulationDetailsDialog(Simulation simulation) {
+        requireTeacher();
+        JDialog dialog = new JDialog((Frame) SwingUtilities.getWindowAncestor(this),
+                "Detalles de la Simulación: " + simulation.getName(), true);
+        dialog.setSize(720, 560);
+        dialog.setMinimumSize(new Dimension(640, 480));
+        dialog.setLocationRelativeTo(this);
+
+        JPanel panel = new JPanel(new BorderLayout(14, 14));
+        panel.setBackground(UiTheme.BACKGROUND);
+        panel.setBorder(BorderFactory.createEmptyBorder(16, 18, 16, 18));
+
+        JPanel header = UiTheme.card(new BorderLayout(12, 6));
+        header.setBorder(BorderFactory.createCompoundBorder(
+                BorderFactory.createMatteBorder(0, 6, 0, 0, UiTheme.INFO),
+                BorderFactory.createEmptyBorder(14, 18, 14, 18)
+        ));
+
+        JPanel headerCopy = new JPanel();
+        headerCopy.setOpaque(false);
+        headerCopy.setLayout(new BoxLayout(headerCopy, BoxLayout.Y_AXIS));
+
+        boolean isEnabled = SimulationService.isEnabled(simulation);
+        String courseName = "Materia ID " + simulation.getCourseId();
+        Course course = courseService.findById(simulation.getCourseId());
+        if (course != null) {
+            courseName = course.getName();
+        }
+
+        JLabel eyebrow = new JLabel("DETALLES DE SIMULACIÓN • " + courseName.toUpperCase(Locale.ROOT));
+        eyebrow.setForeground(UiTheme.INFO);
+        eyebrow.setFont(eyebrow.getFont().deriveFont(Font.BOLD, 11f));
+        headerCopy.add(eyebrow);
+        headerCopy.add(Box.createVerticalStrut(4));
+        headerCopy.add(UiTheme.title(simulation.getName(), 20f));
+
+        if (simulation.getDescription() != null && !simulation.getDescription().isBlank()) {
+            JLabel desc = new JLabel("<html><div style='width:520px'>" + escapeHtml(simulation.getDescription()) + "</div></html>");
+            desc.setForeground(UiTheme.MUTED);
+            headerCopy.add(Box.createVerticalStrut(4));
+            headerCopy.add(desc);
+        }
+
+        JPanel statusBadge = new JPanel(new FlowLayout(FlowLayout.RIGHT, 0, 0));
+        statusBadge.setOpaque(false);
+        JLabel badge = new JLabel(isEnabled ? "Disponible / Habilitada" : "Deshabilitada");
+        badge.setOpaque(true);
+        badge.setBackground(isEnabled ? UiTheme.SUCCESS_SOFT : UiTheme.PRIMARY_SOFT);
+        badge.setForeground(isEnabled ? UiTheme.SUCCESS : UiTheme.PRIMARY_DARK);
+        badge.setFont(badge.getFont().deriveFont(Font.BOLD, 12f));
+        badge.setBorder(BorderFactory.createCompoundBorder(
+                UiTheme.roundedBorder(isEnabled ? UiTheme.SUCCESS : UiTheme.PRIMARY),
+                BorderFactory.createEmptyBorder(6, 12, 6, 12)
+        ));
+        statusBadge.add(badge);
+
+        header.add(headerCopy, BorderLayout.CENTER);
+        header.add(statusBadge, BorderLayout.EAST);
+
+        JScrollPane scroll = new JScrollPane(new SimulationDetailsPanel(simulation));
+        scroll.setBorder(BorderFactory.createEmptyBorder());
+        scroll.setOpaque(false);
+        scroll.getViewport().setOpaque(false);
+        scroll.getVerticalScrollBar().setUnitIncrement(16);
+
+        JPanel actions = new JPanel(new FlowLayout(FlowLayout.RIGHT, 10, 0));
+        actions.setOpaque(false);
+
+        String scriptName = SimulationService.getScript3D(simulation);
+        if (scriptName != null && !scriptName.isBlank()) {
+            JButton launch3d = new JButton("▶ Probar Modelo 3D (" + Visor3DService.titulo(scriptName) + ")");
+            UiTheme.styleButton(launch3d);
+            launch3d.addActionListener(ev -> {
+                auditService.log(currentTeacherId(), "TEACHER_SIM_3D_PRACTICE",
+                        "Simulacion " + simulation.getName() + " -> " + scriptName);
+                runTeacherPythonScript(scriptName);
+            });
+            actions.add(launch3d);
+        }
+
+        JButton editBtn = new JButton("Editar práctica");
+        UiTheme.styleSecondaryButton(editBtn);
+        editBtn.addActionListener(ev -> {
+            dialog.dispose();
+            editSimulation(simulation);
+        });
+        actions.add(editBtn);
+
+        JButton close = new JButton("Cerrar");
+        UiTheme.styleSecondaryButton(close);
+        close.addActionListener(ev -> dialog.dispose());
+        actions.add(close);
+
+        panel.add(header, BorderLayout.NORTH);
+        panel.add(scroll, BorderLayout.CENTER);
+        panel.add(actions, BorderLayout.SOUTH);
+
+        UiTheme.styleTree(panel);
+        dialog.setContentPane(panel);
+        dialog.setVisible(true);
+    }
+
+    private void editSelectedSimulation() {
+        requireTeacher();
+        if (selectedSimulationId.getText().isBlank()) {
+            JOptionPane.showMessageDialog(this, "Selecciona una práctica para editar.");
+            return;
+        }
+        try {
             long simId = Long.parseLong(selectedSimulationId.getText().trim());
-            int opt = javax.swing.JOptionPane.showConfirmDialog(
+            Simulation sim = simulationService.findById(simId);
+            if (sim == null) {
+                JOptionPane.showMessageDialog(this, "No se encontró la práctica.");
+                return;
+            }
+            editSimulation(sim);
+        } catch (NumberFormatException ex) {
+            JOptionPane.showMessageDialog(this, "ID de simulación inválido.");
+        }
+    }
+
+    private void editSimulation(Simulation sim) {
+        requireTeacher();
+        if (sim == null) {
+            JOptionPane.showMessageDialog(this, "No se encontró la práctica.");
+            return;
+        }
+        SimulationFormDialog.Result result = SimulationFormDialog.show(this, sim);
+        if (result == null) return;
+        try {
+            simulationService.updateDetails(sim.getId(),
+                    result.name(), result.description(), result.configJson());
+            auditService.log(currentTeacherId(), "SIM_UPDATE_DETAILS", "Simulacion ID " + sim.getId());
+            refreshSimulations();
+            JOptionPane.showMessageDialog(this, "Práctica actualizada con éxito.");
+        } catch (Exception ex) {
+            JOptionPane.showMessageDialog(this, "No se pudo actualizar la práctica: " + ex.getMessage(),
+                    "Error al guardar", JOptionPane.ERROR_MESSAGE);
+        }
+    }
+
+    private void deleteSelectedSimulation() {
+        requireTeacher();
+        if (selectedSimulationId.getText().isBlank()) {
+            JOptionPane.showMessageDialog(this, "Selecciona una simulación para eliminar.");
+            return;
+        }
+        long simId;
+        try {
+            simId = Long.parseLong(selectedSimulationId.getText().trim());
+        } catch (NumberFormatException ex) {
+            JOptionPane.showMessageDialog(this, "ID de simulación inválido.");
+            return;
+        }
+        int opt = JOptionPane.showConfirmDialog(
+                this,
+                "¿Estás seguro de eliminar la simulación ID " + simId + "?",
+                "Confirmar eliminación",
+                JOptionPane.YES_NO_OPTION,
+                JOptionPane.WARNING_MESSAGE
+        );
+        if (opt == JOptionPane.YES_OPTION) {
+            simulationService.deleteSimulation(simId);
+            auditService.log(currentTeacherId(), "SIM_DELETE", "Simulacion ID " + simId);
+            selectedSimulationId.setText("");
+            refreshSimulations();
+            JOptionPane.showMessageDialog(this, "Simulación eliminada correctamente.");
+        }
+    }
+
+    private void testSimulation3D() {
+        requireTeacher();
+        String scriptToRun = null;
+        if (!selectedSimulationId.getText().isBlank()) {
+            try {
+                long simId = Long.parseLong(selectedSimulationId.getText().trim());
+                Simulation sim = simulationService.findById(simId);
+                if (sim != null) {
+                    scriptToRun = SimulationService.getScript3D(sim);
+                }
+            } catch (Exception ignored) {}
+        }
+        if (scriptToRun == null || scriptToRun.isBlank()) {
+            String[] availableModels = Visor3DService.MODELOS.stream()
+                    .map(Visor3DService.Modelo::titulo).toArray(String[]::new);
+            Object choice = JOptionPane.showInputDialog(
                     this,
-                    "¿Estas seguro de eliminar la simulacion ID " + simId + "?",
-                    "Confirmar eliminacion",
-                    javax.swing.JOptionPane.YES_NO_OPTION,
-                    javax.swing.JOptionPane.WARNING_MESSAGE
+                    "Selecciona el modelo 3D que deseas explorar y probar:",
+                    "Probar Visor Anatómico 3D",
+                    JOptionPane.QUESTION_MESSAGE,
+                    null,
+                    availableModels,
+                    availableModels[0]
             );
-            if (opt == javax.swing.JOptionPane.YES_OPTION) {
-                simulationService.deleteSimulation(simId);
-                auditService.log(currentTeacherId(), "SIM_DELETE", "Simulacion ID " + simId);
-                selectedSimulationId.setText("");
-                refreshSimulations();
-                javax.swing.JOptionPane.showMessageDialog(this, "Simulacion eliminada correctamente.");
+            if (choice == null) {
+                return;
             }
-        });
-
-        preview3d.addActionListener(e -> {
-            requireTeacher();
-            String scriptToRun = null;
-            if (!selectedSimulationId.getText().isBlank()) {
-                try {
-                    long simId = Long.parseLong(selectedSimulationId.getText().trim());
-                    Simulation sim = simulationService.findById(simId);
-                    if (sim != null) {
-                        scriptToRun = SimulationService.getScript3D(sim);
-                    }
-                } catch (Exception ignored) {}
+            scriptToRun = Visor3DService.MODELOS.stream()
+                    .filter(model -> model.titulo().equals(choice))
+                    .map(Visor3DService.Modelo::script)
+                    .findFirst().orElse(null);
+            if (scriptToRun == null) {
+                return;
             }
-            if (scriptToRun == null || scriptToRun.isBlank()) {
-                String[] availableModels = Visor3DService.MODELOS.stream()
-                        .map(Visor3DService.Modelo::titulo).toArray(String[]::new);
-                Object choice = javax.swing.JOptionPane.showInputDialog(
-                        this,
-                        "Selecciona el modelo 3D que deseas explorar y probar:",
-                        "Probar Visor Anatomico 3D",
-                        javax.swing.JOptionPane.QUESTION_MESSAGE,
-                        null,
-                        availableModels,
-                        availableModels[0]
-                );
-                if (choice == null) {
-                    return;
-                }
-                scriptToRun = Visor3DService.MODELOS.stream()
-                        .filter(model -> model.titulo().equals(choice))
-                        .map(Visor3DService.Modelo::script)
-                        .findFirst().orElse(null);
-                if (scriptToRun == null) {
-                    return;
-                }
-            }
-            runTeacherPythonScript(scriptToRun);
-        });
+        }
+        runTeacherPythonScript(scriptToRun);
+    }
 
-        enableJson.addActionListener(e -> toggleSimulationStatus(true));
-        disableJson.addActionListener(e -> toggleSimulationStatus(false));
+    private JPanel buildPythonModelsPanel() {
+        JPanel panel = new JPanel(new BorderLayout(14, 14));
+        panel.setOpaque(false);
 
+        JPanel header = UiTheme.card(new BorderLayout(6, 6));
+        header.setBorder(BorderFactory.createCompoundBorder(
+                BorderFactory.createMatteBorder(0, 6, 0, 0, UiTheme.INFO),
+                BorderFactory.createEmptyBorder(15, 18, 15, 18)
+        ));
+        JPanel copy = new JPanel();
+        copy.setOpaque(false);
+        copy.setLayout(new BoxLayout(copy, BoxLayout.Y_AXIS));
+        JLabel eyebrow = new JLabel("CATÁLOGO ANATÓMICO 3D");
+        eyebrow.setForeground(UiTheme.INFO);
+        eyebrow.setFont(eyebrow.getFont().deriveFont(Font.BOLD, 11f));
+        copy.add(eyebrow);
+        copy.add(Box.createVerticalStrut(4));
+        copy.add(UiTheme.title("Explorador de modelos 3D y simuladores anatómicos", 20f));
+        pythonScriptsSummary.setForeground(UiTheme.MUTED);
+        copy.add(Box.createVerticalStrut(3));
+        copy.add(pythonScriptsSummary);
+        header.add(copy, BorderLayout.CENTER);
+        panel.add(header, BorderLayout.NORTH);
+
+        JScrollPane pythonScriptsScroll = new JScrollPane(pythonScriptsButtonsPanel);
+        pythonScriptsScroll.setBorder(BorderFactory.createEmptyBorder());
+        pythonScriptsScroll.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
+        pythonScriptsScroll.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED);
+        pythonScriptsScroll.getVerticalScrollBar().setUnitIncrement(16);
+        pythonScriptsScroll.setOpaque(false);
+        pythonScriptsScroll.getViewport().setOpaque(false);
+        panel.add(pythonScriptsScroll, BorderLayout.CENTER);
+
+        JPanel actions = new JPanel(new FlowLayout(FlowLayout.LEFT, 10, 4));
+        actions.setOpaque(false);
+        JButton refreshPython = new JButton("Actualizar catálogo");
+        app.ui.UiTheme.styleSecondaryButton(refreshPython);
+        actions.add(refreshPython);
+        panel.add(actions, BorderLayout.SOUTH);
+
+        refreshPython.addActionListener(e -> refreshPythonScripts());
         return panel;
+    }
+
+    private void refreshPythonScripts() {
+        pythonScriptsButtonsPanel.removeAll();
+
+        Path scriptsFolder = Visor3DService.carpetaModelos();
+        List<Visor3DService.Modelo> models = Visor3DService.disponibles(scriptsFolder);
+        if (scriptsFolder == null) {
+            pythonScriptsSummary.setText("El catálogo 3D no está disponible en este equipo.");
+        } else if (models.isEmpty()) {
+            pythonScriptsSummary.setText("Aún no hay modelos 3D disponibles.");
+        } else {
+            boolean environmentReady = Visor3DService.hayPythonPropio();
+            for (Visor3DService.Modelo model : models) {
+                pythonScriptsButtonsPanel.addModel(model, environmentReady,
+                        () -> runTeacherPythonScript(model.script()));
+            }
+            pythonScriptsSummary.setText(models.size() + " modelos interactivos de las cavidades del equino disponibles.");
+        }
+        pythonScriptsButtonsPanel.revalidate();
+        pythonScriptsButtonsPanel.repaint();
     }
 
     private void toggleSimulationStatus(boolean enabled) {
@@ -1253,6 +1626,7 @@ private JPanel buildSimulationPanel() {
         populateCourseSelectors();
         refreshQuestionnaireTables();
         refreshSimulations();
+        refreshPythonScripts();
         populateGradesExamSelector(null);
         loadGrades();
     }
@@ -1267,7 +1641,7 @@ private JPanel buildSimulationPanel() {
         fillCourseCombo(questionnaireCourseFilter, courses, true);
         fillCourseCombo(examCourseSelector, courses, false);
         fillCourseCombo(gradesCourseFilter, courses, true);
-        fillCourseCombo(simulationCourseSelector, courses, false);
+        fillCourseCombo(simulationCourseSelector, courses, true);
 
         selectComboItem(questionnaireCourseFilter, previousQuestionnaireCourse);
         selectComboItem(examCourseSelector, previousExamCourse);
@@ -1464,35 +1838,39 @@ private JPanel buildSimulationPanel() {
         simulationModel.setRowCount(0);
         selectedSimulationId.setText("");
 
-        ComboItem courseItem = selectedItem(simulationCourseSelector);
-        if (courseItem == null) {
-            if (simulationCourseSelector.getItemCount() == 0) {
-                simulationSummary.setText("No hay cursos disponibles. Crea una materia en Administracion > Cursos.");
-            } else {
-                simulationSummary.setText("Selecciona un curso para ver simulaciones.");
-            }
+        List<Course> courses = teacherCourses();
+        if (courses.isEmpty()) {
+            simulationSummary.setText("No tienes materias asignadas.");
             return;
         }
 
-        String courseName = courseItem.label;
+        Long selectedCourseId = selectedId(simulationCourseSelector);
+        int totalSimulations = 0;
         int enabledCount = 0;
-        List<Simulation> simulations = simulationService.listByCourse(courseItem.id);
-        for (Simulation simulation : simulations) {
-            boolean enabled = SimulationService.isEnabled(simulation);
-            if (enabled) {
-                enabledCount++;
+
+        for (Course course : courses) {
+            if (selectedCourseId != null && course.getId() != selectedCourseId) {
+                continue;
             }
-            String script3d = SimulationService.getScript3D(simulation);
-            simulationModel.addRow(new Object[]{
-                    simulation.getId(),
-                    courseName,
-                    simulation.getName(),
-                    script3d != null ? Visor3DService.titulo(script3d) : "Ninguno",
-                    enabled ? "Si" : "No",
-                    simulationDuration(simulation)
-            });
+            List<Simulation> simulations = simulationService.listByCourse(course.getId());
+            for (Simulation simulation : simulations) {
+                boolean enabled = SimulationService.isEnabled(simulation);
+                if (enabled) {
+                    enabledCount++;
+                }
+                totalSimulations++;
+                String script3d = SimulationService.getScript3D(simulation);
+                simulationModel.addRow(new Object[]{
+                        simulation.getId(),
+                        course.getName(),
+                        simulation.getName(),
+                        script3d != null ? Visor3DService.titulo(script3d) : "Ninguno",
+                        enabled ? "Si" : "No",
+                        simulationDuration(simulation)
+                });
+            }
         }
-        simulationSummary.setText("Practicas: " + simulations.size() + " | Disponibles: " + enabledCount);
+        simulationSummary.setText("Prácticas: " + totalSimulations + " | Disponibles: " + enabledCount);
     }
 
     private String simulationDuration(Simulation simulation) {
