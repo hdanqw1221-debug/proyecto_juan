@@ -123,10 +123,10 @@ psql -U postgres -d gestion -f db/test_users.sql
 ## ▶️ Ejecución del Proyecto
 
 ### Opción 1: Script Automatizado (Recomendada en Windows)
-Ejecuta el script PowerShell en la raíz del proyecto:
-```powershell
-.\run.ps1
-```
+Puedes iniciar la aplicación con un solo clic o por comando:
+- **Doble clic o CMD:** Ejecuta el archivo [`run.bat`](run.bat) (o escribe `.\run.bat`).
+- **PowerShell:** Ejecuta `.\run.ps1`.
+
 El script detecta automáticamente el compilador Java (`oracleJdk-26` o del sistema), compila las clases en `out/`, valida las librerías en `lib/` e inicia la ventana principal.
 
 ### Opción 2: Compilación y Ejecución Manual
