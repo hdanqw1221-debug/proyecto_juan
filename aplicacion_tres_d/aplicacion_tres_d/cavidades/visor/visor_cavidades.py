@@ -117,9 +117,15 @@ def html_ficha(ficha, meta, profundidad, relacionados=()):
 class EstiloInteraccion(vtk.vtkInteractorStyleTrackballCamera):
     """Trackball con distinción clic/arrastre, doble clic y rueda hacia el cursor; las teclas las gestiona el visor."""
 
+    visor = None
+    _inicio = None
+    _girando = False
+    _ultimo_clic = (0.0, None)
+
     def __init__(self, visor):
         super().__init__()
         self.visor = visor
+        EstiloInteraccion.visor = visor
         self._inicio = None
         self._girando = False
         self._ultimo_clic = (0.0, None)
@@ -137,34 +143,44 @@ class EstiloInteraccion(vtk.vtkInteractorStyleTrackballCamera):
         self._girando = False
 
     def _mover(self, obj, evento):
-        if self._inicio and not self._girando:
+        inicio = getattr(self, "_inicio", None)
+        girando = getattr(self, "_girando", False)
+        if inicio and not girando:
             x, y = self.GetInteractor().GetEventPosition()
-            if max(abs(x - self._inicio[0]), abs(y - self._inicio[1])) >= UMBRAL_ARRASTRE_PX:
+            if max(abs(x - inicio[0]), abs(y - inicio[1])) >= UMBRAL_ARRASTRE_PX:
                 self._girando = True
                 self.OnLeftButtonDown()
         self.OnMouseMove()
 
     def _rueda(self, sentido):
-        self.visor.rueda(*self.GetInteractor().GetEventPosition(), sentido)
+        visor = getattr(self, "visor", None) or EstiloInteraccion.visor
+        if visor:
+            visor.rueda(*self.GetInteractor().GetEventPosition(), sentido)
 
     def _soltar(self, obj, evento):
         fin = self.GetInteractor().GetEventPosition()
-        if self._girando:
+        girando = getattr(self, "_girando", False)
+        inicio = getattr(self, "_inicio", None)
+        if girando:
             self.OnLeftButtonUp()
-        elif self._inicio:
+        elif inicio:
             ahora = time.time()
-            t_prev, p_prev = self._ultimo_clic
-            if p_prev and ahora - t_prev < DOBLE_CLIC_S and abs(fin[0] - p_prev[0]) + abs(fin[1] - p_prev[1]) < 8:
-                self.visor.encuadrar_seleccion()
-                self._ultimo_clic = (0.0, None)
-            else:
-                self.visor.clic(*fin)
-                self._ultimo_clic = (ahora, fin)
+            t_prev, p_prev = getattr(self, "_ultimo_clic", (0.0, None))
+            visor = getattr(self, "visor", None) or EstiloInteraccion.visor
+            if visor:
+                if p_prev and ahora - t_prev < DOBLE_CLIC_S and abs(fin[0] - p_prev[0]) + abs(fin[1] - p_prev[1]) < 8:
+                    visor.encuadrar_seleccion()
+                    self._ultimo_clic = (0.0, None)
+                else:
+                    visor.clic(*fin)
+                    self._ultimo_clic = (ahora, fin)
         self._inicio = None
         self._girando = False
 
     def _tecla(self, obj, evento):
-        self.visor.tecla(self.GetInteractor().GetKeySym())
+        visor = getattr(self, "visor", None) or EstiloInteraccion.visor
+        if visor:
+            visor.tecla(self.GetInteractor().GetKeySym())
 
 
 class VisorCavidades(QMainWindow):
@@ -202,7 +218,8 @@ class VisorCavidades(QMainWindow):
         self.cavidades_visibles["referencia"] = False
         self._construir_panel()
         self.interactor = self.ventana.GetInteractor()
-        self.interactor.SetInteractorStyle(EstiloInteraccion(self))
+        self.estilo = EstiloInteraccion(self)
+        self.interactor.SetInteractorStyle(self.estilo)
         self._actualizando = False
         # Transición animada entre la cavidad ensamblada y separada.
         self.temporizador = QTimer(self)
