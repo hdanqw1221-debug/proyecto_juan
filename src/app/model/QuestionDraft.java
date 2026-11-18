@@ -13,6 +13,7 @@ public class QuestionDraft {
     private byte[] imageData;
     private String imageName;
     private String imageContentType;
+    private String objectId;
 
     public Long getId() {
         return id;
@@ -76,5 +77,13 @@ public class QuestionDraft {
 
     public void setImageContentType(String imageContentType) {
         this.imageContentType = imageContentType;
+    }
+
+    public String getObjectId() {
+        return objectId;
+    }
+
+    public void setObjectId(String objectId) {
+        this.objectId = objectId == null || objectId.isBlank() ? null : objectId.strip();
     }
 }

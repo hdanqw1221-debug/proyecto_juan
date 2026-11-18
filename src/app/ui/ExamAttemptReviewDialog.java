@@ -178,6 +178,15 @@ public class ExamAttemptReviewDialog extends JDialog {
             statement.setAlignmentX(Component.LEFT_ALIGNMENT);
             body.add(statement);
 
+            if (q.getObjectId() != null) {  // C07: estructura del modelo 3D a la que se refiere la pregunta
+                JLabel structure = new JLabel("Estructura 3D: " + examService.modelObjectName(q.getObjectId()));
+                structure.setForeground(UiTheme.PRIMARY);
+                structure.setFont(structure.getFont().deriveFont(Font.ITALIC, 12f));
+                structure.setAlignmentX(Component.LEFT_ALIGNMENT);
+                body.add(Box.createVerticalStrut(4));
+                body.add(structure);
+            }
+
             if (q.getImageData() != null && q.getImageData().length > 0) {
                 ImageIcon icon = questionImage(q.getImageData(), 680, 260);
                 if (icon != null) {

@@ -32,6 +32,9 @@ public class QuestionBatchEditorDialog extends JDialog {
     private final JTextArea statement = new JTextArea(5, 34);
     private final JComboBox<QuestionType> type = new JComboBox<>(QuestionType.values());
     private final JSpinner score = new JSpinner(new SpinnerNumberModel(1.0, 0.1, 100.0, 0.5));
+    /** Estructura del modelo 3D a la que se refiere la pregunta (opcional, C07). */
+    private final JComboBox<Object> modelObject = new JComboBox<>(new Object[]{NO_MODEL_OBJECT});
+    private static final String NO_MODEL_OBJECT = "(sin estructura 3D)";
     private final JPanel optionsPanel = new JPanel();
     private final JPanel previewBody = new JPanel();
     private final JLabel editorTitle = UiTheme.title("Pregunta 1", 20f);
@@ -275,6 +278,14 @@ public class QuestionBatchEditorDialog extends JDialog {
         gbc.gridx = 1;
         gbc.insets = new Insets(0, 8, 0, 0);
         card.add(score, gbc);
+        gbc.gridy++;
+        gbc.gridx = 0;
+        gbc.gridwidth = 2;
+        gbc.insets = new Insets(13, 0, 4, 0);
+        card.add(fieldLabel("Estructura del modelo 3D (opcional)"), gbc);
+        gbc.gridy++;
+        gbc.insets = new Insets(0, 0, 0, 0);
+        card.add(modelObject, gbc);
         return card;
     }
 
@@ -385,6 +396,7 @@ public class QuestionBatchEditorDialog extends JDialog {
         });
         statement.getDocument().addDocumentListener(documentListener(this::editorChanged));
         score.addChangeListener(e -> editorChanged());
+        modelObject.addActionListener(e -> editorChanged());
         type.addActionListener(e -> {
             if (loading || current == null) {
                 return;
@@ -495,6 +507,7 @@ public class QuestionBatchEditorDialog extends JDialog {
         statementCount.setText(current.statement.length() + " caracteres");
         type.setSelectedItem(current.type);
         score.setValue(current.score);
+        selectModelObject(current.objectId);
         updateImagePreview();
         rebuildOptions();
         loading = false;
@@ -512,6 +525,36 @@ public class QuestionBatchEditorDialog extends JDialog {
                 ? number.doubleValue()
                 : Double.parseDouble(String.valueOf(scoreValue).trim());
         current.type = selectedType();
+        current.objectId = modelObject.getSelectedItem() instanceof app.service.ExamService.ModelObject o ? o.objectId() : null;
+    }
+
+    /** Carga las estructuras del modelo 3D que se pueden enlazar a las preguntas. */
+    public void setModelObjects(List<app.service.ExamService.ModelObject> objects) {
+        boolean wasLoading = loading;
+        loading = true;
+        modelObject.removeAllItems();
+        modelObject.addItem(NO_MODEL_OBJECT);
+        for (var o : objects) {
+            modelObject.addItem(o);
+        }
+        loading = wasLoading;
+        if (current != null) {
+            selectModelObject(current.objectId);
+        }
+    }
+
+    private void selectModelObject(String objectId) {
+        boolean wasLoading = loading;
+        loading = true;
+        Object selected = NO_MODEL_OBJECT;
+        for (int i = 0; i < modelObject.getItemCount(); i++) {
+            if (modelObject.getItemAt(i) instanceof app.service.ExamService.ModelObject o && o.objectId().equals(objectId)) {
+                selected = o;
+                break;
+            }
+        }
+        modelObject.setSelectedItem(selected);
+        loading = wasLoading;
     }
 
     private void editorChanged() {
@@ -780,6 +823,7 @@ public class QuestionBatchEditorDialog extends JDialog {
         draft.setImageData(state.imageData);
         draft.setImageName(state.imageName);
         draft.setImageContentType(state.imageContentType);
+        draft.setObjectId(state.objectId);
         return draft;
     }
 
@@ -1000,6 +1044,7 @@ public class QuestionBatchEditorDialog extends JDialog {
         private byte[] imageData;
         private String imageName;
         private String imageContentType;
+        private String objectId;
 
         private DraftState() {
         }
@@ -1019,6 +1064,7 @@ public class QuestionBatchEditorDialog extends JDialog {
             imageData = draft.getImageData();
             imageName = draft.getImageName();
             imageContentType = draft.getImageContentType();
+            objectId = draft.getObjectId();
         }
 
         private DraftState copy() {
@@ -1033,6 +1079,7 @@ public class QuestionBatchEditorDialog extends JDialog {
             copy.imageData = imageData == null ? null : imageData.clone();
             copy.imageName = imageName;
             copy.imageContentType = imageContentType;
+            copy.objectId = objectId;
             return copy;
         }
     }

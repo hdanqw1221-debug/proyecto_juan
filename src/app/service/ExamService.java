@@ -100,8 +100,8 @@ public class ExamService {
             throw new IllegalArgumentException("Debes proporcionar al menos una pregunta");
         }
         String questionSql = "INSERT INTO preguntas "
-                + "(examen_id, enunciado, tipo, puntaje, imagen, imagen_nombre, imagen_tipo, orden) "
-                + "VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+                + "(examen_id, enunciado, tipo, puntaje, imagen, imagen_nombre, imagen_tipo, orden, objeto_id) "
+                + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
         String answerSql = "INSERT INTO respuestas (pregunta_id, contenido, correcta) VALUES (?, ?, ?)";
 
         try (Connection conn = factory.getConnection()) {
@@ -120,7 +120,9 @@ public class ExamService {
                         questionStatement.setBytes(5, question.getImageData());
                         questionStatement.setString(6, question.getImageName());
                         questionStatement.setString(7, question.getImageContentType());
-                        questionStatement.setInt(8, order++);
+                        questionStatement.setInt(8, order);
+                        questionStatement.setString(9, question.getObjectId());
+                        order++;
                         questionStatement.executeUpdate();
 
                         long questionId;
@@ -161,10 +163,10 @@ public class ExamService {
         }
         String selectSql = "SELECT id FROM preguntas WHERE examen_id = ?";
         String insertSql = "INSERT INTO preguntas "
-                + "(examen_id, enunciado, tipo, puntaje, imagen, imagen_nombre, imagen_tipo, orden) "
-                + "VALUES (?, ?, ?, ?, ?, ?, ?, ?) RETURNING id";
+                + "(examen_id, enunciado, tipo, puntaje, imagen, imagen_nombre, imagen_tipo, orden, objeto_id) "
+                + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?) RETURNING id";
         String updateSql = "UPDATE preguntas SET enunciado = ?, tipo = ?, puntaje = ?, "
-                + "imagen = ?, imagen_nombre = ?, imagen_tipo = ?, orden = ? "
+                + "imagen = ?, imagen_nombre = ?, imagen_tipo = ?, orden = ?, objeto_id = ? "
                 + "WHERE id = ? AND examen_id = ?";
         String deleteAnswersSql = "DELETE FROM respuestas WHERE pregunta_id = ?";
         String insertAnswerSql = "INSERT INTO respuestas (pregunta_id, contenido, correcta) VALUES (?, ?, ?)";
@@ -201,6 +203,7 @@ public class ExamService {
                             insert.setString(6, question.getImageName());
                             insert.setString(7, question.getImageContentType());
                             insert.setInt(8, order);
+                            insert.setString(9, question.getObjectId());
                             try (ResultSet rs = insert.executeQuery()) {
                                 if (!rs.next()) {
                                     throw new SQLException("No se genero el ID de una pregunta");
@@ -220,8 +223,9 @@ public class ExamService {
                             update.setString(5, question.getImageName());
                             update.setString(6, question.getImageContentType());
                             update.setInt(7, order);
-                            update.setLong(8, questionId);
-                            update.setLong(9, examId);
+                            update.setString(8, question.getObjectId());
+                            update.setLong(9, questionId);
+                            update.setLong(10, examId);
                             update.executeUpdate();
 
                             deleteAnswers.setLong(1, questionId);
@@ -284,6 +288,46 @@ public class ExamService {
 
     public List<Question> listQuestionsByExam(long examId) {
         return questionDao.listByExam(examId);
+    }
+
+    /** Estructura del modelo 3D que se puede enlazar a una pregunta. */
+    public record ModelObject(String objectId, String name, String cavity) {
+        @Override
+        public String toString() {
+            return name + " (" + objectId + ")";
+        }
+    }
+
+    /** Estructuras seleccionables del modelo 3D (tabla modelos_3d) para el selector del constructor de preguntas. */
+    public List<ModelObject> listModelObjects() {
+        String sql = "SELECT m.objeto_id, m.nombre, c.nombre AS cavidad FROM modelos_3d m "
+                + "JOIN cavidades c ON c.id = m.cavidad_id WHERE m.seleccionable ORDER BY c.nombre, m.nombre, m.objeto_id";
+        List<ModelObject> list = new ArrayList<>();
+        try (Connection conn = factory.getConnection(); PreparedStatement ps = conn.prepareStatement(sql);
+             ResultSet rs = ps.executeQuery()) {
+            while (rs.next()) {
+                list.add(new ModelObject(rs.getString(1), rs.getString(2), rs.getString(3)));
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException("No se pudo listar las estructuras del modelo 3D", e);
+        }
+        return list;
+    }
+
+    /** Nombre de la estructura enlazada (para la revision del intento); el propio id si ya no existe. */
+    public String modelObjectName(String objectId) {
+        if (objectId == null) {
+            return null;
+        }
+        String sql = "SELECT nombre FROM modelos_3d WHERE objeto_id = ?";
+        try (Connection conn = factory.getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setString(1, objectId);
+            try (ResultSet rs = ps.executeQuery()) {
+                return rs.next() ? rs.getString(1) : objectId;
+            }
+        } catch (SQLException e) {
+            return objectId;
+        }
     }
 
     public boolean isAvailable(Exam exam) {

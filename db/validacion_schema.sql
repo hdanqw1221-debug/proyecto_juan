@@ -28,3 +28,15 @@ CREATE TABLE IF NOT EXISTS exploracion_eventos (
 CREATE INDEX IF NOT EXISTS idx_exploracion_usuario_t ON exploracion_eventos(usuario_id, t_evento);
 CREATE INDEX IF NOT EXISTS idx_exploracion_sesion ON exploracion_eventos(sesion);
 CREATE INDEX IF NOT EXISTS idx_exploracion_simulacion ON exploracion_eventos(simulacion_id);
+
+-- C07: enlace opcional de cada pregunta con una estructura del modelo 3D.
+-- Si se borra la estructura del catalogo, la pregunta se conserva sin enlace.
+ALTER TABLE preguntas ADD COLUMN IF NOT EXISTS objeto_id VARCHAR(60);
+DO $$
+BEGIN
+  IF NOT EXISTS (SELECT 1 FROM pg_constraint WHERE conname = 'fk_preguntas_objeto') THEN
+    ALTER TABLE preguntas ADD CONSTRAINT fk_preguntas_objeto
+      FOREIGN KEY (objeto_id) REFERENCES modelos_3d(objeto_id) ON DELETE SET NULL ON UPDATE CASCADE;
+  END IF;
+END $$;
+CREATE INDEX IF NOT EXISTS idx_preguntas_objeto ON preguntas(objeto_id);

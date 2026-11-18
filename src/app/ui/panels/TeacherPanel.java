@@ -398,6 +398,7 @@ public class TeacherPanel extends JPanel {
             QuestionBatchEditorDialog editor = new QuestionBatchEditorDialog(
                     (Frame) SwingUtilities.getWindowAncestor(this), examItem.label
             );
+            loadModelObjects(editor);
             editor.setVisible(true);
             var questions = editor.getQuestions();
             if (questions != null && !questions.isEmpty()) {
@@ -507,6 +508,7 @@ public class TeacherPanel extends JPanel {
         QuestionBatchEditorDialog editor = new QuestionBatchEditorDialog(
                 (Frame) SwingUtilities.getWindowAncestor(this), examItem.label, drafts
         );
+        loadModelObjects(editor);
         editor.setVisible(true);
         List<QuestionDraft> edited = editor.getQuestions();
         if (edited == null || edited.isEmpty()) {
@@ -609,6 +611,7 @@ public class TeacherPanel extends JPanel {
             draft.setImageData(question.getImageData());
             draft.setImageName(question.getImageName());
             draft.setImageContentType(question.getImageContentType());
+            draft.setObjectId(question.getObjectId());
             draft.setAnswers(answerService.listByQuestion(question.getId()));
             drafts.add(draft);
         }
@@ -642,6 +645,14 @@ public class TeacherPanel extends JPanel {
                 BorderFactory.createEmptyBorder(6, 9, 6, 9)
         ));
         return badge;
+    }
+
+    private void loadModelObjects(QuestionBatchEditorDialog editor) {
+        try {
+            editor.setModelObjects(examService.listModelObjects());
+        } catch (RuntimeException ex) {
+            // Sin catalogo anatomico la pregunta simplemente no se enlaza a una estructura.
+        }
     }
 
     private JPanel buildTableWithSearch(String title, JTable table, DefaultTableModel model, JPanel extraHeader) {

@@ -9,6 +9,7 @@ public class Question {
     private byte[] imageData;
     private String imageName;
     private String imageContentType;
+    private String objectId;
 
     public Question() {}
 
@@ -43,4 +44,8 @@ public class Question {
 
     public String getImageContentType() { return imageContentType; }
     public void setImageContentType(String imageContentType) { this.imageContentType = imageContentType; }
+
+    /** Estructura del modelo 3D (modelos_3d.objeto_id) a la que se refiere la pregunta; null si no se enlaza (C07). */
+    public String getObjectId() { return objectId; }
+    public void setObjectId(String objectId) { this.objectId = objectId == null || objectId.isBlank() ? null : objectId.strip(); }
 }

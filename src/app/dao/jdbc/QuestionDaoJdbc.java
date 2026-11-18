@@ -19,8 +19,8 @@ public class QuestionDaoJdbc implements QuestionDao {
     @Override
     public long create(Question question) {
         String sql = "INSERT INTO preguntas "
-                + "(examen_id, enunciado, tipo, puntaje, imagen, imagen_nombre, imagen_tipo) "
-                + "VALUES (?, ?, ?, ?, ?, ?, ?)";
+                + "(examen_id, enunciado, tipo, puntaje, imagen, imagen_nombre, imagen_tipo, objeto_id) "
+                + "VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
         try (Connection conn = factory.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
             ps.setLong(1, question.getExamId());
@@ -30,6 +30,7 @@ public class QuestionDaoJdbc implements QuestionDao {
             ps.setBytes(5, question.getImageData());
             ps.setString(6, question.getImageName());
             ps.setString(7, question.getImageContentType());
+            ps.setString(8, question.getObjectId());
             ps.executeUpdate();
             try (ResultSet rs = ps.getGeneratedKeys()) {
                 if (rs.next()) return rs.getLong(1);
@@ -42,7 +43,7 @@ public class QuestionDaoJdbc implements QuestionDao {
 
     @Override
     public List<Question> listByExam(long examId) {
-        String sql = "SELECT id, examen_id, enunciado, tipo, puntaje, imagen, imagen_nombre, imagen_tipo "
+        String sql = "SELECT id, examen_id, enunciado, tipo, puntaje, imagen, imagen_nombre, imagen_tipo, objeto_id "
                 + "FROM preguntas WHERE examen_id = ? ORDER BY orden, id";
         List<Question> list = new ArrayList<>();
         try (Connection conn = factory.getConnection();
@@ -60,6 +61,7 @@ public class QuestionDaoJdbc implements QuestionDao {
                     question.setImageData(rs.getBytes("imagen"));
                     question.setImageName(rs.getString("imagen_nombre"));
                     question.setImageContentType(rs.getString("imagen_tipo"));
+                    question.setObjectId(rs.getString("objeto_id"));
                     list.add(question);
                 }
             }
@@ -74,7 +76,8 @@ public class QuestionDaoJdbc implements QuestionDao {
                 "ALTER TABLE preguntas ADD COLUMN IF NOT EXISTS imagen BYTEA",
                 "ALTER TABLE preguntas ADD COLUMN IF NOT EXISTS imagen_nombre VARCHAR(255)",
                 "ALTER TABLE preguntas ADD COLUMN IF NOT EXISTS imagen_tipo VARCHAR(100)",
-                "ALTER TABLE preguntas ADD COLUMN IF NOT EXISTS orden INT NOT NULL DEFAULT 0"
+                "ALTER TABLE preguntas ADD COLUMN IF NOT EXISTS orden INT NOT NULL DEFAULT 0",
+                "ALTER TABLE preguntas ADD COLUMN IF NOT EXISTS objeto_id VARCHAR(60)"
         };
         try (Connection conn = factory.getConnection();
              Statement statement = conn.createStatement()) {
