@@ -47,7 +47,7 @@ public class EmbeddedDatabaseTest {
 
     @Test
     public void testConfiguracionDeDesarrolloNoEsEmbebida() {
-        AppConfig config = AppConfig.load("config/app.properties");
+        AppConfig config = AppConfig.load("config/app.properties.example");
         assertFalse(config.isEmbeddedDatabase());
         assertEquals(EmbeddedDatabase.DEFAULT_PORT, config.getEmbeddedPort());
         assertTrue(config.getEmbeddedHome().endsWith(Path.of("GestionAcademica", "basedatos")));
@@ -83,7 +83,7 @@ public class EmbeddedDatabaseTest {
         Path bin = binariosPostgres();
         assumeTrue(bin != null, "No hay binarios de PostgreSQL en este equipo");
         Path home = carpeta.resolve("basedatos");
-        AppConfig base = AppConfig.load("config/app.properties");
+        AppConfig base = AppConfig.load("config/app.properties.example");
 
         EmbeddedDatabase bd = new EmbeddedDatabase(bin, home, Path.of("db"), EmbeddedDatabase.DEFAULT_PORT + 7, true);
         assertFalse(bd.isInitialized());
