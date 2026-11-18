@@ -1266,6 +1266,11 @@ public class AdminPanel extends JPanel {
         pythonScriptsButtonsPanel.repaint();
     }
 
+    /** Grabacion de los eventos del visor en exploracion_eventos (C05). */
+    private java.util.function.Consumer<app.model.VisorEvent> explorationRecorder(long userId) {
+        return auditService.exploration() == null ? null : auditService.exploration().recorder(userId, null);
+    }
+
     private void runPythonScript(Path scriptPath) {
         AccessControl.requireRole(sessionManager.getCurrent(), RoleType.ADMINISTRADOR);
         long adminId = sessionManager.getCurrent().getUser().getId();
@@ -1289,7 +1294,8 @@ public class AdminPanel extends JPanel {
                     withoutPython = true;
                     return null;
                 }
-                return Visor3DService.ejecutar(scriptPath, python, () -> SwingUtilities.invokeLater(progress::dispose));
+                return Visor3DService.ejecutar(scriptPath, python, () -> SwingUtilities.invokeLater(progress::dispose),
+                        explorationRecorder(adminId));
             }
 
             @Override

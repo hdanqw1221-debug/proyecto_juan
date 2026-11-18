@@ -1,5 +1,10 @@
 package app.service;
 
+import app.model.VisorEvent;
+import app.util.JsonSupport;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
@@ -12,9 +17,10 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Set;
+import java.time.Instant;
+import java.util.UUID;
 import java.util.concurrent.TimeUnit;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+import java.util.function.Consumer;
 
 /**
  * Modelos 3D de las cavidades del equino: visores Python de aplicacion_tres_d/aplicacion_tres_d.
@@ -60,7 +66,6 @@ public final class Visor3DService {
     private static final String DEPENDENCIAS = "import PyQt5, vtk, numpy";
     private static final long ESPERA_SONDEO_S = 25;  // la primera importacion de VTK puede tardar
     private static final int LINEAS_SALIDA = 40;
-    private static final Pattern CAMPO = Pattern.compile("\"%s\"\\s*:\\s*\"([^\"]*)\"");
 
     private static volatile List<String> pythonDetectado;
 
@@ -233,7 +238,8 @@ public final class Visor3DService {
      *                liberar memoria, la sesion sigue siendo correcta para el usuario.
      */
     public record Resultado(int codigoSalida, String salida, Set<String> estructuras, long duracionMs,
-                            boolean abierto, boolean cerrado, Exception error) {
+                            boolean abierto, boolean cerrado, Exception error,
+                            UUID sesion, int eventosValidos, int eventosInvalidos) {
         public boolean correcto() {
             return error == null && (codigoSalida == 0 || cerrado);
         }
@@ -245,49 +251,80 @@ public final class Visor3DService {
      * @param alAbrir se ejecuta cuando el visor avisa de que su ventana ya esta abierta (evento "inicio").
      */
     public static Resultado ejecutar(Path script, List<String> python, Runnable alAbrir) {
+        return ejecutar(script, python, alAbrir, null);
+    }
+
+    /**
+     * Abre el visor y entrega cada evento valido a {@code alEvento} en cuanto llega (C05), para guardarlo sin
+     * esperar al cierre. Cada linea que empieza por "{" se valida con un analizador JSON estricto; las mal
+     * formadas no se entregan: se cuentan y se conservan en la salida para el diagnostico.
+     */
+    public static Resultado ejecutar(Path script, List<String> python, Runnable alAbrir, Consumer<VisorEvent> alEvento) {
         List<String> comando = new ArrayList<>(sinConsola(python));
         comando.add(script.getFileName().toString());
+        return ejecutarComando(comando, script.getParent(), alAbrir, alEvento);
+    }
+
+    /** Ejecuta un comando que se comporta como el visor (tambien lo usan las pruebas del canal de eventos). */
+    public static Resultado ejecutarComando(List<String> comando, Path carpeta, Runnable alAbrir, Consumer<VisorEvent> alEvento) {
+        UUID sesion = UUID.randomUUID();
         long inicio = System.currentTimeMillis();
         Deque<String> salida = new ArrayDeque<>();
         Set<String> estructuras = new LinkedHashSet<>();
         boolean abierto = false;
         boolean cerrado = false;
+        int validos = 0;
+        int invalidos = 0;
         try {
-            Process proceso = new ProcessBuilder(comando)
-                    .directory(script.getParent().toFile())
-                    .redirectErrorStream(true)
-                    .start();
+            ProcessBuilder pb = new ProcessBuilder(comando).redirectErrorStream(true);
+            if (carpeta != null) {
+                pb.directory(carpeta.toFile());
+            }
+            Process proceso = pb.start();
             proceso.getOutputStream().close();
             try (BufferedReader lector = new BufferedReader(
                     new InputStreamReader(proceso.getInputStream(), StandardCharsets.UTF_8))) {
                 String linea;
                 while ((linea = lector.readLine()) != null) {
-                    String evento = linea.startsWith("{") ? campo(linea, "evento") : null;
-                    if (evento == null) {
-                        salida.addLast(linea);
-                        if (salida.size() > LINEAS_SALIDA) {
-                            salida.removeFirst();
+                    VisorEvent.Line clasificada = VisorEvent.parse(linea, sesion, Instant.now());
+                    if (clasificada instanceof VisorEvent.Valid v) {
+                        validos++;
+                        VisorEvent evento = v.event();
+                        switch (evento.event()) {
+                            case "inicio" -> {
+                                abierto = true;
+                                if (alAbrir != null) {
+                                    alAbrir.run();
+                                }
+                            }
+                            case "cierre" -> cerrado = true;
+                            case "seleccion" -> estructuras.add(evento.fichaId());
+                            default -> { }
                         }
-                    } else if (evento.equals("inicio")) {
-                        abierto = true;
-                        if (alAbrir != null) {
-                            alAbrir.run();
+                        if (alEvento != null) {
+                            alEvento.accept(evento);
                         }
-                    } else if (evento.equals("cierre")) {
-                        cerrado = true;
-                    } else if (evento.equals("seleccion")) {
-                        String ficha = campo(linea, "ficha_id");
-                        if (ficha != null && !ficha.isBlank()) {
-                            estructuras.add(ficha);
+                    } else {
+                        String texto = clasificada instanceof VisorEvent.Malformed m
+                                ? "[evento descartado: " + m.reason() + "] " + m.text()
+                                : ((VisorEvent.PlainOutput) clasificada).text();
+                        if (clasificada instanceof VisorEvent.Malformed) {
+                            invalidos++;
+                        }
+                        if (clasificada instanceof VisorEvent.Malformed || !texto.isBlank()) {
+                            salida.addLast(texto);
+                            if (salida.size() > LINEAS_SALIDA) {
+                                salida.removeFirst();
+                            }
                         }
                     }
                 }
             }
             return new Resultado(proceso.waitFor(), String.join("\n", salida), estructuras,
-                    System.currentTimeMillis() - inicio, abierto, cerrado, null);
+                    System.currentTimeMillis() - inicio, abierto, cerrado, null, sesion, validos, invalidos);
         } catch (Exception ex) {
             return new Resultado(-1, String.join("\n", salida), estructuras, System.currentTimeMillis() - inicio,
-                    abierto, cerrado, ex);
+                    abierto, cerrado, ex, sesion, validos, invalidos);
         }
     }
 
@@ -307,8 +344,10 @@ public final class Visor3DService {
         return texto.toString();
     }
 
+    /** Campo de texto de una linea JSON del visor (analizador estricto); null si no existe o no es JSON. */
     static String campo(String json, String clave) {
-        Matcher m = Pattern.compile(String.format(CAMPO.pattern(), Pattern.quote(clave))).matcher(json);
-        return m.find() ? m.group(1) : null;
+        JsonObject o = JsonSupport.parseObjectOrNull(json);
+        JsonElement e = o == null ? null : o.get(clave);
+        return JsonSupport.isString(e) ? e.getAsString() : null;
     }
 }

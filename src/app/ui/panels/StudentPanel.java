@@ -247,6 +247,7 @@ public class StudentPanel extends JPanel {
             UiTheme.styleButton(launch3d);
             launch3d.addActionListener(ev -> {
                 auditService.log(currentStudentId(), "SIM_RUN_3D_PRACTICE", "Simulacion " + simulation.getName() + " -> " + scriptName);
+                practiceSimulationId = simulation.getId();
                 runPythonScript(scriptPath);
                 dialog.dispose();
             });
@@ -777,13 +778,19 @@ public class StudentPanel extends JPanel {
             boolean environmentReady = Visor3DService.hayPythonPropio();
             for (Visor3DService.Modelo model : models) {
                 pythonScriptsButtonsPanel.addModel(model, environmentReady,
-                        () -> runPythonScript(scriptsFolder.resolve(model.script())));
+                        () -> {
+                            practiceSimulationId = null;
+                            runPythonScript(scriptsFolder.resolve(model.script()));
+                        });
             }
             pythonScriptsSummary.setText(models.size() + " modelos interactivos de las cavidades del equino");
         }
         pythonScriptsButtonsPanel.revalidate();
         pythonScriptsButtonsPanel.repaint();
     }
+
+    /** Practica desde la que se abre el visor; los eventos de exploracion se asocian a ella (C05). */
+    private Long practiceSimulationId;
 
     private void runPythonScript(Path scriptPath) {
         requireStudent();
@@ -904,6 +911,7 @@ public class StudentPanel extends JPanel {
      */
     private void launchSimulation(Path scriptPath, boolean afterSetup) {
         long studentId = currentStudentId();
+        Long simulationId = practiceSimulationId;  // practica desde la que se abrio el modelo (null: catalogo)
         JDialog progress = progressDialog("Abriendo modelo 3D", "Preparando la ventana interactiva...");
 
         SwingWorker<Visor3DService.Resultado, Void> worker = new SwingWorker<>() {
@@ -916,7 +924,9 @@ public class StudentPanel extends JPanel {
                     withoutPython = true;
                     return null;
                 }
-                return Visor3DService.ejecutar(scriptPath, python, () -> SwingUtilities.invokeLater(progress::dispose));
+                return Visor3DService.ejecutar(scriptPath, python, () -> SwingUtilities.invokeLater(progress::dispose),
+                        auditService.exploration() == null ? null
+                                : auditService.exploration().recorder(studentId, simulationId));
             }
 
             @Override

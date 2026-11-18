@@ -69,6 +69,14 @@ public class TeacherPanel extends JPanel {
     private final JComboBox<ComboItem> gradesCourseFilter = new JComboBox<>();
     private final JComboBox<ComboItem> gradesExamFilter = new JComboBox<>();
     private final JComboBox<ComboItem> simulationCourseSelector = new JComboBox<>();
+    private final JComboBox<ComboItem> explorationCourseFilter = new JComboBox<>();
+    private final DefaultTableModel explorationStudentsModel = new ReadOnlyTableModel(new Object[]{
+            "ID", "Estudiante", "Sesiones", "Estructuras consultadas", "Selecciones", "Tiempo total", "Ultima sesion"}, 0);
+    private final DefaultTableModel explorationModelModel =
+            new ReadOnlyTableModel(new Object[]{"Cavidad / modelo", "Sesiones", "Tiempo"}, 0);
+    private final DefaultTableModel explorationFichaModel =
+            new ReadOnlyTableModel(new Object[]{"Ficha", "Estructura", "Consultas", "Tiempo"}, 0);
+    private final JLabel explorationSummary = new JLabel("Selecciona una materia para ver la exploracion de los estudiantes.");
 
     private final JLabel questionnaireSummary = new JLabel("Sin datos cargados.");
     private final JLabel gradesSummary = new JLabel("Selecciona un examen para ver notas.");
@@ -109,6 +117,7 @@ public class TeacherPanel extends JPanel {
         tabs.add("Simulaciones", buildSimulationPanel());
         tabs.add("Modelos 3D", buildPythonModelsPanel());
         tabs.add("Notas", buildGradesPanel());
+        tabs.add("Exploracion", buildExplorationPanel());
         tabs.add("Estadisticas", buildStatsPanel());
 
         JPanel contentWrapper = new ViewportPanel(new BorderLayout(12, 12));
@@ -1630,6 +1639,109 @@ public class TeacherPanel extends JPanel {
         refreshPythonScripts();
         populateGradesExamSelector(null);
         loadGrades();
+        loadExploration();
+    }
+
+    // ------------------------------------------------------------------ exploracion (C05)
+    /**
+     * Vista "Exploracion": por cada estudiante de las materias del docente, las sesiones en los modelos 3D, las
+     * estructuras consultadas y el tiempo por cavidad y por ficha, a partir de la tabla exploracion_eventos.
+     */
+    private JPanel buildExplorationPanel() {
+        JPanel panel = new JPanel(new BorderLayout(10, 10));
+        panel.setOpaque(false);
+
+        JPanel filters = new JPanel(new FlowLayout(FlowLayout.LEFT, 8, 0));
+        filters.setOpaque(false);
+        filters.add(new JLabel("Materia:"));
+        filters.add(explorationCourseFilter);
+        JButton refresh = new JButton("Actualizar");
+        UiTheme.styleSecondaryButton(refresh);
+        refresh.addActionListener(e -> loadExploration());
+        filters.add(refresh);
+        explorationCourseFilter.addActionListener(e -> loadExploration());
+
+        JPanel north = new JPanel(new BorderLayout(4, 4));
+        north.setOpaque(false);
+        north.add(filters, BorderLayout.NORTH);
+        explorationSummary.setForeground(UiTheme.MUTED);
+        north.add(explorationSummary, BorderLayout.SOUTH);
+        panel.add(north, BorderLayout.NORTH);
+
+        JTable students = new JTable(explorationStudentsModel);
+        students.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        students.getSelectionModel().addListSelectionListener(e -> {
+            if (!e.getValueIsAdjusting()) {
+                int row = students.getSelectedRow();
+                loadExplorationDetail(row < 0 ? null : (Long) explorationStudentsModel.getValueAt(students.convertRowIndexToModel(row), 0));
+            }
+        });
+        students.removeColumn(students.getColumnModel().getColumn(0));  // el ID queda en el modelo
+
+        JPanel detail = new JPanel(new GridLayout(1, 2, 10, 10));
+        detail.setOpaque(false);
+        detail.add(titled("Tiempo por cavidad", new JTable(explorationModelModel)));
+        detail.add(titled("Estructuras consultadas y tiempo por ficha", new JTable(explorationFichaModel)));
+
+        JSplitPane split = new JSplitPane(JSplitPane.VERTICAL_SPLIT, titled("Estudiantes", students), detail);
+        split.setResizeWeight(0.5);
+        split.setBorder(BorderFactory.createEmptyBorder());
+        split.setPreferredSize(new Dimension(900, 520));
+        panel.add(split, BorderLayout.CENTER);
+        return panel;
+    }
+
+    private JPanel titled(String title, JTable table) {
+        JPanel box = UiTheme.card(new BorderLayout(6, 6));
+        box.add(UiTheme.title(title, 15f), BorderLayout.NORTH);
+        JScrollPane scroll = new JScrollPane(table);
+        scroll.setBorder(BorderFactory.createEmptyBorder());
+        box.add(scroll, BorderLayout.CENTER);
+        return box;
+    }
+
+    private void loadExploration() {
+        explorationStudentsModel.setRowCount(0);
+        explorationModelModel.setRowCount(0);
+        explorationFichaModel.setRowCount(0);
+        if (auditService.exploration() == null) {
+            return;
+        }
+        Long courseId = selectedId(explorationCourseFilter);
+        List<Long> courseIds = courseId != null ? List.of(courseId)
+                : teacherCourses().stream().map(Course::getId).toList();
+        try {
+            var rows = auditService.exploration().summaryByCourses(courseIds);
+            int active = 0;
+            for (var r : rows) {
+                if (r.sessions() > 0) active++;
+                explorationStudentsModel.addRow(new Object[]{r.studentId(), r.username(), r.sessions(), r.structures(),
+                        r.selections(), app.ui.Formats.duration(r.seconds()), app.ui.Formats.shortDateTime(r.lastSession())});
+            }
+            explorationSummary.setText(rows.isEmpty() ? "No hay estudiantes matriculados en la seleccion."
+                    : active + " de " + rows.size() + " estudiantes han explorado los modelos 3D. "
+                    + "Selecciona un estudiante para ver el detalle.");
+        } catch (RuntimeException ex) {
+            explorationSummary.setText("No se pudo cargar la exploracion: " + ex.getMessage());
+        }
+    }
+
+    private void loadExplorationDetail(Long studentId) {
+        explorationModelModel.setRowCount(0);
+        explorationFichaModel.setRowCount(0);
+        if (studentId == null || auditService.exploration() == null) {
+            return;
+        }
+        try {
+            for (var r : auditService.exploration().timeByModel(studentId)) {
+                explorationModelModel.addRow(new Object[]{r.name(), r.count(), app.ui.Formats.duration(r.seconds())});
+            }
+            for (var r : auditService.exploration().timeByFicha(studentId)) {
+                explorationFichaModel.addRow(new Object[]{r.key(), r.name(), r.count(), app.ui.Formats.duration(r.seconds())});
+            }
+        } catch (RuntimeException ex) {
+            explorationSummary.setText("No se pudo cargar el detalle: " + ex.getMessage());
+        }
     }
 
     private void populateCourseSelectors() {
@@ -1643,6 +1755,9 @@ public class TeacherPanel extends JPanel {
         fillCourseCombo(examCourseSelector, courses, false);
         fillCourseCombo(gradesCourseFilter, courses, true);
         fillCourseCombo(simulationCourseSelector, courses, true);
+        Long previousExplorationCourse = selectedId(explorationCourseFilter);
+        fillCourseCombo(explorationCourseFilter, courses, true);
+        selectComboItem(explorationCourseFilter, previousExplorationCourse);
 
         selectComboItem(questionnaireCourseFilter, previousQuestionnaireCourse);
         selectComboItem(examCourseSelector, previousExamCourse);
@@ -2142,7 +2257,8 @@ public class TeacherPanel extends JPanel {
                     withoutPython = true;
                     return null;
                 }
-                return Visor3DService.ejecutar(scriptPath, python, () -> SwingUtilities.invokeLater(progress::dispose));
+                return Visor3DService.ejecutar(scriptPath, python, () -> SwingUtilities.invokeLater(progress::dispose),
+                        auditService.exploration() == null ? null : auditService.exploration().recorder(teacherId, null));
             }
 
             @Override

@@ -74,7 +74,7 @@ public class EmbeddedDatabaseTest {
         assertEquals(EmbeddedDatabase.SCHEMA_SCRIPTS,
                 sinDemo.schemaScripts().stream().map(p -> p.getFileName().toString()).toList());
         EmbeddedDatabase conDemo = new EmbeddedDatabase(carpeta, carpeta, Path.of("db"), 0, true);
-        assertEquals(EmbeddedDatabase.DEMO_SCRIPT, conDemo.schemaScripts().get(3).getFileName().toString());
+        assertEquals(EmbeddedDatabase.DEMO_SCRIPT, conDemo.schemaScripts().get(EmbeddedDatabase.SCHEMA_SCRIPTS.size()).getFileName().toString());
     }
 
     /** Crea un cluster real con los binarios de PostgreSQL disponibles, carga el esquema y lo reutiliza. */

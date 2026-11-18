@@ -44,7 +44,8 @@ public final class EmbeddedDatabase {
     public static final int DEFAULT_PORT = 15432;
 
     /** Scripts del esquema, en orden; test_users.sql se anade si app.db.embedded.demoData=true. */
-    static final List<String> SCHEMA_SCRIPTS = List.of("schema.sql", "cavidades_schema.sql", "cavidades_fichas.sql");
+    static final List<String> SCHEMA_SCRIPTS = List.of("schema.sql", "cavidades_schema.sql", "cavidades_fichas.sql",
+            "validacion_schema.sql");
     static final String DEMO_SCRIPT = "test_users.sql";
 
     private static final String[] BIN_DIRS = {"app/pgsql/bin", "pgsql/bin", "build/pgsql-runtime/bin"};

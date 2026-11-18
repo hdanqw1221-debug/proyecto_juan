@@ -11,13 +11,21 @@ import java.util.List;
 
 public class AuditService {
     private final LogDao logDao;
+    private final ExplorationService exploration;
 
     public AuditService(ConnectionFactory factory) {
-        this(new LogDaoJdbc(factory));
+        this.logDao = new LogDaoJdbc(factory);
+        this.exploration = new ExplorationService(factory);
     }
 
     public AuditService(LogDao logDao) {
         this.logDao = logDao;
+        this.exploration = null;
+    }
+
+    /** Registro detallado de la exploracion en los modelos 3D (C05); null si el servicio se creo sin base de datos. */
+    public ExplorationService exploration() {
+        return exploration;
     }
 
     public void log(Long userId, String action, String detail) {
