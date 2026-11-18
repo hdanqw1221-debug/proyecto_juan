@@ -323,6 +323,57 @@ public final class UiTheme {
         table.setDefaultRenderer(Number.class, new ModernCellRenderer());
         table.setDefaultRenderer(Boolean.class, new BadgeCellRenderer());
         applyBadgeColumns(table);
+        installColumnFitting(table);
+    }
+
+    // ------------------------------------------------------------------ anchos de columna (C14)
+    private static final int MIN_COLUMN_WIDTH = 64;
+    private static final int MAX_COLUMN_WIDTH = 420;
+    private static final int FIT_ROW_LIMIT = 200;
+    private static final int LONG_COLUMN_WIDTH = 200;
+    private static final int LONG_COLUMN_MIN = 130;
+
+    /** Ajusta los anchos al contenido ahora y cada vez que cambien los datos de la tabla. */
+    private static void installColumnFitting(JTable table) {
+        if (Boolean.TRUE.equals(table.getClientProperty("uiTheme.fitInstalled"))) {
+            return;
+        }
+        table.putClientProperty("uiTheme.fitInstalled", Boolean.TRUE);
+        table.setAutoResizeMode(JTable.AUTO_RESIZE_SUBSEQUENT_COLUMNS);
+        table.getModel().addTableModelListener(e -> SwingUtilities.invokeLater(() -> fitColumns(table)));
+        fitColumns(table);
+    }
+
+    /**
+     * Ancho de cada columna segun su encabezado y el contenido de las primeras filas (entre 64 y 420 px). Las columnas
+     * muy largas (descripciones, enunciados) quedan en el maximo y muestran el texto completo como consejo emergente.
+     */
+    public static void fitColumns(JTable table) {
+        javax.swing.table.TableColumnModel columns = table.getColumnModel();
+        for (int c = 0; c < columns.getColumnCount(); c++) {
+            TableColumn column = columns.getColumn(c);
+            int width = headerWidth(table, column, c);
+            int rows = Math.min(table.getRowCount(), FIT_ROW_LIMIT);
+            for (int r = 0; r < rows; r++) {
+                java.awt.Component cell = table.prepareRenderer(table.getCellRenderer(r, c), r, c);
+                width = Math.max(width, cell.getPreferredSize().width + table.getIntercellSpacing().width);
+            }
+            int natural = Math.max(MIN_COLUMN_WIDTH, Math.min(MAX_COLUMN_WIDTH, width + 14));
+            column.setPreferredWidth(natural);
+            // Si falta ancho, solo ceden las columnas de texto largo; las cortas (ID, fecha, estado, notas) y los
+            // encabezados conservan su ancho para no quedar recortados con «...».
+            column.setMinWidth(natural >= LONG_COLUMN_WIDTH ? LONG_COLUMN_MIN : natural);
+        }
+    }
+
+    private static int headerWidth(JTable table, TableColumn column, int index) {
+        JTableHeader header = table.getTableHeader();
+        if (header == null) {
+            return MIN_COLUMN_WIDTH;
+        }
+        java.awt.Component comp = header.getDefaultRenderer().getTableCellRendererComponent(
+                table, column.getHeaderValue(), false, false, -1, index);
+        return comp.getPreferredSize().width;
     }
 
     private static void applyBadgeColumns(JTable table) {
@@ -485,7 +536,13 @@ public final class UiTheme {
         @Override
         public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected,
                                                        boolean hasFocus, int row, int column) {
+            if (value instanceof java.time.LocalDateTime dateTime) {  // C14: fecha corta, sin segundos ni nanosegundos
+                value = Formats.shortDateTime(dateTime);
+            } else if (value instanceof Double number) {
+                value = Formats.score(number);
+            }
             super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
+            setToolTipText(value == null ? null : String.valueOf(value));  // el texto completo, si la celda lo recorta
             if (!isSelected) {
                 setBackground(row % 2 == 0 ? SURFACE : new Color(250, 249, 247));
                 setForeground(INK);

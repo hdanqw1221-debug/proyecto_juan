@@ -1195,9 +1195,7 @@ public class AdminPanel extends JPanel {
         if (date == null) {
             return "Sin fecha";
         }
-        return date.format(java.time.format.DateTimeFormatter.ofPattern(
-                "d MMM yyyy, h:mm a", Locale.forLanguageTag("es-CO")
-        ));
+        return app.ui.Formats.shortDateTime(date);  // C14: fecha corta
     }
 
     private void selectAdminTab(String title) {

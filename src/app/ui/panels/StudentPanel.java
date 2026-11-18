@@ -1059,9 +1059,7 @@ public class StudentPanel extends JPanel {
         if (date == null) {
             return "Sin fecha";
         }
-        return date.format(java.time.format.DateTimeFormatter.ofPattern(
-                "d MMM yyyy, h:mm a", java.util.Locale.forLanguageTag("es-CO")
-        ));
+        return app.ui.Formats.shortDateTime(date);  // C14: fecha corta
     }
 
     private int countOccurrences(String text, String token) {

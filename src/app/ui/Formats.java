@@ -25,6 +25,11 @@ public final class Formats {
         return DATE.format(LocalDate.from(value));
     }
 
+    /** Nota con un decimal y coma o punto segun la configuracion regional por defecto: 4.2. */
+    public static String score(Double value) {
+        return value == null ? "" : String.format(java.util.Locale.ROOT, "%.1f", value);
+    }
+
     /** 45 s, 3 min 20 s, 1 h 05 min. */
     public static String duration(double seconds) {
         long s = Math.max(0, Math.round(seconds));

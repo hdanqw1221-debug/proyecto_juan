@@ -140,7 +140,7 @@ public class DashboardPanel extends JPanel {
         try {
             auditService.listRecentFor(user, 4).forEach(entry -> {
                 JLabel item = new JLabel("<html><b>" + entry.getAction() + "</b><br><span style='color:#696971'>"
-                        + entry.getCreatedAt() + "</span></html>");
+                        + app.ui.Formats.shortDateTime(entry.getCreatedAt()) + "</span></html>");
                 item.setBorder(BorderFactory.createMatteBorder(0, 0, 1, 0, UiTheme.BORDER));
                 item.setAlignmentX(Component.LEFT_ALIGNMENT);
                 items.add(item);

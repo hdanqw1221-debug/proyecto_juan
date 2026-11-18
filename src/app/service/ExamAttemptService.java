@@ -110,6 +110,26 @@ public class ExamAttemptService {
         return examAttemptDao.listByExam(examId);
     }
 
+    /** Nombre de usuario de cada estudiante (para mostrar nombres y no identificadores en las notas). */
+    public java.util.Map<Long, String> studentNames(java.util.Collection<Long> studentIds) {
+        java.util.Map<Long, String> names = new java.util.HashMap<>();
+        if (studentIds == null || studentIds.isEmpty()) {
+            return names;
+        }
+        String sql = "SELECT id, username FROM usuarios WHERE id = ANY (?)";
+        try (Connection conn = factory.getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setArray(1, conn.createArrayOf("bigint", studentIds.toArray()));
+            try (java.sql.ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    names.put(rs.getLong(1), rs.getString(2));
+                }
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException("No se pudieron consultar los nombres de los estudiantes", e);
+        }
+        return names;
+    }
+
     public int countAll() {
         return examAttemptDao.countAll();
     }

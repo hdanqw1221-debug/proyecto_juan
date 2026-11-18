@@ -1563,11 +1563,13 @@ public class TeacherPanel extends JPanel {
         Double max = null;
         Double min = null;
 
+        java.util.Map<Long, String> studentNames = examAttemptService.studentNames(
+                attempts.stream().map(app.model.ExamAttempt::getStudentId).toList());
         for (app.model.ExamAttempt attempt : attempts) {
             gradeModel.addRow(new Object[]{
                     attempt.getId(),
-                    attempt.getExamId(),
-                    attempt.getStudentId(),
+                    examItem.label,
+                    studentNames.getOrDefault(attempt.getStudentId(), "Estudiante #" + attempt.getStudentId()),
                     attempt.getStartAt(),
                     attempt.getEndAt(),
                     attempt.getTotalScore()
@@ -1896,11 +1898,13 @@ public class TeacherPanel extends JPanel {
         Double max = null;
         Double min = null;
 
+        java.util.Map<Long, String> studentNames = examAttemptService.studentNames(
+                attempts.stream().map(ExamAttempt::getStudentId).toList());
         for (ExamAttempt attempt : attempts) {
             gradeModel.addRow(new Object[]{
                     attempt.getId(),
-                    attempt.getExamId(),
-                    attempt.getStudentId(),
+                    examItem.label,
+                    studentNames.getOrDefault(attempt.getStudentId(), "Estudiante #" + attempt.getStudentId()),
                     attempt.getStartAt(),
                     attempt.getEndAt(),
                     attempt.getTotalScore()

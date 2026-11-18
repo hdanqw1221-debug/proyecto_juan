@@ -47,7 +47,30 @@ public final class SimulationFormDialog {
         model.setSelectedItem(savedScript);
         JSpinner duration = new JSpinner(new SpinnerNumberModel(Math.max(1, settings.integer("tiempoMinutos", 45)), 1, 600, 1));
         JTextField topic = new JTextField(settings.string("tema", "cavidades_equinas"), 32);
-        JTextField level = new JTextField(settings.string("nivel", "intermedio"), 32);
+        // Nivel: lista cerrada (C14); si la practica trae otro valor, se conserva como una opcion mas.
+        JComboBox<String> level = new JComboBox<>(new String[]{"basico", "intermedio", "avanzado"});
+        String savedLevel = settings.string("nivel", "intermedio");
+        if (!savedLevel.isBlank()) {
+            boolean known = false;
+            for (int i = 0; i < level.getItemCount(); i++) known |= level.getItemAt(i).equalsIgnoreCase(savedLevel);
+            if (!known) level.addItem(savedLevel);
+            for (int i = 0; i < level.getItemCount(); i++) {
+                if (level.getItemAt(i).equalsIgnoreCase(savedLevel)) level.setSelectedIndex(i);
+            }
+        }
+        level.setRenderer(new DefaultListCellRenderer() {
+            @Override public Component getListCellRendererComponent(JList<?> list, Object value, int index,
+                                                                      boolean selected, boolean focus) {
+                String text = String.valueOf(value);
+                String label = switch (text) {
+                    case "basico" -> "Basico";
+                    case "intermedio" -> "Intermedio";
+                    case "avanzado" -> "Avanzado";
+                    default -> text;
+                };
+                return super.getListCellRendererComponent(list, label, index, selected, focus);
+            }
+        });
         JTextArea objectives = area(String.join("\n", settings.strings("objetivos")), 4);
         JTextArea instructions = area(String.join("\n", settings.strings("instrucciones")), 5);
         JTextField scenarioTitle = new JTextField(settings.scenario("titulo", ""), 32);
@@ -82,14 +105,28 @@ public final class SimulationFormDialog {
         form.setBackground(UiTheme.SURFACE);
         form.setBorder(BorderFactory.createEmptyBorder(14, 18, 14, 18));
         int row = 0;
-        row = addRow(form, row, "Nombre de la practica", name);
+        JLabel guide = new JLabel("<html>Completa los campos: <b>no necesitas escribir JSON</b>. "
+                + "Los marcados con * son obligatorios. Al elegir un modelo 3D se sugieren objetivos e instrucciones "
+                + "que puedes modificar.</html>");
+        guide.setForeground(UiTheme.MUTED);
+        GridBagConstraints top = new GridBagConstraints();
+        top.gridx = 0; top.gridy = row++; top.gridwidth = 2; top.fill = GridBagConstraints.HORIZONTAL;
+        top.insets = new Insets(0, 0, 8, 0);
+        form.add(guide, top);
+        name.setToolTipText("Nombre que veran los estudiantes en su lista de practicas");
+        model.setToolTipText("Modelo anatomico que se abre al iniciar la practica");
+        duration.setToolTipText("Tiempo sugerido de la practica, entre 1 y 600 minutos");
+        level.setToolTipText("Dificultad de la practica");
+        objectives.setToolTipText("Escribe un objetivo por linea");
+        instructions.setToolTipText("Escribe un paso por linea");
+        row = addRow(form, row, "Nombre de la practica *", name);
         row = addRow(form, row, "Descripcion breve", description);
         row = addRow(form, row, "Modelo anatomico 3D", model);
         row = addRow(form, row, "Duracion (minutos)", duration);
         row = addRow(form, row, "Tema", topic);
         row = addRow(form, row, "Nivel", level);
-        row = addRow(form, row, "Objetivos (uno por linea)", new JScrollPane(objectives));
-        row = addRow(form, row, "Instrucciones (una por linea)", new JScrollPane(instructions));
+        row = addRow(form, row, "Objetivos (uno por linea) *", new JScrollPane(objectives));
+        row = addRow(form, row, "Instrucciones (una por linea) *", new JScrollPane(instructions));
         row = addRow(form, row, "Titulo del escenario", scenarioTitle);
         row = addRow(form, row, "Descripcion del escenario", new JScrollPane(scenarioDescription));
         addRow(form, row, "Estado", enabled);
@@ -104,13 +141,13 @@ public final class SimulationFormDialog {
                     JOptionPane.PLAIN_MESSAGE, null, new String[]{"Guardar", "Cancelar"}, "Guardar");
             if (choice != 0) return null;
             if (name.getText().isBlank() || objectives.getText().isBlank() || instructions.getText().isBlank()) {
-                JOptionPane.showMessageDialog(owner, "Completa el nombre, los objetivos y las instrucciones.",
+                JOptionPane.showMessageDialog(owner, "Completa el nombre, los objetivos y las instrucciones (campos con *).",
                         "Faltan datos", JOptionPane.WARNING_MESSAGE);
                 continue;
             }
             settings.putBoolean("habilitado", enabled.isSelected());
             settings.putString("tema", topic.getText().strip());
-            settings.putString("nivel", level.getText().strip());
+            settings.putString("nivel", String.valueOf(level.getSelectedItem()).strip());
             settings.putString("script3d", (String) model.getSelectedItem());
             settings.putInt("tiempoMinutos", (Integer) duration.getValue());
             settings.putStrings("objetivos", lines(objectives));
