@@ -1,0 +1,31 @@
+@startuml T01_red_y_servicios
+!pragma layout smetana
+title T01 - Red y servicios del simulador 3D (sala de computo)
+skinparam shadowing false
+skinparam componentStyle rectangle
+
+node "Equipo cliente (estudiante / profesor / administrador)" as CLI {
+  component "Aplicacion Java 21\n(Swing + JDBC + Gson + jBCrypt)" as APP
+  component "Visor 3D\nPython 3.14 + PyQt5 + VTK" as VIS
+  component "psycopg 3\n(solo lectura de fichas)" as PSY
+  APP -> VIS : ProcessBuilder\nstdout JSON por linea\n(inicio / seleccion / cierre)
+  VIS -> PSY
+}
+
+node "Servidor de la sala" as SRV {
+  database "PostgreSQL 18\npuerto 5432/TCP\nBD gestion" as PG
+  component "Servidor HTTP de modelos\n(propuesto: escena.glb, Draco,\nmeshopt, carpeta obj/)\npuerto HTTP 8080/TCP" as HTTP
+  folder "cavidades/modelos/" as FILES
+  HTTP --> FILES
+}
+
+APP --> PG : JDBC (TCP 5432)\nlogin, notas, exploracion_eventos
+PSY --> PG : libpq (TCP 5432)\nrol visor_lectura (SELECT)
+VIS ..> HTTP : HTTP GET\n(distribucion del modelo, propuesta)
+
+note bottom of PG
+  Hoy: ssl=off, listen_addresses='*'.
+  Propuesta (T08/T09): ssl=on + sslmode=require,
+  pg_hba.conf restringido a la subred de la sala.
+end note
+@enduml

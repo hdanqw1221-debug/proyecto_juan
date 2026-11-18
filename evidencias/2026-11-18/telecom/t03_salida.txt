@@ -1,0 +1,4 @@
+ 1 clientes: 20 operaciones, 0 errores, 3.4 s, 5.9 op/s, conexiones activas max 2
+ 5 clientes: 100 operaciones, 0 errores, 6.4 s, 15.6 op/s, conexiones activas max 2
+10 clientes: 200 operaciones, 0 errores, 14.1 s, 14.2 op/s, conexiones activas max 9
+30 clientes: 600 operaciones, 0 errores, 33.7 s, 17.8 op/s, conexiones activas max 25

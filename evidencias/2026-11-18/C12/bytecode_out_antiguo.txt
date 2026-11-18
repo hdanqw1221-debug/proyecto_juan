@@ -1,0 +1,4 @@
+Version de bytecode de las clases del out/ antiguo (local, ya no versionado):
+  version 65 (Java 21): 2 clases
+  version 69 (Java 25): 11 clases
+  version 70 (Java 26): 170 clases

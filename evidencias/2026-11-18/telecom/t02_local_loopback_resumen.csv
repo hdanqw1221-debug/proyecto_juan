@@ -1,0 +1,7 @@
+operacion,n,media_ms,mediana_ms,p95_ms,min_ms,max_ms
+conexion_jdbc,200,71.097,60.923,148.016,31.390,289.167
+envio_evaluacion_transaccion,200,52.465,43.905,139.814,34.081,148.601
+login_bcrypt,200,435.148,412.521,550.003,379.122,754.280
+login_consulta_usuario,200,122.207,98.861,207.004,66.852,286.729
+login_total,200,557.355,539.237,716.722,451.092,891.773
+select_1,200,0.232,0.211,0.337,0.170,1.082

@@ -1,0 +1,88 @@
+============================= test session starts =============================
+platform win32 -- Python 3.14.4, pytest-9.2.0, pluggy-1.7.0 -- C:\Users\user\Desktop\proyecto_juan\aplicacion_tres_d\aplicacion_tres_d\.venv\Scripts\python.exe
+rootdir: C:\Users\user\Desktop\proyecto_juan\aplicacion_tres_d\aplicacion_tres_d
+collecting ... collected 60 items
+
+cavidades/tests/test_catalogo.py::test_ids_unicos_y_nomenclatura PASSED  [  1%]
+cavidades/tests/test_catalogo.py::test_prefijo_coincide_con_cavidad PASSED [  3%]
+cavidades/tests/test_catalogo.py::test_seleccionables_tienen_ficha_y_referencias_no PASSED [  5%]
+cavidades/tests/test_catalogo.py::test_una_envoltura_por_cavidad_principal PASSED [  6%]
+cavidades/tests/test_catalogo.py::test_cada_ficha_tiene_objetos PASSED   [  8%]
+cavidades/tests/test_catalogo.py::test_campos_validos PASSED             [ 10%]
+cavidades/tests/test_catalogo.py::test_inguinal_bilateral PASSED         [ 11%]
+cavidades/tests/test_configuracion_bd.py::test_variable_de_entorno_tiene_prioridad PASSED [ 13%]
+cavidades/tests/test_configuracion_bd.py::test_sin_variable_usa_el_archivo PASSED [ 15%]
+cavidades/tests/test_configuracion_bd.py::test_claves_con_espacios_y_comillas_se_entrecomillan PASSED [ 16%]
+cavidades/tests/test_configuracion_bd.py::test_sin_archivo_no_hay_dsn PASSED [ 18%]
+cavidades/tests/test_explosion.py::test_solo_carga_su_cavidad PASSED     [ 20%]
+cavidades/tests/test_explosion.py::test_de_lejos_se_ve_y_se_selecciona_la_cavidad PASSED [ 21%]
+cavidades/tests/test_explosion.py::test_de_cerca_se_despieza PASSED      [ 23%]
+cavidades/tests/test_explosion.py::test_al_alejarse_se_vuelve_a_ensamblar PASSED [ 25%]
+cavidades/tests/test_explosion.py::test_abierta_las_piezas_no_se_mueven_al_acercarse_ni_al_girar PASSED [ 26%]
+cavidades/tests/test_explosion.py::test_la_camara_acompana_a_la_pieza_al_separarse PASSED [ 28%]
+cavidades/tests/test_explosion.py::test_acercar_hacia_el_cursor PASSED   [ 30%]
+cavidades/tests/test_explosion.py::test_despiece_no_va_hacia_la_camara PASSED [ 31%]
+cavidades/tests/test_explosion.py::test_otras_cavidades[cavidades0-abdominal-ABD_CAVIDAD_ABDOMINAL] PASSED [ 33%]
+cavidades/tests/test_explosion.py::test_otras_cavidades[cavidades1-inguinal-ING_REGION_INGUINAL] PASSED [ 35%]
+cavidades/tests/test_explosion.py::test_texto_de_etiquetas PASSED        [ 36%]
+cavidades/tests/test_fichas.py::test_valida_contra_esquema PASSED        [ 38%]
+cavidades/tests/test_fichas.py::test_longitud_entre_120_y_300_palabras PASSED [ 40%]
+cavidades/tests/test_fichas.py::test_coincide_con_catalogo PASSED        [ 41%]
+cavidades/tests/test_fichas.py::test_campos_pendientes_coherentes PASSED [ 43%]
+cavidades/tests/test_fichas.py::test_sql_generado_coincide_con_json PASSED [ 45%]
+cavidades/tests/test_modelos.py::test_todos_los_objetos_del_catalogo_existen PASSED [ 46%]
+cavidades/tests/test_modelos.py::test_mallas_cerradas_manifold PASSED    [ 48%]
+cavidades/tests/test_modelos.py::test_presupuesto_de_triangulos PASSED   [ 50%]
+cavidades/tests/test_modelos.py::test_centroide_en_la_cavidad_correcta PASSED [ 51%]
+cavidades/tests/test_modelos.py::test_asimetrias_izquierda_derecha PASSED [ 53%]
+cavidades/tests/test_modelos.py::test_corazon_entre_costillas_3_y_6 PASSED [ 55%]
+cavidades/tests/test_modelos.py::test_abdomen_intratoracico PASSED       [ 56%]
+cavidades/tests/test_modelos.py::test_cupula_diafragmatica PASSED        [ 58%]
+cavidades/tests/test_modelos.py::test_flexura_pelvica_mas_estrecha_que_colon_ventral PASSED [ 60%]
+cavidades/tests/test_modelos.py::test_envolturas_contienen_su_cavidad PASSED [ 61%]
+cavidades/tests/test_modelos.py::test_glb_conserva_los_identificadores PASSED [ 63%]
+cavidades/tests/test_referencia.py::test_costillas_y_eic PASSED          [ 65%]
+cavidades/tests/test_referencia.py::test_vertice_diafragma_en_eic6 PASSED [ 66%]
+cavidades/tests/test_referencia.py::test_hiato_esofagico_en_eic_13_14 PASSED [ 68%]
+cavidades/tests/test_referencia.py::test_hiato_aortico_dorsal_y_caudal PASSED [ 70%]
+cavidades/tests/test_referencia.py::test_foramen_vena_cava_a_la_derecha_y_craneal_al_hiato_esofagico PASSED [ 71%]
+cavidades/tests/test_referencia.py::test_envolvente_continua PASSED      [ 73%]
+cavidades/tests/test_referencia.py::test_clasificacion_de_cavidades PASSED [ 75%]
+cavidades/tests/test_referencia.py::test_borde_basal_deja_receso_costodiafragmatico PASSED [ 76%]
+cavidades/tests/test_referencia.py::test_recorte_a_cavidad PASSED        [ 78%]
+cavidades/tests/test_topologia.py::test_una_sola_pieza PASSED            [ 80%]
+cavidades/tests/test_topologia.py::test_sin_tuneles_ni_asas_fusionadas PASSED [ 81%]
+cavidades/tests/test_visor.py::test_carga_en_menos_de_5_s FAILED         [ 83%]
+cavidades/tests/test_visor.py::test_referencias_no_seleccionables PASSED [ 85%]
+cavidades/tests/test_visor.py::test_seleccion_en_el_centro_de_un_organo[TOR_CORAZON] PASSED [ 86%]
+cavidades/tests/test_visor.py::test_seleccion_en_el_centro_de_un_organo[ABD_RINON_DER] PASSED [ 88%]
+cavidades/tests/test_visor.py::test_seleccion_en_el_centro_de_un_organo[ABD_RINON_IZQ] PASSED [ 90%]
+cavidades/tests/test_visor.py::test_seleccion_en_el_centro_de_un_organo[PEL_VEJIGA] PASSED [ 91%]
+cavidades/tests/test_visor.py::test_seleccion_en_el_centro_de_un_organo[ING_TESTICULO_IZQ] PASSED [ 93%]
+cavidades/tests/test_visor.py::test_seleccion_en_el_centro_de_un_organo[TOR_PULMON_IZQ] PASSED [ 95%]
+cavidades/tests/test_visor.py::test_clic_en_el_fondo_no_selecciona PASSED [ 96%]
+cavidades/tests/test_visor.py::test_repositorio_json_cubre_todos_los_objetos_seleccionables PASSED [ 98%]
+cavidades/tests/test_visor.py::test_repositorio_bd_coincide_con_json PASSED [100%]
+
+================================== FAILURES ===================================
+_________________________ test_carga_en_menos_de_5_s __________________________
+
+contexto = (<vtkmodules.vtkRenderingOpenGL2.vtkOpenGLRenderer(0x000001463B9370A0) at 0x00000145B448E8C0>, <vtkmodules.vtkRenderin...ndow(0x00000145B1DAB3A0) at 0x00000145B448F2E0>, <visor.escena.Escena object at 0x00000145B442AFD0>, 6.440229177474976)
+
+    def test_carga_en_menos_de_5_s(contexto):
+        _, _, escena, carga = contexto
+        assert len(escena.actores) == len(escena.meta) > 50
+>       assert carga < 5.0
+E       assert 6.440229177474976 < 5.0
+
+cavidades\tests\test_visor.py:42: AssertionError
+============================== warnings summary ===============================
+cavidades/tests/test_explosion.py: 58 warnings
+  C:\Users\user\Desktop\proyecto_juan\aplicacion_tres_d\aplicacion_tres_d\.venv\Lib\site-packages\vtkmodules\util\numpy_support.py:244: DeprecationWarning: Setting the shape on a NumPy array has been deprecated in NumPy 2.5.
+  As an alternative, you can create a new view using np.reshape (with copy=False if needed).
+    result.shape = shape
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ===========================
+FAILED cavidades/tests/test_visor.py::test_carga_en_menos_de_5_s - assert 6.4...
+============ 1 failed, 59 passed, 58 warnings in 115.52s (0:01:55) ============

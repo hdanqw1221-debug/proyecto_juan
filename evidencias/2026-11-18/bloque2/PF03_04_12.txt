@@ -1,0 +1,20 @@
+NOTICE:  no existe la base de datos «gestion_pf», omitiendo
+== PF-03: db/schema.sql
+schema.sql OK
+tablas=12
+claves_foraneas=13
+indices=29
+== PF-04: db/test_users.sql (tras cavidades)
+cavidades_schema OK
+cavidades_fichas OK
+test_users OK
+usuarios=4
+roles=3
+materias=1
+matriculas=2
+practicas=3
+fichas=47
+modelos_3d=61
+hash: $2a$12$ len=60
+== PF-12: pregunta para examen inexistente
+ERROR:  23503: inserción o actualización en la tabla «preguntas» viola la llave foránea «fk_preguntas_examen»

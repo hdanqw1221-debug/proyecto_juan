@@ -1,0 +1,63 @@
+stty: /dev/tty: No such device or address
+?
+?? JUnit Jupiter ?
+?  ?? EmbeddedDatabaseTest ?
+?  ?  ?? testConfiguracionEmbebida(Path) ?
+?  ?  ?? testSaltaElPuertoOcupado() ?
+?  ?  ?? testCreaArrancaYDetiene(Path) ?
+?  ?  ?? testPuertoDelArchivoPid() ?
+?  ?  ?? testConfiguracionDeDesarrolloNoEsEmbebida() ?
+?  ?  ?? testScriptsDelEsquemaEnOrden(Path) ?
+?  ?? Visor3DServiceTest ?
+?  ?  ?? testFalloAlLiberarTrasElCierreNoEsUnError(Path) ?
+?  ?  ?? testDisponiblesExigeLaEscenaCompartida(Path) ?
+?  ?  ?? testCatalogoTieneLosCuatroVisores() ?
+?  ?  ?? testPlantillaPorModelo() ?
+?  ?  ?? testVisorSinConsola(Path) ?
+?  ?  ?? testEjecutarRecogeLaSesion(Path) ?
+?  ?  ?? testLeeLosEventosDelVisor() ?
+?  ?? CertificateServiceTest ?
+?  ?  ?? testPassingThreshold() ?
+?  ?  ?? testHtmlCertificateGeneration() ?
+?  ?  ?? testDistinctionLabels() ?
+?  ?  ?? testVerificationCodeGeneration() ?
+?  ?? InputValidatorTest ?
+?  ?  ?? testPasswordStrength() ?
+?  ?  ?? testEmailValidation() ?
+?  ?? ProfilePasswordTest ?
+?  ?  ?? testChangeOwnPasswordValidations() ?
+?  ?? SimulationConfigTest ?
+?  ?  ?? visualEditorPreservesAdditionalSettingsAndEscapesText() ?
+?  ?  ?? rejectsIncompleteJson() ?
+?  ?? ExamRandomizerTest ?
+?  ?  ?? testShuffleAnswersPreservesData() ?
+?  ?  ?? testShuffleQuestionsPreservesData() ?
+?  ?  ?? testDifferentAttemptsProduceDifferentPermutations() ?
+?  ?  ?? testNullOrSingleItemsHandling() ?
+?  ?? DatabaseBackupServiceTest ?
+?  ?  ?? testPgDumpDetection() ?
+?  ?  ?? testBackupResultFormatting() ?
+?  ?  ?? testUrlParsingAndConfiguration() ?
+?  ?? HashTest ?
+?  ?  ?? testWrongPassword() ?
+?  ?  ?? testHashGeneration() ?
+?  ?? UserImportServiceTest ?
+?     ?? testTemplateContent() ?
+?     ?? testInvalidRowsHandling() ?
+?? JUnit Vintage ?
+?? JUnit Platform Suite ?
+
+Test run finished after 13831 ms
+[        13 containers found      ]
+[         0 containers skipped    ]
+[        13 containers started    ]
+[         0 containers aborted    ]
+[        13 containers successful ]
+[         0 containers failed     ]
+[        33 tests found           ]
+[         0 tests skipped         ]
+[        33 tests started         ]
+[         0 tests aborted         ]
+[        33 tests successful      ]
+[         0 tests failed          ]
+

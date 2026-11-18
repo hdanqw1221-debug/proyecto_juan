@@ -1,0 +1,69 @@
+stty: /dev/tty: No such device or address
+?
+?? JUnit Jupiter ?
+?  ?? EmbeddedDatabaseTest ?
+?  ?  ?? testConfiguracionEmbebida(Path) ?
+?  ?  ?? testSaltaElPuertoOcupado() ?
+?  ?  ?? testCreaArrancaYDetiene(Path) ?
+?  ?  ?? testPuertoDelArchivoPid() ?
+?  ?  ?? testConfiguracionDeDesarrolloNoEsEmbebida() ?
+?  ?  ?? testScriptsDelEsquemaEnOrden(Path) ?
+?  ?? Visor3DServiceTest ?
+?  ?  ?? testFalloAlLiberarTrasElCierreNoEsUnError(Path) ?
+?  ?  ?? testDisponiblesExigeLaEscenaCompartida(Path) ?
+?  ?  ?? testCatalogoTieneLosCuatroVisores() ?
+?  ?  ?? testPlantillaPorModelo() ?
+?  ?  ?? testVisorSinConsola(Path) ?
+?  ?  ?? testEjecutarRecogeLaSesion(Path) ?
+?  ?  ?? testLeeLosEventosDelVisor() ?
+?  ?? CertificateServiceTest ?
+?  ?  ?? testPassingThreshold() ?
+?  ?  ?? testHtmlCertificateGeneration() ?
+?  ?  ?? testDistinctionLabels() ?
+?  ?  ?? testVerificationCodeGeneration() ?
+?  ?? InputValidatorTest ?
+?  ?  ?? testPasswordStrength() ?
+?  ?  ?? testEmailValidation() ?
+?  ?? ProfilePasswordTest ?
+?  ?  ?? testChangeOwnPasswordValidations() ?
+?  ?? SimulationConfigTest ?
+?  ?  ?? visualEditorPreservesAdditionalSettingsAndEscapesText() ?
+?  ?  ?? rejectsIncompleteJson() ?
+?  ?? ExamRandomizerTest ?
+?  ?  ?? testShuffleAnswersPreservesData() ?
+?  ?  ?? testShuffleQuestionsPreservesData() ?
+?  ?  ?? testDifferentAttemptsProduceDifferentPermutations() ?
+?  ?  ?? testNullOrSingleItemsHandling() ?
+?  ?? AppConfigTest ?
+?  ?  ?? sinVariableDeEntornoSeUsaElArchivo() ?
+?  ?  ?? unaVariableVaciaNoAnulaElArchivo() ?
+?  ?  ?? laVariableDeEntornoTienePrioridadSobreElArchivo() ?
+?  ?  ?? urlYUsuarioTambienSePuedenTomarDelEntorno() ?
+?  ?  ?? withDatabaseIgnoraLasVariablesDeEntorno() ?
+?  ?? DatabaseBackupServiceTest ?
+?  ?  ?? testPgDumpDetection() ?
+?  ?  ?? testBackupResultFormatting() ?
+?  ?  ?? testUrlParsingAndConfiguration() ?
+?  ?? HashTest ?
+?  ?  ?? testWrongPassword() ?
+?  ?  ?? testHashGeneration() ?
+?  ?? UserImportServiceTest ?
+?     ?? testTemplateContent() ?
+?     ?? testInvalidRowsHandling() ?
+?? JUnit Vintage ?
+?? JUnit Platform Suite ?
+
+Test run finished after 15527 ms
+[        14 containers found      ]
+[         0 containers skipped    ]
+[        14 containers started    ]
+[         0 containers aborted    ]
+[        14 containers successful ]
+[         0 containers failed     ]
+[        38 tests found           ]
+[         0 tests skipped         ]
+[        38 tests started         ]
+[         0 tests aborted         ]
+[        38 tests successful      ]
+[         0 tests failed          ]
+

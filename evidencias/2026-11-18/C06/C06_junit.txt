@@ -1,0 +1,100 @@
+stty: /dev/tty: No such device or address
+?
+?? JUnit Jupiter ?
+?  ?? EmbeddedDatabaseTest ?
+?  ?  ?? testConfiguracionEmbebida(Path) ?
+?  ?  ?? testSaltaElPuertoOcupado() ?
+?  ?  ?? testCreaArrancaYDetiene(Path) 25447 ms ?
+?  ?  ?? testPuertoDelArchivoPid() ?
+?  ?  ?? testConfiguracionDeDesarrolloNoEsEmbebida() ?
+?  ?  ?? testScriptsDelEsquemaEnOrden(Path) ?
+?  ?? Visor3DServiceTest ?
+?  ?  ?? testFalloAlLiberarTrasElCierreNoEsUnError(Path) ?
+?  ?  ?? testDisponiblesExigeLaEscenaCompartida(Path) ?
+?  ?  ?? testCatalogoTieneLosCuatroVisores() ?
+?  ?  ?? testPlantillaPorModelo() ?
+?  ?  ?? testVisorSinConsola(Path) ?
+?  ?  ?? testEjecutarRecogeLaSesion(Path) ?
+?  ?  ?? testLeeLosEventosDelVisor() ?
+?  ?? LogDaoJdbcIntegrationTest ?
+?  ?  ?? cadaUsuarioSoloRecibeSusEventos() ?
+?  ?? InputValidatorTest ?
+?  ?  ?? testPasswordStrength() ?
+?  ?  ?? testEmailValidation() ?
+?  ?? ProfilePasswordTest ?
+?  ?  ?? testChangeOwnPasswordValidations() 10915 ms ?
+?  ?? AppConfigTest ?
+?  ?  ?? sinVariableDeEntornoSeUsaElArchivo() ?
+?  ?  ?? unaVariableVaciaNoAnulaElArchivo() ?
+?  ?  ?? laVariableDeEntornoTienePrioridadSobreElArchivo() ?
+?  ?  ?? urlYUsuarioTambienSePuedenTomarDelEntorno() ?
+?  ?  ?? withDatabaseIgnoraLasVariablesDeEntorno() ?
+?  ?? ServiceAuthorizationTest ?
+?  ?  ?? profesorNoAdministraUsuariosNiRespaldosPeroSiSusEvaluaciones() ?
+?  ?  ?? sinSesionTambienSeDeniega() ?
+?  ?  ?? estudianteRecibeSecurityExceptionEnTodasLasOperacionesSensibles() ?
+?  ?  ?? unEstudianteNoOperaSobreIntentosNiContrasenasDeOtro() ?
+?  ?? AuditServiceTest ?
+?  ?  ?? profesorYEstudianteSoloVenLoPropioYAdminTodo() ?
+?  ?? CertificateServiceTest ?
+?  ?  ?? testPassingThreshold() ?
+?  ?  ?? testHtmlCertificateGeneration() ?
+?  ?  ?? testDistinctionLabels() ?
+?  ?  ?? testVerificationCodeGeneration() ?
+?  ?? SimulationConfigTest ?
+?  ?  ?? visualEditorPreservesAdditionalSettingsAndEscapesText() ?
+?  ?  ?? rejectsIncompleteJson() ?
+?  ?? ReadOnlyTableModelTest ?
+?  ?  ?? ningunaCeldaEsEditable() ?
+?  ?  ?? laInterfazNoCreaModelosEditables() ?
+?  ?? ExamRandomizerTest ?
+?  ?  ?? testShuffleAnswersPreservesData() ?
+?  ?  ?? testShuffleQuestionsPreservesData() ?
+?  ?  ?? testDifferentAttemptsProduceDifferentPermutations() ?
+?  ?  ?? testNullOrSingleItemsHandling() ?
+?  ?? ExamSubmitIntegrationTest ?
+?  ?  ?? enviarRegistraExamSubmitYCierraElIntento() ?
+?  ?  ?? otroUsuarioNoPuedeEnviarElIntento() ?
+?  ?  ?? siFallaElGuardadoNoQuedaNadaAMedias() ?
+?  ?? SimulationConfigValidationTest ?
+?  ?  ?? elModeloDebeExistirEnElCatalogo() ?
+?  ?  ?? aceptaLasPlantillasDeLosCuatroModelosYLaConfiguracionCompleta() ?
+?  ?  ?? rechazaTextoQueNoEsJsonEstricto(String) ?
+?  ?  ?  ?? [1] no es json ?
+?  ?  ?  ?? [2] {'habilitado': true} ?
+?  ?  ?  ?? [3] {"habilitado": true,} ?
+?  ?  ?  ?? [4] {"habilitado": true} basura ?
+?  ?  ?  ?? [5] [1, 2] ?
+?  ?  ?  ?? [6] {habilitado: true} ?
+?  ?  ?  ?? [7] {"habilitado": true // comentario } ?
+?  ?  ?? rechazaTiposYValoresIncorrectos() ?
+?  ?  ?? reuneTodosLosErroresEnUnMensaje() ?
+?  ?  ?? lasClavesDentroDeUnTextoNoCuentan() ?
+?  ?  ?? losLectoresUsanElAnalizadorYToleranDatosAntiguos() ?
+?  ?? DatabaseBackupServiceTest ?
+?  ?  ?? testPgDumpDetection() ?
+?  ?  ?? testBackupResultFormatting() ?
+?  ?  ?? testUrlParsingAndConfiguration() ?
+?  ?? HashTest ?
+?  ?  ?? testWrongPassword() ?
+?  ?  ?? testHashGeneration() ?
+?  ?? UserImportServiceTest ?
+?     ?? testTemplateContent() ?
+?     ?? testInvalidRowsHandling() ?
+?? JUnit Vintage ?
+?? JUnit Platform Suite ?
+
+Test run finished after 51302 ms
+[        21 containers found      ]
+[         0 containers skipped    ]
+[        21 containers started    ]
+[         0 containers aborted    ]
+[        21 containers successful ]
+[         0 containers failed     ]
+[        62 tests found           ]
+[         0 tests skipped         ]
+[        62 tests started         ]
+[         0 tests aborted         ]
+[        62 tests successful      ]
+[         0 tests failed          ]
+

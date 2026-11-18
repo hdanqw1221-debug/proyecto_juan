@@ -1,0 +1,9 @@
+============================= test session starts =============================
+platform win32 -- Python 3.14.4, pytest-9.2.0, pluggy-1.7.0 -- C:\Users\user\Desktop\proyecto_juan\aplicacion_tres_d\aplicacion_tres_d\.venv\Scripts\python.exe
+rootdir: C:\Users\user\Desktop\proyecto_juan\aplicacion_tres_d\aplicacion_tres_d
+collecting ... collected 2 items
+
+cavidades/tests/test_rol_solo_lectura.py::test_el_rol_no_puede_escribir_ni_ver_datos_de_la_aplicacion PASSED [ 50%]
+cavidades/tests/test_rol_solo_lectura.py::test_el_visor_carga_las_47_fichas_con_el_rol PASSED [100%]
+
+============================== 2 passed in 0.53s ==============================

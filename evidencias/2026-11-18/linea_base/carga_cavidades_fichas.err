@@ -1,0 +1,1 @@
+psql:db/cavidades_fichas.sql:60: ERROR:  carácter con secuencia de bytes 0x8d en codificación «WIN1252» no tiene equivalente en la codificación «UTF8»

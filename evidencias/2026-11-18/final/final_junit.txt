@@ -1,0 +1,162 @@
+stty: /dev/tty: No such device or address
+?
+?? JUnit Jupiter ?
+?  ?? EmbeddedDatabaseTest ?
+?  ?  ?? testConfiguracionEmbebida(Path) ?
+?  ?  ?? testSaltaElPuertoOcupado() ?
+?  ?  ?? testCreaArrancaYDetiene(Path) ?
+?  ?  ?? testPuertoDelArchivoPid() ?
+?  ?  ?? testConfiguracionDeDesarrolloNoEsEmbebida() ?
+?  ?  ?? testScriptsDelEsquemaEnOrden(Path) ?
+?  ?? FormatsTest ?
+?  ?  ?? notaConUnDecimal() ?
+?  ?  ?? fechaCortaSinSegundosNiNanosegundos() ?
+?  ?  ?? duraciones() ?
+?  ?? Visor3DServiceTest ?
+?  ?  ?? testFalloAlLiberarTrasElCierreNoEsUnError(Path) ?
+?  ?  ?? testDisponiblesExigeLaEscenaCompartida(Path) ?
+?  ?  ?? testCatalogoTieneLosCuatroVisores() ?
+?  ?  ?? testPlantillaPorModelo() ?
+?  ?  ?? testVisorSinConsola(Path) ?
+?  ?  ?? testEjecutarRecogeLaSesion(Path) ?
+?  ?  ?? testLeeLosEventosDelVisor() ?
+?  ?? LogDaoJdbcIntegrationTest ?
+?  ?  ?? cadaUsuarioSoloRecibeSusEventos() ?
+?  ?? ProfilePasswordTest ?
+?  ?  ?? testChangeOwnPasswordValidations() ?
+?  ?? DependencyCheckTest ?
+?  ?  ?? versionesCorrectasNoDanProblemas() ?
+?  ?  ?? leeLaSalidaDelSondeoYIgnoraLoQueNoEsDelSondeo() ?
+?  ?  ?? comparaVersionesNumericamente() ?
+?  ?  ?? elRequeriments_txtDelProyectoSeInterpretaParaPython314() ?
+?  ?  ?? elMarcadorDePythonSeleccionaElRequisitoDeVtk() ?
+?  ?  ?? comprobacionRealConElPythonDelProyecto(Path) ?
+?  ?  ?? versionesIncorrectasSimuladasDanUnMensajeClaro() ?
+?  ?? ExamRandomizerTest ?
+?  ?  ?? testShuffleAnswersPreservesData() ?
+?  ?  ?? testShuffleQuestionsPreservesData() ?
+?  ?  ?? testDifferentAttemptsProduceDifferentPermutations() ?
+?  ?  ?? testNullOrSingleItemsHandling() ?
+?  ?? QuestionObjectLinkIntegrationTest ?
+?  ?  ?? siSeBorraLaEstructuraLaPreguntaSeConservaSinEnlace() ?
+?  ?  ?? laBaseRechazaUnaEstructuraInexistente() ?
+?  ?  ?? laColumnaTieneLaClaveForaneaADefinida() ?
+?  ?  ?? laEstructuraSePersisteAlCrearYAlEditar() ?
+?  ?  ?? elSelectorListaLasEstructurasSeleccionablesDelCatalogo() ?
+?  ?? ExamSubmitIntegrationTest ?
+?  ?  ?? enviarRegistraExamSubmitYCierraElIntento() ?
+?  ?  ?? otroUsuarioNoPuedeEnviarElIntento() ?
+?  ?  ?? siFallaElGuardadoNoQuedaNadaAMedias() ?
+?  ?? SimulationConfigValidationTest ?
+?  ?  ?? elModeloDebeExistirEnElCatalogo() ?
+?  ?  ?? aceptaLasPlantillasDeLosCuatroModelosYLaConfiguracionCompleta() ?
+?  ?  ?? rechazaTextoQueNoEsJsonEstricto(String) ?
+?  ?  ?  ?? [1] no es json ?
+?  ?  ?  ?? [2] {'habilitado': true} ?
+?  ?  ?  ?? [3] {"habilitado": true,} ?
+?  ?  ?  ?? [4] {"habilitado": true} basura ?
+?  ?  ?  ?? [5] [1, 2] ?
+?  ?  ?  ?? [6] {habilitado: true} ?
+?  ?  ?  ?? [7] {"habilitado": true // comentario } ?
+?  ?  ?? rechazaTiposYValoresIncorrectos() ?
+?  ?  ?? reuneTodosLosErroresEnUnMensaje() ?
+?  ?  ?? lasClavesDentroDeUnTextoNoCuentan() ?
+?  ?  ?? losLectoresUsanElAnalizadorYToleranDatosAntiguos() ?
+?  ?? HashTest ?
+?  ?  ?? testWrongPassword() ?
+?  ?  ?? testHashGeneration() ?
+?  ?? UserImportServiceTest ?
+?  ?  ?? testTemplateContent() ?
+?  ?  ?? testInvalidRowsHandling() ?
+?  ?? TableLayoutTest ?
+?  ?  ?? losAnchosSeAjustanAlContenido() ?
+?  ?  ?? lasFechasSeVenCortas() ?
+?  ?  ?? elAnchoTieneTopeYSeReajustaAlCambiarLosDatos() ?
+?  ?? InputValidatorTest ?
+?  ?  ?? testPasswordStrength() ?
+?  ?  ?? testEmailValidation() ?
+?  ?? ExplorationIntegrationTest ?
+?  ?  ?? unFalloDeLaBaseNoInterrumpeLaLecturaDelVisor(Path) ?
+?  ?  ?? guardaSoloLosEventosValidosConTodosSusCampos(Path) ?
+?  ?  ?? cierreAbruptoYSalidaVaciaNoRompenElRegistro(Path) ?
+?  ?? StudentNamesIntegrationTest ?
+?  ?  ?? devuelveElNombreDeCadaEstudiante() ?
+?  ?? AppConfigTest ?
+?  ?  ?? sinVariableDeEntornoSeUsaElArchivo() ?
+?  ?  ?? unaVariableVaciaNoAnulaElArchivo() ?
+?  ?  ?? laVariableDeEntornoTienePrioridadSobreElArchivo() ?
+?  ?  ?? urlYUsuarioTambienSePuedenTomarDelEntorno() ?
+?  ?  ?? withDatabaseIgnoraLasVariablesDeEntorno() ?
+?  ?? ServiceAuthorizationTest ?
+?  ?  ?? profesorNoAdministraUsuariosNiRespaldosPeroSiSusEvaluaciones() ?
+?  ?  ?? sinSesionTambienSeDeniega() ?
+?  ?  ?? estudianteRecibeSecurityExceptionEnTodasLasOperacionesSensibles() ?
+?  ?  ?? unEstudianteNoOperaSobreIntentosNiContrasenasDeOtro() ?
+?  ?? AuditServiceTest ?
+?  ?  ?? profesorYEstudianteSoloVenLoPropioYAdminTodo() ?
+?  ?? CertificateServiceTest ?
+?  ?  ?? testPassingThreshold() ?
+?  ?  ?? testHtmlCertificateGeneration() ?
+?  ?  ?? testDistinctionLabels() ?
+?  ?  ?? testVerificationCodeGeneration() ?
+?  ?? SimulationConfigTest ?
+?  ?  ?? visualEditorPreservesAdditionalSettingsAndEscapesText() ?
+?  ?  ?? rejectsIncompleteJson() ?
+?  ?? ReadOnlyTableModelTest ?
+?  ?  ?? ningunaCeldaEsEditable() ?
+?  ?  ?? laInterfazNoCreaModelosEditables() ?
+?  ?? VisorDiagnosticoTest ?
+?  ?  ?? pythonNoEncontrado() ?
+?  ?  ?? cierreAnormalConCodigoDeSalida() ?
+?  ?  ?? errorAlLanzarElProceso() ?
+?  ?  ?? versionesIncorrectas() ?
+?  ?  ?? violacionDeAccesoYErroresDeOpenGlSiMencionanLosGraficos() ?
+?  ?  ?? hayPythonPeroFaltanBibliotecas() ?
+?  ?  ?? elMensajeIncluyeLaRutaDelRegistroDeFallos() ?
+?  ?  ?? archivosDelModeloAusentes(Path) ?
+?  ?  ?? noLlegoAAbrirLaVentana() ?
+?  ?  ?? importErrorEnLaSalidaDelVisorEsUnaDependenciaFaltante() ?
+?  ?? DatabaseBackupServiceTest ?
+?  ?  ?? testPgDumpDetection() ?
+?  ?  ?? testBackupResultFormatting() ?
+?  ?  ?? testUrlParsingAndConfiguration() ?
+?  ?? VisorEventTest ?
+?     ?? lineasVaciasYTextoNormalNoSonEventos(String) ?
+?     ?  ?? [1]  ?
+?     ?  ?? [2]     ?
+?     ?  ?? [3] Warning: In vtkOpenGLRenderWindow ?
+?     ?  ?? [4] [1, 2, 3] ?
+?     ?  ?? [5] Traceback (most recent call last): ?
+?     ?? lineasDeEventoMalFormadasSeDescartan(String) ?
+?     ?  ?? [1] {"evento": "seleccion" ?
+?     ?  ?? [2] {'evento': 'inicio'} ?
+?     ?  ?? [3] {"evento": "inicio"} {"evento": "cierre"} ?
+?     ?  ?? [4] {"evento": "borrar_todo"} ?
+?     ?  ?? [5] {"evento": 3} ?
+?     ?  ?? [6] {"t": 1.0} ?
+?     ?  ?? [7] {"evento": "seleccion", "objeto_id": "X"} ?
+?     ?  ?? [8] {"evento": "seleccion", "objeto_id": "", "ficha_id": "F"} ?
+?     ?  ?? [9] {"evento": "inicio", "t": "ayer"} ?
+?     ?  ?? [10] {"evento": "inicio", "t": -5} ?
+?     ?  ?? [11] {"evento": "inicio", "modelo": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx... ?
+?     ?? nullEsSalidaVacia() ?
+?     ?? cuentaBytesEnUtf8() ?
+?     ?? inicioYCierreSinTUsanLaHoraDeLlegada() ?
+?     ?? seleccionValida() ?
+?? JUnit Vintage ?
+?? JUnit Platform Suite ?
+
+Test run finished after 30477 ms
+[        31 containers found      ]
+[         0 containers skipped    ]
+[        31 containers started    ]
+[         0 containers aborted    ]
+[        31 containers successful ]
+[         0 containers failed     ]
+[       114 tests found           ]
+[         0 tests skipped         ]
+[       114 tests started         ]
+[         0 tests aborted         ]
+[       114 tests successful      ]
+[         0 tests failed          ]
+
