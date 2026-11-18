@@ -8,16 +8,17 @@ import app.dao.jdbc.SimulationDaoJdbc;
 import app.db.ConnectionFactory;
 import app.model.Simulation;
 
+import app.util.JsonSupport;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+
 import java.util.ArrayList;
 import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 public class SimulationService {
     private final SimulationDao simulationDao;
-    private static final Pattern STRING_PATTERN = Pattern.compile("\"%s\"\\s*:\\s*\"([^\"]*)\"");
-    private static final Pattern NUMBER_PATTERN = Pattern.compile("\"%s\"\\s*:\\s*(\\d+)");
-    private static final Pattern ARRAY_PATTERN = Pattern.compile("\"%s\"\\s*:\\s*\\[(.*?)]", Pattern.DOTALL);
+    /** Duracion maxima admitida para una practica, en minutos. */
+    static final int MAX_MINUTES = 600;
 
     private final ServiceGuard guard;
 
@@ -81,12 +82,9 @@ public class SimulationService {
     }
 
     public static boolean isEnabled(Simulation simulation) {
-        String config = simulation.getConfigJson();
-        if (config == null || config.isBlank()) {
-            return false;
-        }
-        String normalized = config.replace(" ", "").toLowerCase();
-        return normalized.contains("\"habilitado\":true");
+        JsonObject config = simulation == null ? null : JsonSupport.parseObjectOrNull(simulation.getConfigJson());
+        JsonElement enabled = config == null ? null : config.get("habilitado");
+        return JsonSupport.isBoolean(enabled) && enabled.getAsBoolean();
     }
 
     public static String defaultConfigJson() {
@@ -149,16 +147,92 @@ public class SimulationService {
         return created;
     }
 
+    /**
+     * Valida la configuracion de una practica con un analizador JSON estricto (C06): tipos, campos obligatorios y
+     * que el modelo 3D exista en {@link Visor3DService#MODELOS}. Reune todos los problemas en un solo mensaje.
+     *
+     * @throws IllegalArgumentException si la configuracion no es valida
+     */
     public static void validateConfigJson(String configJson) {
         if (configJson == null || configJson.isBlank()) {
             throw new IllegalArgumentException("La configuracion JSON de la simulacion es obligatoria");
         }
-        requireKey(configJson, "habilitado");
-        requireKey(configJson, "tema");
-        requireKey(configJson, "nivel");
-        requireKey(configJson, "tiempoMinutos");
-        requireKey(configJson, "objetivos");
-        requireKey(configJson, "instrucciones");
+        JsonElement root = JsonSupport.parseStrict(configJson);
+        if (!root.isJsonObject()) {
+            throw new IllegalArgumentException("La configuracion de la simulacion debe ser un objeto JSON");
+        }
+        JsonObject config = root.getAsJsonObject();
+        List<String> errors = new ArrayList<>();
+
+        if (!JsonSupport.isBoolean(config.get("habilitado"))) {
+            errors.add("'habilitado' es obligatorio y debe ser true o false");
+        }
+        requireText(config, "tema", errors);
+        requireText(config, "nivel", errors);
+
+        JsonElement minutes = config.get("tiempoMinutos");
+        if (!JsonSupport.isNumber(minutes)) {
+            errors.add("'tiempoMinutos' es obligatorio y debe ser un numero entero");
+        } else {
+            double value = minutes.getAsDouble();
+            if (value != Math.rint(value) || value < 1 || value > MAX_MINUTES) {
+                errors.add("'tiempoMinutos' debe ser un entero entre 1 y " + MAX_MINUTES);
+            }
+        }
+        requireTextArray(config, "objetivos", errors);
+        requireTextArray(config, "instrucciones", errors);
+
+        JsonElement script = config.get("script3d");
+        if (script != null && !script.isJsonNull()) {
+            if (!JsonSupport.isString(script)) {
+                errors.add("'script3d' debe ser texto");
+            } else if (!script.getAsString().isBlank()) {
+                String name = script.getAsString().strip();
+                if (Visor3DService.modelo(name) == null || name.contains("/") || name.contains("\\")) {
+                    errors.add("'script3d' debe ser uno de los modelos 3D del catalogo: "
+                            + String.join(", ", Visor3DService.MODELOS.stream().map(Visor3DService.Modelo::script).toList()));
+                }
+            }
+        }
+
+        JsonElement scenario = config.get("escenario");
+        if (scenario != null && !scenario.isJsonNull()) {
+            if (!scenario.isJsonObject()) {
+                errors.add("'escenario' debe ser un objeto con 'titulo' y 'descripcion'");
+            } else {
+                for (String key : List.of("titulo", "descripcion")) {
+                    JsonElement value = scenario.getAsJsonObject().get(key);
+                    if (value != null && !JsonSupport.isString(value)) {
+                        errors.add("'escenario." + key + "' debe ser texto");
+                    }
+                }
+            }
+        }
+
+        if (!errors.isEmpty()) {
+            throw new IllegalArgumentException("La configuracion de la simulacion no es valida:\n- " + String.join("\n- ", errors));
+        }
+    }
+
+    private static void requireText(JsonObject config, String key, List<String> errors) {
+        JsonElement value = config.get(key);
+        if (!JsonSupport.isString(value) || value.getAsString().isBlank()) {
+            errors.add("'" + key + "' es obligatorio y debe ser un texto no vacio");
+        }
+    }
+
+    private static void requireTextArray(JsonObject config, String key, List<String> errors) {
+        JsonElement value = config.get(key);
+        if (value == null || !value.isJsonArray() || value.getAsJsonArray().isEmpty()) {
+            errors.add("'" + key + "' es obligatorio y debe ser una lista con al menos un elemento");
+            return;
+        }
+        for (JsonElement item : value.getAsJsonArray()) {
+            if (!JsonSupport.isString(item) || item.getAsString().isBlank()) {
+                errors.add("cada elemento de '" + key + "' debe ser un texto no vacio");
+                return;
+            }
+        }
     }
 
     public static String summarizeSimulation(Simulation simulation) {
@@ -184,48 +258,31 @@ public class SimulationService {
         return summary.toString();
     }
 
+    /** Valor de texto de la clave (o de la primera clave igual en un objeto anidado); fallback si no existe. */
     public static String readString(String json, String key, String fallback) {
-        Pattern pattern = Pattern.compile(String.format(STRING_PATTERN.pattern(), Pattern.quote(key)));
-        Matcher matcher = pattern.matcher(json);
-        return matcher.find() ? matcher.group(1) : fallback;
+        JsonElement value = JsonSupport.find(JsonSupport.parseObjectOrNull(json), key);
+        return JsonSupport.isString(value) ? value.getAsString() : fallback;
     }
 
     public static int readInt(String json, String key, int fallback) {
-        Pattern pattern = Pattern.compile(String.format(NUMBER_PATTERN.pattern(), Pattern.quote(key)));
-        Matcher matcher = pattern.matcher(json);
-        return matcher.find() ? Integer.parseInt(matcher.group(1)) : fallback;
+        JsonElement value = JsonSupport.find(JsonSupport.parseObjectOrNull(json), key);
+        try {
+            return JsonSupport.isNumber(value) ? value.getAsInt() : fallback;
+        } catch (NumberFormatException e) {
+            return fallback;
+        }
     }
 
     public static List<String> readArray(String json, String key) {
-        Pattern pattern = Pattern.compile(String.format(ARRAY_PATTERN.pattern(), Pattern.quote(key)), Pattern.DOTALL);
-        Matcher matcher = pattern.matcher(json);
+        JsonElement value = JsonSupport.find(JsonSupport.parseObjectOrNull(json), key);
         List<String> items = new ArrayList<>();
-        if (!matcher.find()) {
-            return items;
-        }
-
-        String raw = matcher.group(1).trim();
-        if (raw.isBlank()) {
-            return items;
-        }
-
-        String[] parts = raw.split(",");
-        for (String part : parts) {
-            String cleaned = part.trim();
-            if (cleaned.startsWith("\"")) {
-                cleaned = cleaned.substring(1);
+        if (value != null && value.isJsonArray()) {
+            for (JsonElement item : value.getAsJsonArray()) {
+                if (JsonSupport.isString(item)) {
+                    items.add(item.getAsString());
+                }
             }
-            if (cleaned.endsWith("\"")) {
-                cleaned = cleaned.substring(0, cleaned.length() - 1);
-            }
-            items.add(cleaned);
         }
         return items;
-    }
-
-    private static void requireKey(String json, String key) {
-        if (!json.contains("\"" + key + "\"")) {
-            throw new IllegalArgumentException("La simulacion debe incluir la clave '" + key + "'");
-        }
     }
 }

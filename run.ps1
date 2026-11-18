@@ -167,7 +167,7 @@ function Package-App {
 
     @"
 Main-Class: app.Main
-Class-Path: lib/jbcrypt-0.4.jar lib/postgresql-42.7.10.jar
+Class-Path: lib/gson-2.11.0.jar lib/jbcrypt-0.4.jar lib/postgresql-42.7.10.jar
 
 "@ | Set-Content -Encoding ASCII $manifest
 
