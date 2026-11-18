@@ -23,10 +23,12 @@ if (!(Test-Path $JAVAC)) {
 }
 
 function Compile-App {
-    if (!(Test-Path "out")) { New-Item -ItemType Directory "out" | Out-Null }
-    Write-Host "Compilando proyecto..." -ForegroundColor Cyan
+    # out/ se recrea en cada compilacion y con --release 21: asi nunca queda bytecode de otra version del JDK (C12).
+    if (Test-Path "out") { Remove-Item "out" -Recurse -Force }
+    New-Item -ItemType Directory "out" | Out-Null
+    Write-Host "Compilando proyecto (--release 21)..." -ForegroundColor Cyan
     $files = Get-ChildItem -Recurse -Filter *.java src | ForEach-Object { $_.FullName }
-    & $JAVAC -encoding UTF-8 -cp "lib/*" -d out $files
+    & $JAVAC --release 21 -encoding UTF-8 -cp "lib/*" -d out $files
     if ($LASTEXITCODE -ne 0) {
         throw "Error en la compilacion."
     }

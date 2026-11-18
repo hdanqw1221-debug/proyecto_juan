@@ -11,16 +11,16 @@ if (-Not (Test-Path $JUNIT_JAR)) {
 }
 
 Write-Host "Compilando proyecto para pruebas..."
-if (-Not (Test-Path "out")) {
-    New-Item -ItemType Directory -Force -Path "out" | Out-Null
-}
+# Compilacion limpia y con --release 21 (C12): sin restos de otras versiones del JDK en out/.
+if (Test-Path "out") { Remove-Item "out" -Recurse -Force }
+New-Item -ItemType Directory -Force -Path "out" | Out-Null
 
 $javaFiles = Get-ChildItem -Recurse -Filter *.java src
 $testFiles = Get-ChildItem -Recurse -Filter *.java tests
 
 $allFiles = @($javaFiles.FullName) + @($testFiles.FullName)
 
-javac -encoding UTF-8 -cp "lib/*" -d out $allFiles
+javac --release 21 -encoding UTF-8 -cp "lib/*" -d out $allFiles
 if ($LASTEXITCODE -ne 0) {
     Write-Host "Error en compilacion." -ForegroundColor Red
     exit $LASTEXITCODE
