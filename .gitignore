@@ -11,4 +11,12 @@ previos/
 *.rar
 *.docx
 scratch/
+out/
+*.class
 
+# Credenciales: nunca versionar. Usar config/app.properties.example como plantilla
+# y la variable de entorno APP_DB_PASSWORD para la contrasena.
+config/app.properties
+
+# Registros locales del visor 3D (faulthandler)
+aplicacion_tres_d/aplicacion_tres_d/registros/

@@ -1,4 +1,10 @@
-﻿# PostgreSQL local: copia este archivo a app.properties y configura tus credenciales
+# PostgreSQL local: copia este archivo a app.properties y configura la conexion.
+# config/app.properties esta en .gitignore: NUNCA lo agregues al repositorio.
+#
+# La contrasena se recomienda definirla en la variable de entorno APP_DB_PASSWORD
+# (tiene prioridad sobre este archivo). Tambien se admiten APP_DB_URL y APP_DB_USER.
+#   PowerShell:  $env:APP_DB_PASSWORD = "..."
+#   CMD:         set APP_DB_PASSWORD=...
 app.db.url=jdbc:postgresql://localhost:5432/gestion
 app.db.user=postgres
 app.db.password=

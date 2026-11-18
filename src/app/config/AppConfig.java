@@ -12,12 +12,31 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Properties;
 import java.util.Set;
+import java.util.function.Function;
 
 public class AppConfig {
+    /** Variables de entorno que, si estan definidas, tienen prioridad sobre config/app.properties. */
+    public static final String ENV_DB_URL = "APP_DB_URL";
+    public static final String ENV_DB_USER = "APP_DB_USER";
+    public static final String ENV_DB_PASSWORD = "APP_DB_PASSWORD";
+
     private final Properties props;
+    private final Function<String, String> env;
 
     private AppConfig(Properties props) {
+        this(props, System::getenv);
+    }
+
+    private AppConfig(Properties props, Function<String, String> env) {
         this.props = props;
+        this.env = env;
+    }
+
+    /** Construye la configuracion desde propiedades y un proveedor de variables de entorno (usado en pruebas). */
+    public static AppConfig fromProperties(Properties props, Function<String, String> env) {
+        Properties copy = new Properties();
+        copy.putAll(props);
+        return new AppConfig(copy, env);
     }
 
     public static AppConfig load(String path) {
@@ -78,15 +97,24 @@ public class AppConfig {
     }
 
     public String getDbUrl() {
-        return props.getProperty("app.db.url");
+        return fromEnvOrProperty(ENV_DB_URL, "app.db.url");
     }
 
     public String getDbUser() {
-        return props.getProperty("app.db.user");
+        return fromEnvOrProperty(ENV_DB_USER, "app.db.user");
     }
 
+    /** La contrasena se toma de APP_DB_PASSWORD si existe; asi no hace falta guardarla en el archivo. */
     public String getDbPassword() {
-        return props.getProperty("app.db.password");
+        return fromEnvOrProperty(ENV_DB_PASSWORD, "app.db.password");
+    }
+
+    private String fromEnvOrProperty(String envName, String propertyName) {
+        String value = env.apply(envName);
+        if (value != null && !value.isBlank()) {
+            return value;
+        }
+        return props.getProperty(propertyName);
     }
 
     /** PostgreSQL incluido en el paquete: la aplicacion lo crea y lo arranca (ver app.db.EmbeddedDatabase). */
@@ -127,6 +155,7 @@ public class AppConfig {
         copy.setProperty("app.db.url", url);
         copy.setProperty("app.db.user", user);
         copy.setProperty("app.db.password", password);
-        return new AppConfig(copy);
+        // La conexion indicada explicitamente no debe ser reemplazada por las variables de entorno.
+        return new AppConfig(copy, name -> null);
     }
 }

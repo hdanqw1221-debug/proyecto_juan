@@ -1,7 +1,8 @@
 """Fuente de las fichas anatómicas: PostgreSQL si hay conexión, si no el JSON local.
 
-La conexión se toma de `CAVIDADES_DB_DSN` (cadena libpq) o de
-`proyecto_juan/config/app.properties` (las mismas credenciales de la app Java).
+La conexión se toma de `CAVIDADES_DB_DSN` (cadena libpq; se recomienda el rol de solo
+lectura de `db/rol_visor_lectura.sql`) o de `proyecto_juan/config/app.properties`. Si existe
+la variable `APP_DB_PASSWORD`, tiene prioridad sobre la contraseña del archivo.
 El driver (`psycopg` 3 o `psycopg2`) es opcional.
 """
 import json
@@ -39,8 +40,17 @@ def _dsn_desde_properties(ruta):
         return None
     host, puerto, base = m.group(1), m.group(2) or "5432", m.group(3)
     usuario = props.get("app.db.user") or props.get("db.user") or "postgres"
-    clave = props.get("app.db.password") or props.get("db.password") or ""
-    return f"host={host} port={puerto} dbname={base} user={usuario} password={clave} connect_timeout=2"
+    clave = os.environ.get("APP_DB_PASSWORD") or props.get("app.db.password") or props.get("db.password") or ""
+    partes = {"host": host, "port": puerto, "dbname": base, "user": usuario, "password": clave}
+    return " ".join(f"{k}={_valor_libpq(v)}" for k, v in partes.items()) + " connect_timeout=2"
+
+
+def _valor_libpq(valor):
+    """Entrecomilla un valor de cadena libpq (espacios, comillas y barras invertidas)."""
+    valor = str(valor)
+    if valor and not re.search(r"[\s'\\]", valor):
+        return valor
+    return "'" + valor.replace("\\", "\\\\").replace("'", "\\'") + "'"
 
 
 def _conectar(dsn):
