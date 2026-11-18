@@ -64,7 +64,7 @@ public class DashboardPanel extends JPanel {
         JPanel detailGrid = new JPanel(new GridLayout(1, 3, 14, 14));
         detailGrid.setOpaque(false);
         detailGrid.add(rolesCard(user));
-        detailGrid.add(activityCard(auditService));
+        detailGrid.add(activityCard(auditService, user));
         detailGrid.add(chartCard(courses, exams, simulations));
         contentContainer.add(detailGrid, BorderLayout.CENTER);
 
@@ -128,15 +128,17 @@ public class DashboardPanel extends JPanel {
         return card;
     }
 
-    private JPanel activityCard(AuditService auditService) {
+    private JPanel activityCard(AuditService auditService, User user) {
         JPanel card = UiTheme.card(new BorderLayout(12, 12));
-        card.add(sectionHeading("Actividad reciente", "Ultimos movimientos del sistema"), BorderLayout.NORTH);
+        boolean admin = user.getRoles().contains(RoleType.ADMINISTRADOR);
+        card.add(sectionHeading("Actividad reciente",
+                admin ? "Ultimos movimientos del sistema" : "Tus ultimos movimientos"), BorderLayout.NORTH);
 
         JPanel items = new JPanel();
         items.setOpaque(false);
         items.setLayout(new BoxLayout(items, BoxLayout.Y_AXIS));
         try {
-            auditService.listRecent(4).forEach(entry -> {
+            auditService.listRecentFor(user, 4).forEach(entry -> {
                 JLabel item = new JLabel("<html><b>" + entry.getAction() + "</b><br><span style='color:#696971'>"
                         + entry.getCreatedAt() + "</span></html>");
                 item.setBorder(BorderFactory.createMatteBorder(0, 0, 1, 0, UiTheme.BORDER));
