@@ -1,0 +1,9 @@
+.......................................................................  [100%]
+============================== warnings summary ===============================
+cavidades/tests/test_explosion.py: 58 warnings
+  C:\Users\user\Desktop\proyecto_juan\aplicacion_tres_d\aplicacion_tres_d\.venv\Lib\site-packages\vtkmodules\util\numpy_support.py:244: DeprecationWarning: Setting the shape on a NumPy array has been deprecated in NumPy 2.5.
+  As an alternative, you can create a new view using np.reshape (with copy=False if needed).
+    result.shape = shape
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+71 passed, 58 warnings in 41.95s

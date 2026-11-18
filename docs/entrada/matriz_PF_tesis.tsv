@@ -1,0 +1,41 @@
+ID	Prueba	Entrada	Resultado esperado	Resultado en la tesis (12/10/2026)	Estado en la tesis
+PF-01	Compilación desde fuentes	73 fuentes y 7 pruebas; javac 21	Sin errores	Compilación terminada sin errores	Aprobada
+PF-02	Pruebas unitarias	18 casos JUnit 5	18 aprobados	17 aprobados; 1 fallido (detección de pg_dump)	Defecto
+PF-03	Creación del esquema académico	db/schema.sql	12 tablas con claves e índices	12 tablas, índices y claves foráneas creados	Aprobada
+PF-04	Datos de prueba	db/test_users.sql	4 usuarios, 3 roles, 1 materia	Datos creados y estudiantes matriculados	Aprobada
+PF-05	Credenciales inválidas	admin con contraseña errónea	Rechazo con mensaje genérico y evento LOGIN_FAIL	«Credenciales inválidas o usuario inactivo»; evento registrado	Aprobada
+PF-06	Credenciales válidas y hash	admin / contraseña correcta	Acceso al panel; hash BCrypt	Acceso concedido; hashes con prefijo $2a$12$ y 60 caracteres	Aprobada
+PF-07	Menú según el rol	Sesiones de profesor y estudiante	Sin acceso al módulo de administración	El profesor ve solo Docencia y el estudiante solo Estudiante	Aprobada
+PF-08	Control de acceso en código	Sesión de estudiante pide rol de administrador; sesión nula	Excepción de seguridad	«Permiso denegado» y «Sesión requerida»	Aprobada
+PF-09	Creación de cuestionario	Profesor; 2 intentos; 20 min	Examen persistido y disponible	Examen ID 1 en estado Disponible; evento EXAM_CREATE	Aprobada
+PF-10	Banco de preguntas por lote	3 preguntas sobre las cavidades; 9 opciones	Preguntas y clave correctas en la base	3 preguntas, 9 respuestas, 1 correcta por pregunta	Aprobada
+PF-11	Atomicidad del lote	Lote con una pregunta inválida	Ningún registro parcial	Excepción controlada; preguntas 3→3, respuestas 9→9	Aprobada
+PF-12	Integridad referencial	Pregunta para el examen 9999	Rechazo por clave foránea	Rechazada (SQLSTATE 23503)	Aprobada
+PF-13	Prácticas 3D del modelo	db/cavidades_fichas.sql	4 prácticas con su script	4 prácticas (general, torácica, abdominal e inguinal) visibles para el estudiante	Aprobada
+PF-14	Práctica vista por el estudiante	Estudiante matriculado	Objetivos e instrucciones visibles	Diálogo con la configuración de la práctica	Aprobada
+PF-15	Apertura del visor desde Java	«Abrir Modelo 3D»	Ventana del visor como proceso hijo y evento SIM_RUN_PY	Ventana en 7,4 s en el primer arranque y en 2,2 s en el segundo; eventos registrados	Aprobada
+PF-16	Carga del modelo general	cavidades_equinas.py	61 objetos y origen de las fichas	«61 estructuras • fichas desde postgresql • carga 1,8 s»	Aprobada
+PF-17	Rotación y acercamiento	Arrastre y rueda del ratón	Cambio de punto de vista	Rotación y acercamiento correctos	Aprobada
+PF-18	Identidad de la estructura seleccionada	Clic sobre corazón, diafragma, pulmón izquierdo y testículo izquierdo	Ficha de la estructura señalada	Ficha correcta en los cuatro casos	Aprobada
+PF-19	Resaltado de la selección	Clic sobre una estructura	Resaltado visible	Color de selección y silueta visibles	Aprobada
+PF-20	Rotación sin selección	Arrastre de más de 5 píxeles	Rotar sin abrir fichas	Sin evento de selección; la ficha previa se conserva	Aprobada
+PF-21	Cierre normal del visor	Cierre de la ventana	Proceso terminado sin mensaje de error	Código de salida 0; sin mensaje	Aprobada
+PF-22	Terminación anormal del visor	Señal de terminación al proceso	Mensaje controlado	Mensaje con opción «Reintentar»; atribuye el fallo a la aceleración gráfica	Aprobada con observación
+PF-23	Presentación de la evaluación	Estudiante; examen 1	Orden aleatorio, tiempo e intentos	«Modo seguro», 20 min e intento 1 de 2; orden 3-1-2 registrado en el detalle JSONB	Aprobada
+PF-24	Calificación	2 de 3 respuestas correctas	3,3 / 5,0	3,3 / 5,0; detalle JSONB con 2,0 de 3,0	Aprobada
+PF-25	Revisión con retroalimentación	«Ver resultado»	Acierto y respuesta correcta por pregunta	Revisión pregunta por pregunta	Aprobada
+PF-26	Seguimiento docente	Profesor; notas y estadísticas	Intento y promedio visibles	Nota 3,3; promedio 3,30	Aprobada
+PF-27	Trazabilidad	Sesión completa con tres roles	Eventos de cada acción relevante	14 eventos registrados; el envío de la evaluación no genera evento	Aprobada con observación
+PF-28	Privacidad de la auditoría	Inicio del estudiante	Solo actividad propia	Muestra eventos de otros usuarios	Defecto
+PF-29	Rendimiento del visor	4 modelos; 5 cargas y rotaciones de 360°	Registrar (sin umbral)	Carga de 0,54 a 1,32 s; 3,1 a 6,3 fps; selección en 0,4 ms o menos	Medición registrada
+PF-30	Suite automatizada del modelo	56 pruebas pytest	56 aprobadas	56 aprobadas con VTK 9.4.1 y con VTK 9.7.1	Aprobada
+PF-31	Identidad de todas las estructuras	58 estructuras seleccionables, una por una	Cada una muestra su propia ficha	58 de 58; 47 fichas distintas	Aprobada
+PF-32	Alcance por clic repetido	53 estructuras visibles desde la vista inicial	Todas alcanzables	53 de 53; 39 al primer clic; máximo 3 clics	Aprobada
+PF-33	Cobertura de las tres áreas	Manifiesto, GLB y .blend	Estructuras de las tres áreas como objetos independientes	11 torácicas, 26 abdominales, 2 pélvicas y 16 inguinales, más 3 envolturas	Aprobada con observación
+PF-34	Consistencia del modelo en Blender	cavidades_equinas.blend abierto con bpy 4.2	Mismos objetos que el manifiesto	61 objetos, 862 298 triángulos y propiedades iguales en el .blend, el GLB y el manifiesto	Aprobada
+PF-35	Fichas desde PostgreSQL y respaldo JSON	Con y sin servidor	47 fichas en ambos casos	47 fichas desde PostgreSQL; 47 desde JSON sin servidor	Aprobada con observación
+PF-36	Despiece torácico e inguinal	Rueda del ratón y clic	Separación, etiquetas y ficha	Correcto; 12 de 12 ensayos sin cierres	Aprobada
+PF-37	Estabilidad del modelo abdominal	Acercar, girar y acercar de nuevo	Sin cierres inesperados	El primer despiece funciona; cierre por violación de segmento en 25 de 26 ensayos	Defecto
+PF-38	Eventos del visor	Sesión con clic, arrastre, búsqueda y cierre	Una línea JSON por evento	Inicio, 2 selecciones (clic y búsqueda) y cierre; el arrastre no genera evento; la aplicación no los procesa	Aprobada con observación
+PF-39	Regeneración del modelo desde el código	generar_cavidades.py con bpy 4.2	Mismos objetos y conteos que la versión entregada	61 objetos con los mismos identificadores en 5,2 min; diferencias menores de 0,1 mm en 52 centroides y hasta 3,6 % de volumen en 4 tubos digestivos	Aprobada con observación
+PF-40	Compresión para distribución en red	escena.glb con Draco y meshopt	Registrar (sin umbral)	De 15,5 MB a 2,27 MB con Draco y a 3,62 MB con meshopt	Medición registrada

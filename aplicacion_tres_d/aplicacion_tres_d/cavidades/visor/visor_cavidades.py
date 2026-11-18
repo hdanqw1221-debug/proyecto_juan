@@ -26,6 +26,7 @@ from PyQt5.QtWidgets import (QApplication, QCheckBox, QCompleter, QGridLayout, Q
                              QWidget)
 from vtkmodules.qt.QVTKRenderWindowInteractor import QVTKRenderWindowInteractor  # noqa: E402
 
+from visor.diagnostico import registrar_excepcion  # noqa: E402
 from visor.escena import DIR_MODELOS, Escena, configurar_render_realista  # noqa: E402
 from visor.explosion import (ANGULO_VISTA, DURACION_TRANSICION, FACTOR_RUEDA, FIN_DESVANECIDO,  # noqa: E402
                              ControladorExplosion, acercar_hacia, punto_bajo_cursor)
@@ -221,6 +222,7 @@ class VisorCavidades(QMainWindow):
         self.estilo = EstiloInteraccion(self)
         self.interactor.SetInteractorStyle(self.estilo)
         self._actualizando = False
+        self._en_rueda = False
         # Transición animada entre la cavidad ensamblada y separada.
         self.temporizador = QTimer(self)
         self.temporizador.setInterval(15)
@@ -403,18 +405,29 @@ class VisorCavidades(QMainWindow):
 
         Si al acercarse la cavidad se separa, la cámara acompaña a la pieza que estaba bajo el cursor.
         """
-        envoltura = [self.explosion.envoltura] if self.explosion and self.explosion.envoltura else []
-        oid, punto = self.seleccionador.punto_en(x, y, envoltura)
-        if punto is None:
-            punto = punto_bajo_cursor(self.renderer, x, y)
-        self._actualizando = True
+        # C08: durante la transición del despiece las piezas se mueven y el selector de VTK/OpenGL trabaja sobre una
+        # escena a medio actualizar; se ignoran las ruedas que llegan entonces (la animación dura 0,6 s) y se captura
+        # cualquier excepción para que un fallo puntual no cierre el visor.
+        if self._en_rueda or (self.explosion and self.temporizador.isActive()):
+            return
+        self._en_rueda = True
         try:
-            acercar_hacia(self.renderer.GetActiveCamera(), punto, FACTOR_RUEDA if sentido > 0 else 1.0 / FACTOR_RUEDA)
+            envoltura = [self.explosion.envoltura] if self.explosion and self.explosion.envoltura else []
+            oid, punto = self.seleccionador.punto_en(x, y, envoltura)
+            if punto is None:
+                punto = punto_bajo_cursor(self.renderer, x, y)
+            self._actualizando = True
+            try:
+                acercar_hacia(self.renderer.GetActiveCamera(), punto, FACTOR_RUEDA if sentido > 0 else 1.0 / FACTOR_RUEDA)
+            finally:
+                self._actualizando = False
+            self._tras_mover_camara(seguir=oid)
+            self.renderer.ResetCameraClippingRange()
+            self.ventana.Render()
+        except Exception as exc:  # noqa: BLE001
+            registrar_excepcion("rueda", exc)
         finally:
-            self._actualizando = False
-        self._tras_mover_camara(seguir=oid)
-        self.renderer.ResetCameraClippingRange()
-        self.ventana.Render()
+            self._en_rueda = False
 
     def encuadrar_seleccion(self):
         """Acerca la cámara a la pieza seleccionada; en el modo inmersivo la cavidad se abre y la cámara la acompaña."""

@@ -9,6 +9,10 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent / "cavidades"))
 
+from visor.diagnostico import activar_faulthandler  # noqa: E402
+
+activar_faulthandler("inguinal")  # C08: pila de Python si el visor muere (registros/)
+
 from visor.visor_cavidades import main  # noqa: E402
 
 if __name__ == "__main__":
