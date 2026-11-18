@@ -1,0 +1,31 @@
+== Servidor temporal: on (ssl), TLSv1.2 minimo
+== T08: T02 con sslmode=disable (100 repeticiones)
+conexion_jdbc,100,76.370,58.302,156.865,42.508,168.132
+envio_evaluacion_transaccion,100,96.094,75.984,167.742,35.268,217.475
+login_bcrypt,100,464.243,431.893,568.386,410.174,737.414
+login_consulta_usuario,100,147.364,122.349,236.231,82.500,308.335
+login_total,100,611.607,609.768,773.734,492.674,964.452
+select_1,100,0.217,0.182,0.262,0.146,2.312
+   cifrado en la sesion: false - -
+== T08: T02 con sslmode=require (100 repeticiones)
+conexion_jdbc,100,110.811,97.580,187.705,53.108,241.614
+envio_evaluacion_transaccion,100,93.770,74.705,175.688,56.640,184.734
+login_bcrypt,100,478.252,451.114,642.072,394.276,744.231
+login_consulta_usuario,100,195.636,177.292,326.512,105.483,414.179
+login_total,100,673.887,651.584,891.069,507.781,1008.370
+select_1,100,0.405,0.323,0.685,0.251,3.530
+   cifrado en la sesion: true TLSv1.3 TLS_AES_256_GCM_SHA384
+== T09: pg_hba restringido (hostssl 127.0.0.1/32 unicamente). LAN propia: 10.78.250.32
+-- (a) 127.0.0.1 con TLS (debe entrar): 1
+-- (b) 127.0.0.1 SIN TLS (debe rechazarse): psql: error: falló la conexión al servidor en «127.0.0.1», puerto 55433: FATAL:  no hay una línea en pg_hba.conf para «127.0.0.1», usuario «postgres», base de datos «postgres», sin cifrado 
+-- (c) desde la IP de la LAN 10.78.250.32, origen no autorizado (debe rechazarse): psql: error: falló la conexión al servidor en «10.78.250.32», puerto 55433: FATAL:  no hay una línea en pg_hba.conf para «10.78.250.32», usuario «postgres», base de datos «postgres», cifrado SSL 
+-- (d) contrasena incorrecta desde 127.0.0.1: psql: error: falló la conexión al servidor en «127.0.0.1», puerto 55433: FATAL:  la autentificación password falló para el usuario «postgres»
+== Puertos de la IP de la LAN (10.78.250.32), Test-NetConnection (sustituye a nmap)
+5432/TCP ABIERTO
+55433/TCP ABIERTO
+80/TCP cerrado/filtrado
+135/TCP ABIERTO
+443/TCP cerrado/filtrado
+445/TCP ABIERTO
+3389/TCP cerrado/filtrado
+8080/TCP cerrado/filtrado

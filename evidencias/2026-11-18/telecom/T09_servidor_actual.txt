@@ -1,0 +1,22 @@
+== Configuracion del servidor real (solo lectura)
+*
+5432
+off
+scram-sha-256
+C:/Program Files/PostgreSQL/18/data/pg_hba.conf
+== Reglas activas de pg_hba.conf
+113 | local | {all} | {all} |  |  | scram-sha-256
+115 | host | {all} | {all} | 127.0.0.1 | 255.255.255.255 | scram-sha-256
+117 | host | {all} | {all} | ::1 | ffff:ffff:ffff:ffff:ffff:ffff:ffff:ffff | scram-sha-256
+120 | local | {replication} | {all} |  |  | scram-sha-256
+121 | host | {replication} | {all} | 127.0.0.1 | 255.255.255.255 | scram-sha-256
+122 | host | {replication} | {all} | ::1 | ffff:ffff:ffff:ffff:ffff:ffff:ffff:ffff | scram-sha-256
+== Roles con LOGIN
+postgres super=true
+== Escucha en la red (Windows)
+
+::                5432
+0.0.0.0           5432
+
+
+10.78.250.32, 192.168.137.1, 127.0.0.1
