@@ -463,8 +463,9 @@ public class ExamDialog extends JDialog {
                 .append(",\"calificacionFinal\":").append(finalScore)
                 .append("}");
 
-        attemptService.finishAttempt(attemptId, finalScore);
-        resultService.createResult(attemptId, json.toString());
+        // Cierre del intento, detalle y evento EXAM_SUBMIT en una sola transaccion (C02).
+        attemptService.submitAttempt(attemptId, examId, studentId, finalScore, correctAnswers, questions.size(),
+                json.toString());
 
         JPanel result = UiTheme.card(new GridLayout(0, 1, 7, 7));
         result.add(UiTheme.title("Evaluacion enviada", 21f));
