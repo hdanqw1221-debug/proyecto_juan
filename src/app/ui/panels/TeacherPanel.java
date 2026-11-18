@@ -2250,8 +2250,9 @@ public class TeacherPanel extends JPanel {
             return;
         }
         Path scriptPath = scriptsFolder.resolve(scriptName);
-        if (!Files.isRegularFile(scriptPath)) {
-            javax.swing.JOptionPane.showMessageDialog(this, "El archivo " + scriptName + " no existe.", "Error", javax.swing.JOptionPane.ERROR_MESSAGE);
+        var missing = app.service.VisorDiagnostico.previo(scriptPath);
+        if (missing != null) {
+            javax.swing.JOptionPane.showMessageDialog(this, missing.mensaje(), missing.titulo(), javax.swing.JOptionPane.ERROR_MESSAGE);
             return;
         }
         long teacherId = currentTeacherId();
@@ -2282,10 +2283,10 @@ public class TeacherPanel extends JPanel {
                     result = null;
                 }
                 if (withoutPython) {
+                    var diagnosis = app.service.VisorDiagnostico.sinPython();
                     javax.swing.JOptionPane.showMessageDialog(TeacherPanel.this,
-                            "No se detecto un entorno Python con PyQt5, VTK y numpy.\n"
-                                    + "Pide al administrador que instale las dependencias de los modelos 3D.",
-                            "Python no listo", javax.swing.JOptionPane.WARNING_MESSAGE);
+                            diagnosis.mensaje() + "\nPide al administrador que lo resuelva.",
+                            diagnosis.titulo(), javax.swing.JOptionPane.WARNING_MESSAGE);
                     return;
                 }
                 if (result == null) {
@@ -2293,9 +2294,9 @@ public class TeacherPanel extends JPanel {
                 }
                 auditService.log(teacherId, "SIM_3D_SESION", Visor3DService.resumen(scriptPath, result));
                 if (!result.correcto()) {
+                    var diagnosis = app.service.VisorDiagnostico.deResultado(result);
                     javax.swing.JOptionPane.showMessageDialog(TeacherPanel.this,
-                            "El modelo no pudo abrirse correctamente.\nVerifica aceleracion grafica y librerias.",
-                            "Aviso", javax.swing.JOptionPane.WARNING_MESSAGE);
+                            diagnosis.mensaje(), diagnosis.titulo(), javax.swing.JOptionPane.WARNING_MESSAGE);
                 }
             }
         };

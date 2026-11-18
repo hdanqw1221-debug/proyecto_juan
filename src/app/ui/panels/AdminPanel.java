@@ -1308,10 +1308,8 @@ public class AdminPanel extends JPanel {
                     result = null;
                 }
                 if (withoutPython) {
-                    JOptionPane.showMessageDialog(AdminPanel.this,
-                            "No se encontro un entorno Python con PyQt5, VTK y numpy.\n"
-                                    + "Usa la opcion Instalar dependencias y vuelve a intentar.",
-                            "Entorno 3D no disponible",
+                    var diagnosis = app.service.VisorDiagnostico.sinPython();
+                    JOptionPane.showMessageDialog(AdminPanel.this, diagnosis.mensaje(), diagnosis.titulo(),
                             JOptionPane.ERROR_MESSAGE);
                     return;
                 }
@@ -1320,7 +1318,8 @@ public class AdminPanel extends JPanel {
                 }
                 auditService.log(adminId, "SIM_3D_SESION", Visor3DService.resumen(scriptPath, result));
                 if (!result.correcto()) {
-                    String detail = "Codigo de salida: " + result.codigoSalida()
+                    String detail = app.service.VisorDiagnostico.deResultado(result).mensaje()
+                            + "\n\n--- Detalle tecnico ---\nCodigo de salida: " + result.codigoSalida()
                             + (result.error() != null ? "\nError: " + result.error().getMessage() : "")
                             + "\n\n" + (result.salida().isBlank() ? "(Sin salida de consola)" : result.salida());
                     JTextArea area = new JTextArea(detail, 18, 78);

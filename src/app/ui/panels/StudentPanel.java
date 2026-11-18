@@ -910,6 +910,11 @@ public class StudentPanel extends JPanel {
      * ventana esta abierta; al cerrarlo se registra la sesion (estructuras consultadas y duracion).
      */
     private void launchSimulation(Path scriptPath, boolean afterSetup) {
+        var missing = app.service.VisorDiagnostico.previo(scriptPath);  // C13: archivos del modelo ausentes
+        if (missing != null) {
+            JOptionPane.showMessageDialog(this, missing.mensaje(), missing.titulo(), JOptionPane.ERROR_MESSAGE);
+            return;
+        }
         long studentId = currentStudentId();
         Long simulationId = practiceSimulationId;  // practica desde la que se abrio el modelo (null: catalogo)
         JDialog progress = progressDialog("Abriendo modelo 3D", "Preparando la ventana interactiva...");
@@ -955,11 +960,11 @@ public class StudentPanel extends JPanel {
                 }
                 auditService.log(studentId, "SIM_3D_SESION", Visor3DService.resumen(scriptPath, result));
                 if (!result.correcto()) {
+                    var diagnosis = app.service.VisorDiagnostico.deResultado(result);
                     int option = JOptionPane.showOptionDialog(
                             StudentPanel.this,
-                            "El modelo no pudo abrirse correctamente.\n"
-                                    + "Verifica que el equipo tenga aceleracion grafica disponible.",
-                            "No se pudo abrir el modelo",
+                            diagnosis.mensaje(),
+                            diagnosis.titulo(),
                             JOptionPane.DEFAULT_OPTION,
                             JOptionPane.WARNING_MESSAGE,
                             null,
