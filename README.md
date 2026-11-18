@@ -193,6 +193,14 @@ java -cp "out:lib/*" app.Main
 
 ---
 
+## 📄 Licencia
+
+- **Código**: GPL-3.0-or-later ([LICENSE](LICENSE)). El visor usa PyQt5 (GPLv3), por lo que el conjunto se distribuye bajo GPL.
+- **Modelo 3D y fichas anatómicas**: CC BY-SA 4.0 ([LICENSE-CONTENIDO.md](LICENSE-CONTENIDO.md)).
+- Dependencias, herramientas y material de referencia: [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md).
+
+---
+
 ## 💡 Herramienta de Generación de Contraseñas
 
 Si deseas generar nuevas contraseñas con hash BCrypt:
