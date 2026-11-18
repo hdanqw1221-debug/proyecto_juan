@@ -1,5 +1,8 @@
 package app.service;
 
+import app.model.RoleType;
+import app.session.SessionManager;
+import app.security.ServiceGuard;
 import app.dao.SimulationDao;
 import app.dao.jdbc.SimulationDaoJdbc;
 import app.db.ConnectionFactory;
@@ -16,11 +19,20 @@ public class SimulationService {
     private static final Pattern NUMBER_PATTERN = Pattern.compile("\"%s\"\\s*:\\s*(\\d+)");
     private static final Pattern ARRAY_PATTERN = Pattern.compile("\"%s\"\\s*:\\s*\\[(.*?)]", Pattern.DOTALL);
 
+    private final ServiceGuard guard;
+
+    /** Sin sesion: los metodos de escritura se deniegan. */
     public SimulationService(ConnectionFactory factory) {
+        this(factory, null);
+    }
+
+    public SimulationService(ConnectionFactory factory, SessionManager sessionManager) {
         this.simulationDao = new SimulationDaoJdbc(factory);
+        this.guard = ServiceGuard.of(sessionManager);
     }
 
     public long createSimulation(long courseId, String name, String description, String configJson) {
+        guard.require(RoleType.PROFESOR, RoleType.ADMINISTRADOR);
         validateConfigJson(configJson);
         Simulation sim = new Simulation();
         sim.setCourseId(courseId);
@@ -45,15 +57,18 @@ public class SimulationService {
     }
 
     public void updateDetails(long simulationId, String name, String description, String configJson) {
+        guard.require(RoleType.PROFESOR, RoleType.ADMINISTRADOR);
         validateConfigJson(configJson);
         simulationDao.updateDetails(simulationId, name, description, configJson);
     }
 
     public void updateEnabled(long simulationId, boolean enabled) {
+        guard.require(RoleType.PROFESOR, RoleType.ADMINISTRADOR);
         simulationDao.updateEnabled(simulationId, enabled);
     }
 
     public void deleteSimulation(long simulationId) {
+        guard.require(RoleType.PROFESOR, RoleType.ADMINISTRADOR);
         simulationDao.delete(simulationId);
     }
 
@@ -117,6 +132,7 @@ public class SimulationService {
      * @return numero de practicas creadas
      */
     public int addCavityPractices(long courseId) {
+        guard.require(RoleType.PROFESOR, RoleType.ADMINISTRADOR);
         List<String> existing = listByCourse(courseId).stream()
                 .map(SimulationService::getScript3D)
                 .filter(script -> script != null)

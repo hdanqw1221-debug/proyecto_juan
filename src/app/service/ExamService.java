@@ -1,5 +1,8 @@
 package app.service;
 
+import app.model.RoleType;
+import app.session.SessionManager;
+import app.security.ServiceGuard;
 import app.dao.ExamDao;
 import app.dao.QuestionDao;
 import app.dao.jdbc.ExamDaoJdbc;
@@ -26,7 +29,15 @@ public class ExamService {
     private final ExamDao examDao;
     private final QuestionDao questionDao;
 
+    private final ServiceGuard guard;
+
+    /** Sin sesion: los metodos de escritura se deniegan. */
     public ExamService(ConnectionFactory factory) {
+        this(factory, null);
+    }
+
+    public ExamService(ConnectionFactory factory, SessionManager sessionManager) {
+        this.guard = ServiceGuard.of(sessionManager);
         this.factory = factory;
         this.examDao = new ExamDaoJdbc(factory);
         this.questionDao = new QuestionDaoJdbc(factory);
@@ -37,6 +48,7 @@ public class ExamService {
     }
 
     public long createExam(long courseId, String title, String description, boolean active, LocalDateTime dueAt, int maxAttempts, int durationMinutes) {
+        guard.require(RoleType.PROFESOR, RoleType.ADMINISTRADOR);
         Exam exam = new Exam();
         exam.setCourseId(courseId);
         exam.setTitle(title);
@@ -49,10 +61,12 @@ public class ExamService {
     }
 
     public void updateAvailability(long examId, boolean active, LocalDateTime dueAt) {
+        guard.require(RoleType.PROFESOR, RoleType.ADMINISTRADOR);
         examDao.updateAvailability(examId, active, dueAt);
     }
 
     public void updateDetails(long examId, String title, String description, boolean active, LocalDateTime dueAt, int maxAttempts, int durationMinutes) {
+        guard.require(RoleType.PROFESOR, RoleType.ADMINISTRADOR);
         examDao.updateDetails(examId, title, description, active, dueAt, maxAttempts > 0 ? maxAttempts : 1, durationMinutes > 0 ? durationMinutes : 60);
     }
 
@@ -61,6 +75,7 @@ public class ExamService {
     }
 
     public long createQuestion(long examId, String statement, String type, double score) {
+        guard.require(RoleType.PROFESOR, RoleType.ADMINISTRADOR);
         Question question = new Question();
         question.setExamId(examId);
         question.setStatement(statement);
@@ -80,6 +95,7 @@ public class ExamService {
     }
 
     public List<Long> createQuestionsWithAnswers(long examId, List<QuestionDraft> questions) {
+        guard.require(RoleType.PROFESOR, RoleType.ADMINISTRADOR);
         if (questions == null || questions.isEmpty()) {
             throw new IllegalArgumentException("Debes proporcionar al menos una pregunta");
         }
@@ -139,6 +155,7 @@ public class ExamService {
     }
 
     public List<Long> synchronizeQuestions(long examId, List<QuestionDraft> questions) {
+        guard.require(RoleType.PROFESOR, RoleType.ADMINISTRADOR);
         if (questions == null || questions.isEmpty()) {
             throw new IllegalArgumentException("El cuestionario debe conservar al menos una pregunta");
         }
@@ -247,6 +264,7 @@ public class ExamService {
     }
 
     public void deleteExam(long examId) {
+        guard.require(RoleType.PROFESOR, RoleType.ADMINISTRADOR);
         examDao.delete(examId);
     }
 

@@ -61,22 +61,23 @@ public class Main {
 
         SessionManager sessionManager = new SessionManager();
 
-        UserService userService = new UserService(connectionFactory, hasher);
+        // Los servicios reciben la sesion para comprobar permisos en cada operacion sensible (C04).
+        UserService userService = new UserService(connectionFactory, hasher, sessionManager);
         AuthService authService = new AuthService(userService, hasher, sessionManager);
         AuditService auditService = new AuditService(connectionFactory);
         RoleService roleService = new RoleService(connectionFactory);
         roleService.ensureBaseRoles();
         userService.ensureDefaultAdmin();
 
-        CourseService courseService = new CourseService(connectionFactory);
-        ExamService examService = new ExamService(connectionFactory);
-        SimulationService simulationService = new SimulationService(connectionFactory);
+        CourseService courseService = new CourseService(connectionFactory, sessionManager);
+        ExamService examService = new ExamService(connectionFactory, sessionManager);
+        SimulationService simulationService = new SimulationService(connectionFactory, sessionManager);
         ResultService resultService = new ResultService(connectionFactory);
-        ExamAttemptService examAttemptService = new ExamAttemptService(connectionFactory);
+        ExamAttemptService examAttemptService = new ExamAttemptService(connectionFactory, sessionManager);
         AnswerService answerService = new AnswerService(connectionFactory);
 
         UserImportService userImportService = new UserImportService(userService);
-        DatabaseBackupService backupService = new DatabaseBackupService(config);
+        DatabaseBackupService backupService = new DatabaseBackupService(config, sessionManager);
 
         SwingUtilities.invokeLater(() -> {
             LoginFrame loginFrame = new LoginFrame(authService, sessionManager, auditService,

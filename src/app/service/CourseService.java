@@ -1,5 +1,7 @@
 package app.service;
 
+import app.session.SessionManager;
+import app.security.ServiceGuard;
 import app.dao.CourseDao;
 import app.dao.jdbc.CourseDaoJdbc;
 import app.dao.jdbc.UserDaoJdbc;
@@ -15,12 +17,21 @@ public class CourseService {
     private final CourseDao courseDao;
     private final UserDaoJdbc userDao;
 
+    private final ServiceGuard guard;
+
+    /** Sin sesion: crear, editar y borrar materias y matriculas se deniega. */
     public CourseService(ConnectionFactory factory) {
+        this(factory, null);
+    }
+
+    public CourseService(ConnectionFactory factory, SessionManager sessionManager) {
+        this.guard = ServiceGuard.of(sessionManager);
         this.courseDao = new CourseDaoJdbc(factory);
         this.userDao = new UserDaoJdbc(factory, new app.dao.jdbc.RoleDaoJdbc(factory));
     }
 
     public long createCourse(String name, String description, long teacherId) {
+        guard.require(RoleType.ADMINISTRADOR);
         Course course = new Course();
         course.setName(name);
         course.setDescription(description);
@@ -37,6 +48,7 @@ public class CourseService {
     }
 
     public void updateCourse(long courseId, String name, String description, long teacherId) {
+        guard.require(RoleType.ADMINISTRADOR);
         if (name == null || name.isBlank()) {
             throw new IllegalArgumentException("El nombre del curso es obligatorio");
         }
@@ -51,6 +63,7 @@ public class CourseService {
     }
 
     public void deleteCourse(long courseId) {
+        guard.require(RoleType.ADMINISTRADOR);
         Course course = courseDao.findById(courseId);
         if (course == null) {
             throw new IllegalArgumentException("El curso no existe");
@@ -72,11 +85,13 @@ public class CourseService {
     }
 
     public void assignStudentToCourse(long studentId, long courseId) {
+        guard.require(RoleType.ADMINISTRADOR);
         validateStudentAssignment(studentId, courseId);
         courseDao.assignStudentToCourse(studentId, courseId);
     }
 
     public void removeStudentFromCourse(long studentId, long courseId) {
+        guard.require(RoleType.ADMINISTRADOR);
         validateStudentAssignment(studentId, courseId);
         courseDao.removeStudentFromCourse(studentId, courseId);
     }

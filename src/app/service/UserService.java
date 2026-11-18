@@ -1,5 +1,7 @@
 package app.service;
 
+import app.session.SessionManager;
+import app.security.ServiceGuard;
 import app.dao.UserDao;
 import app.dao.jdbc.RoleDaoJdbc;
 import app.dao.jdbc.UserDaoJdbc;
@@ -16,13 +18,22 @@ public class UserService {
     private final UserDao userDao;
     private final PasswordHasher hasher;
 
+    private final ServiceGuard guard;
+
+    /** Sin sesion: crear, editar, borrar usuarios y asignar roles se deniega. */
     public UserService(ConnectionFactory factory, PasswordHasher hasher) {
+        this(factory, hasher, null);
+    }
+
+    public UserService(ConnectionFactory factory, PasswordHasher hasher, SessionManager sessionManager) {
+        this.guard = ServiceGuard.of(sessionManager);
         RoleDaoJdbc roleDao = new RoleDaoJdbc(factory);
         this.userDao = new UserDaoJdbc(factory, roleDao);
         this.hasher = hasher;
     }
 
     public User createUser(String username, String email, String plainPassword, boolean active) {
+        guard.require(RoleType.ADMINISTRADOR);
         InputValidator.notBlank(username, "username");
         InputValidator.notBlank(email, "email");
         InputValidator.email(email);
@@ -38,6 +49,7 @@ public class UserService {
     }
 
     public void updateUser(long id, String username, String email, boolean active) {
+        guard.require(RoleType.ADMINISTRADOR);
         User user = userDao.findById(id);
         if (user == null) throw new IllegalArgumentException("Usuario no encontrado");
         InputValidator.notBlank(username, "username");
@@ -50,6 +62,7 @@ public class UserService {
     }
 
     public void changePassword(long id, String newPassword) {
+        guard.require(RoleType.ADMINISTRADOR);
         InputValidator.notBlank(newPassword, "password");
         User user = userDao.findById(id);
         if (user == null) throw new IllegalArgumentException("Usuario no encontrado");
@@ -58,6 +71,7 @@ public class UserService {
     }
 
     public void changeOwnPassword(long id, String currentPassword, String newPassword) {
+        guard.requireSelf(id);
         InputValidator.notBlank(currentPassword, "contrasena actual");
         InputValidator.notBlank(newPassword, "nueva contrasena");
         User user = userDao.findById(id);
@@ -82,10 +96,12 @@ public class UserService {
     }
 
     public void deleteUser(long id) {
+        guard.require(RoleType.ADMINISTRADOR);
         userDao.delete(id);
     }
 
     public void assignRoles(long userId, List<RoleType> roles) {
+        guard.require(RoleType.ADMINISTRADOR);
         userDao.setRoles(userId, roles);
     }
 

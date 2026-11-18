@@ -1,5 +1,8 @@
 package app.service;
 
+import app.model.RoleType;
+import app.session.SessionManager;
+import app.security.ServiceGuard;
 import app.dao.ExamAttemptDao;
 import app.dao.jdbc.ExamAttemptDaoJdbc;
 import app.db.ConnectionFactory;
@@ -18,16 +21,26 @@ public class ExamAttemptService {
     private final ConnectionFactory factory;
     private final ExamAttemptDao examAttemptDao;
 
+    private final ServiceGuard guard;
+
+    /** Sin sesion: iniciar, enviar y recalificar intentos se deniega. */
     public ExamAttemptService(ConnectionFactory factory) {
+        this(factory, null);
+    }
+
+    public ExamAttemptService(ConnectionFactory factory, SessionManager sessionManager) {
+        this.guard = ServiceGuard.of(sessionManager);
         this.factory = factory;
         this.examAttemptDao = new ExamAttemptDaoJdbc(factory);
     }
 
     public long startAttempt(long examId, long studentId) {
+        guard.requireSelf(studentId);
         return examAttemptDao.createAttempt(examId, studentId);
     }
 
     public void finishAttempt(long attemptId, double totalScore) {
+        guard.require(RoleType.PROFESOR, RoleType.ADMINISTRADOR);
         examAttemptDao.finishAttempt(attemptId, totalScore);
     }
 
@@ -38,6 +51,7 @@ public class ExamAttemptService {
      */
     public void submitAttempt(long attemptId, long examId, long studentId, double finalScore,
                               int correctAnswers, int totalQuestions, String resultJson) {
+        guard.requireSelf(studentId);
         String finish = "UPDATE intentos_examen SET fecha_fin = CURRENT_TIMESTAMP, puntaje_total = ? "
                 + "WHERE id = ? AND examen_id = ? AND estudiante_id = ? AND fecha_fin IS NULL";
         String result = "INSERT INTO resultados (intento_id, detalle) VALUES (?, ?::jsonb)";
@@ -80,6 +94,7 @@ public class ExamAttemptService {
     }
 
     public void updateScore(long attemptId, double totalScore) {
+        guard.require(RoleType.PROFESOR, RoleType.ADMINISTRADOR);
         examAttemptDao.updateScore(attemptId, totalScore);
     }
 

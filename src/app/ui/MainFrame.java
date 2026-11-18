@@ -78,7 +78,7 @@ public class MainFrame extends JFrame {
                      AnswerService answerService) {
         this(sessionManager, authService, auditService, userService, roleService, courseService,
                 examService, simulationService, resultService, examAttemptService, answerService,
-                new UserImportService(userService), new DatabaseBackupService(app.config.AppConfig.load("config/app.properties")));
+                new UserImportService(userService), new DatabaseBackupService(app.config.AppConfig.load("config/app.properties"), sessionManager));
     }
 
     public MainFrame(SessionManager sessionManager,

@@ -1,5 +1,8 @@
 package app.service;
 
+import app.model.RoleType;
+import app.session.SessionManager;
+import app.security.ServiceGuard;
 import app.config.AppConfig;
 import app.db.EmbeddedDatabase;
 
@@ -89,7 +92,15 @@ public class DatabaseBackupService {
         }
     }
 
+    private final ServiceGuard guard;
+
+    /** Sin sesion: crear y restaurar respaldos se deniega. */
     public DatabaseBackupService(AppConfig config) {
+        this(config, null);
+    }
+
+    public DatabaseBackupService(AppConfig config, SessionManager sessionManager) {
+        this.guard = ServiceGuard.of(sessionManager);
         this.config = config;
         this.dbUser = config.getDbUser() != null ? config.getDbUser() : "postgres";
         this.dbPassword = config.getDbPassword() != null ? config.getDbPassword() : "";
@@ -155,6 +166,7 @@ public class DatabaseBackupService {
     }
 
     public BackupResult createBackup(File targetFile) throws IOException, InterruptedException {
+        guard.require(RoleType.ADMINISTRADOR);
         String pgDumpExe = findExecutable("pg_dump");
         if (pgDumpExe == null) {
             throw new IllegalStateException("No se encontro el utilitario 'pg_dump' de PostgreSQL. Verifica que este instalado en el equipo.");
@@ -220,6 +232,7 @@ public class DatabaseBackupService {
     }
 
     public RestoreResult restoreBackup(File sourceFile) throws IOException, InterruptedException {
+        guard.require(RoleType.ADMINISTRADOR);
         if (!sourceFile.exists()) {
             throw new IllegalArgumentException("El archivo de respaldo no existe: " + sourceFile.getAbsolutePath());
         }

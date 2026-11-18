@@ -1,8 +1,11 @@
 package app.service;
 
-import app.config.AppConfig;
 import app.db.ConnectionFactory;
+import app.model.RoleType;
 import app.model.User;
+import app.session.SessionManager;
+import app.testutil.TestDatabase;
+import app.testutil.TestSessions;
 import app.security.BCryptPasswordHasher;
 import app.security.PasswordHasher;
 import org.junit.jupiter.api.Test;
@@ -13,15 +16,17 @@ public class ProfilePasswordTest {
 
     @Test
     public void testChangeOwnPasswordValidations() {
-        AppConfig config = AppConfig.load("config/app.properties");
-        ConnectionFactory connectionFactory = new ConnectionFactory(config);
+        // Antes usaba config/app.properties, es decir, la base real "gestion"; ahora la base de pruebas.
+        ConnectionFactory connectionFactory = TestDatabase.require();
         PasswordHasher hasher = new BCryptPasswordHasher();
-        UserService userService = new UserService(connectionFactory, hasher);
+        SessionManager sessions = TestSessions.as(1L, RoleType.ADMINISTRADOR);
+        UserService userService = new UserService(connectionFactory, hasher, sessions);
 
         // Crear usuario temporal para prueba
         String username = "test_profile_" + System.currentTimeMillis();
         String initialPass = "ClaveInicial123";
         User user = userService.createUser(username, username + "@unipamplona.edu.co", initialPass, true);
+        TestSessions.switchTo(sessions, user.getId(), RoleType.ESTUDIANTE);  // el propio usuario cambia su clave
 
         try {
             // 1. Contrasena actual incorrecta
@@ -54,7 +59,8 @@ public class ProfilePasswordTest {
             assertFalse(hasher.verify(initialPass, updated.getPasswordHash()));
 
         } finally {
-            // Limpieza
+            // Limpieza (como administrador)
+            TestSessions.switchTo(sessions, 1L, RoleType.ADMINISTRADOR);
             userService.deleteUser(user.getId());
         }
     }

@@ -11,7 +11,7 @@ public class DatabaseBackupServiceTest {
 
     @Test
     public void testUrlParsingAndConfiguration() {
-        AppConfig config = AppConfig.load("config/app.properties");
+        AppConfig config = AppConfig.load("config/app.properties.example");
         DatabaseBackupService backupService = new DatabaseBackupService(config);
 
         assertEquals("localhost", backupService.getDbHost());
@@ -22,7 +22,7 @@ public class DatabaseBackupServiceTest {
 
     @Test
     public void testPgDumpDetection() {
-        AppConfig config = AppConfig.load("config/app.properties");
+        AppConfig config = AppConfig.load("config/app.properties.example");
         DatabaseBackupService backupService = new DatabaseBackupService(config);
 
         assertTrue(backupService.isPgDumpAvailable(), "pg_dump debe ser detectado en el sistema");

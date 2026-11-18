@@ -70,7 +70,7 @@ public class AdminPanel extends JPanel {
     public AdminPanel(SessionManager sessionManager, AuditService auditService, UserService userService, RoleService roleService,
                       CourseService courseService) {
         this(sessionManager, auditService, userService, roleService, courseService,
-                new UserImportService(userService), new DatabaseBackupService(AppConfig.load("config/app.properties")));
+                new UserImportService(userService), new DatabaseBackupService(AppConfig.load("config/app.properties"), sessionManager));
     }
 
     public AdminPanel(SessionManager sessionManager, AuditService auditService, UserService userService, RoleService roleService,

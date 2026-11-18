@@ -2,6 +2,8 @@ package app.service;
 
 import app.testutil.TestCourses;
 import app.testutil.TestDatabase;
+import app.model.RoleType;
+import app.testutil.TestSessions;
 import app.testutil.TestUsers;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -20,9 +22,9 @@ class ExamSubmitIntegrationTest {
 
     @BeforeEach
     void setUp() throws Exception {
-        service = new ExamAttemptService(TestDatabase.require());
         teacher = TestUsers.create("c02_prof");
         student = TestUsers.create("c02_est");
+        service = new ExamAttemptService(TestDatabase.require(), TestSessions.as(student, RoleType.ESTUDIANTE));
         course = TestCourses.course(teacher);
         exam = TestCourses.exam(course);
     }
@@ -77,10 +79,16 @@ class ExamSubmitIntegrationTest {
     }
 
     @Test
-    void otroEstudianteNoPuedeEnviarElIntento() throws Exception {
+    void otroUsuarioNoPuedeEnviarElIntento() throws Exception {
         long attempt = TestCourses.attempt(exam, student);
-        assertThrows(IllegalStateException.class,
+        // C04: la sesion es del estudiante; enviar a nombre de otro usuario se deniega antes de tocar la base.
+        assertThrows(SecurityException.class,
                 () -> service.submitAttempt(attempt, exam, teacher, 5.0, 5, 5, "{}"));
+        // Aunque la sesion fuera de ese otro usuario, el intento no le pertenece: la base no lo cierra.
+        ExamAttemptService ajeno = new ExamAttemptService(TestDatabase.require(),
+                TestSessions.as(teacher, RoleType.ESTUDIANTE));
+        assertThrows(IllegalStateException.class,
+                () -> ajeno.submitAttempt(attempt, exam, teacher, 5.0, 5, 5, "{}"));
     }
 
     private static int count(Connection c, String sql) throws Exception {
