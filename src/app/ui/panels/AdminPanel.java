@@ -1,5 +1,6 @@
 package app.ui.panels;
 
+import app.ui.ReadOnlyTableModel;
 import app.config.AppConfig;
 import app.model.Course;
 import app.model.LogEntry;
@@ -47,16 +48,11 @@ public class AdminPanel extends JPanel {
     private final UserImportService userImportService;
     private final DatabaseBackupService databaseBackupService;
 
-    private final DefaultTableModel usersModel = new DefaultTableModel(new Object[]{"ID", "Usuario", "Email", "Activo", "Roles"}, 0);
-    private final DefaultTableModel coursesModel = new DefaultTableModel(new Object[]{"ID", "Nombre", "Descripcion", "Docente Titular", "Creado"}, 0);
-    private final DefaultTableModel studentCoursesModel = new DefaultTableModel(new Object[]{"Curso ID", "Materia", "Estudiante ID", "Usuario", "Asignado"}, 0);
+    private final DefaultTableModel usersModel = new ReadOnlyTableModel(new Object[]{"ID", "Usuario", "Email", "Activo", "Roles"}, 0);
+    private final DefaultTableModel coursesModel = new ReadOnlyTableModel(new Object[]{"ID", "Nombre", "Descripcion", "Docente Titular", "Creado"}, 0);
+    private final DefaultTableModel studentCoursesModel = new ReadOnlyTableModel(new Object[]{"Curso ID", "Materia", "Estudiante ID", "Usuario", "Asignado"}, 0);
     private final DefaultTableModel systemActivityModel =
-            new DefaultTableModel(new Object[]{"Accion", "Detalle", "Fecha"}, 0) {
-                @Override
-                public boolean isCellEditable(int row, int column) {
-                    return false;
-                }
-            };
+            new ReadOnlyTableModel(new Object[]{"Accion", "Detalle", "Fecha"}, 0);
     private final JLabel pythonScriptsSummary = new JLabel("Scripts Python no cargados.");
     private final JPanel pythonScriptsButtonsPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 8, 8));
     private final JTabbedPane adminTabs = new JTabbedPane();
@@ -650,7 +646,7 @@ public class AdminPanel extends JPanel {
 
     private JPanel buildLogsPanel() {
         JPanel panel = new JPanel(new BorderLayout());
-        DefaultTableModel logModel = new DefaultTableModel(new Object[]{"ID", "Usuario", "Accion", "Detalle", "Fecha"}, 0);
+        DefaultTableModel logModel = new ReadOnlyTableModel(new Object[]{"ID", "Usuario", "Accion", "Detalle", "Fecha"}, 0);
         JTable table = new JTable(logModel);
         JButton refresh = new JButton("Refrescar");
         refresh.addActionListener(e -> {

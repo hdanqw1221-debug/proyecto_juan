@@ -1,5 +1,6 @@
 package app.ui.panels;
 
+import app.ui.ReadOnlyTableModel;
 import app.model.Answer;
 import app.model.Course;
 import app.model.Exam;
@@ -51,15 +52,15 @@ public class TeacherPanel extends JPanel {
     private final app.service.ResultService resultService;
 
     private final DefaultTableModel examModel =
-            new DefaultTableModel(new Object[]{"ID", "Curso", "Titulo", "Activo", "Vence", "Intentos", "Duracion (min)", "Estado", "Creado"}, 0);
+            new ReadOnlyTableModel(new Object[]{"ID", "Curso", "Titulo", "Activo", "Vence", "Intentos", "Duracion (min)", "Estado", "Creado"}, 0);
     private final DefaultTableModel questionModel =
-            new DefaultTableModel(new Object[]{"ID", "Examen", "Tipo", "Puntaje", "Imagen", "Enunciado"}, 0);
+            new ReadOnlyTableModel(new Object[]{"ID", "Examen", "Tipo", "Puntaje", "Imagen", "Enunciado"}, 0);
     private final DefaultTableModel answerModel =
-            new DefaultTableModel(new Object[]{"ID", "Pregunta", "Correcta", "Contenido"}, 0);
+            new ReadOnlyTableModel(new Object[]{"ID", "Pregunta", "Correcta", "Contenido"}, 0);
     private final DefaultTableModel gradeModel =
-            new DefaultTableModel(new Object[]{"Intento", "Examen", "Estudiante", "Inicio", "Fin", "Puntaje"}, 0);
+            new ReadOnlyTableModel(new Object[]{"Intento", "Examen", "Estudiante", "Inicio", "Fin", "Puntaje"}, 0);
     private final DefaultTableModel simulationModel =
-            new DefaultTableModel(new Object[]{"ID", "Curso", "Nombre", "Modelo 3D", "Disponible", "Duracion"}, 0);
+            new ReadOnlyTableModel(new Object[]{"ID", "Curso", "Nombre", "Modelo 3D", "Disponible", "Duracion"}, 0);
 
     private final JComboBox<ComboItem> questionnaireCourseFilter = new JComboBox<>();
     private final JComboBox<ComboItem> examCourseSelector = new JComboBox<>();
