@@ -16,6 +16,7 @@ import java.util.Deque;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.Set;
 import java.time.Instant;
 import java.util.UUID;
@@ -260,6 +261,11 @@ public final class Visor3DService {
      * formadas no se entregan: se cuentan y se conservan en la salida para el diagnostico.
      */
     public static Resultado ejecutar(Path script, List<String> python, Runnable alAbrir, Consumer<VisorEvent> alEvento) {
+        String versiones = comprobarVersiones(python, script.getParent());
+        if (versiones != null) {  // C10: versiones distintas de las probadas
+            return new Resultado(-1, versiones, new LinkedHashSet<>(), 0, false, false,
+                    new IllegalStateException(versiones), UUID.randomUUID(), 0, 0);
+        }
         List<String> comando = new ArrayList<>(sinConsola(python));
         comando.add(script.getFileName().toString());
         return ejecutarComando(comando, script.getParent(), alAbrir, alEvento);
@@ -326,6 +332,57 @@ public final class Visor3DService {
             return new Resultado(-1, String.join("\n", salida), estructuras, System.currentTimeMillis() - inicio,
                     abierto, cerrado, ex, sesion, validos, invalidos);
         }
+    }
+
+    // ------------------------------------------------------------------ versiones (C10)
+    private static final java.util.Map<String, String> VERSIONES_VERIFICADAS = new java.util.concurrent.ConcurrentHashMap<>();
+
+    /**
+     * Compara las versiones de PyQt5 y VTK del Python indicado con las de {@code requeriments.txt} (en la carpeta de
+     * los visores). Devuelve un mensaje claro si no coinciden, o null si coinciden, si no hay archivo de requisitos
+     * o si no se pudo sondear (en ese caso se deja intentar abrir el visor). El resultado se recuerda por Python.
+     */
+    public static String comprobarVersiones(List<String> python, Path carpeta) {
+        Path requisitos = carpeta == null ? null : carpeta.resolve("requeriments.txt");
+        if (requisitos == null || !Files.isRegularFile(requisitos)) {
+            return null;
+        }
+        String clave = String.join(" ", python) + "|" + requisitos.toAbsolutePath();
+        String previo = VERSIONES_VERIFICADAS.get(clave);
+        if (previo != null) {
+            return previo.isEmpty() ? null : previo;
+        }
+        String mensaje;
+        try {
+            String salida = sondear(python, DependencyCheck.PROBE_CODE);
+            Map<String, String> instaladas = DependencyCheck.parseProbeOutput(salida);
+            if (instaladas.isEmpty()) {
+                return null;  // el sondeo no respondio: no se bloquea
+            }
+            Map<String, String> requeridas = DependencyCheck.parseRequirements(
+                    Files.readAllLines(requisitos, StandardCharsets.UTF_8), instaladas.getOrDefault("py", "0.0"));
+            List<String> problemas = DependencyCheck.check(requeridas, instaladas);
+            mensaje = problemas.isEmpty() ? "" : DependencyCheck.message(problemas, requisitos.getFileName().toString());
+        } catch (Exception ex) {
+            return null;
+        }
+        VERSIONES_VERIFICADAS.put(clave, mensaje);
+        return mensaje.isEmpty() ? null : mensaje;
+    }
+
+    /** Ejecuta codigo Python pasado por la entrada estandar (sin problemas de comillas) y devuelve su salida. */
+    static String sondear(List<String> python, String codigo) throws Exception {
+        List<String> comando = new ArrayList<>(python);
+        comando.add("-");
+        Process proceso = new ProcessBuilder(comando).redirectErrorStream(true).start();
+        try (var entrada = proceso.getOutputStream()) {
+            entrada.write(codigo.getBytes(StandardCharsets.UTF_8));
+        }
+        String salida = new String(proceso.getInputStream().readAllBytes(), StandardCharsets.UTF_8);
+        if (!proceso.waitFor(ESPERA_SONDEO_S, TimeUnit.SECONDS)) {
+            proceso.destroyForcibly();
+        }
+        return salida;
     }
 
     /** Detalle para el registro de auditoria de una sesion. */

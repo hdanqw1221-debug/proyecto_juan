@@ -100,6 +100,23 @@ El PostgreSQL portable se prepara una vez en `build/pgsql-runtime` (sin pgAdmin,
   - La aplicación usa el entorno virtual `aplicacion_tres_d/aplicacion_tres_d/.venv/`; si no existe, el panel del estudiante lo crea e instala las dependencias al abrir el primer modelo.
   - `psycopg` es opcional: sin él, los visores leen las fichas desde `cavidades/datos/fichas_anatomicas.json`.
 
+#### Versiones probadas (las más recientes de VTK y PyQt5 pueden fallar)
+
+| Componente | Versión probada | Notas |
+|---|---|---|
+| Java | JDK 21 (compilar con `javac --release 21`) | probado con Temurin 25 compilando para 21 |
+| PostgreSQL | 18.3 | el esquema funciona desde 14 |
+| Python | 3.14.4 | con Python < 3.14 usar `vtk==9.4.1` (ver `requeriments.txt`) |
+| PyQt5 | **5.15.11** (Qt 5.15.2) | exacta |
+| VTK | **9.6.2** (Python 3.14) / 9.4.1 (Python < 3.14) | `>=9.6.2,<10` en Python 3.14 |
+| numpy | 2.5.1 | `>=1.24` |
+| psycopg | 3.3.6 | opcional; `>=3.2` |
+| Gson / PostgreSQL JDBC / jBCrypt | 2.11.0 / 42.7.10 / 0.4 | en `lib/` |
+
+Al abrir un visor, la aplicación comprueba las versiones de PyQt5 y VTK del Python elegido contra
+`requeriments.txt` y, si no coinciden, muestra qué versión hay, cuál se probó y cómo instalarla
+(`python -m pip install -r requeriments.txt`), en lugar de abrir un visor que puede fallar.
+
 ### 2. Configuración de Base de Datos
 Copia [`config/app.properties.example`](config/app.properties.example) a `config/app.properties` y edita este último con las credenciales de tu servidor PostgreSQL:
 
@@ -109,13 +126,38 @@ app.db.user=postgres
 app.db.password=tu_password_aqui
 ```
 
+**La contraseña no debe guardarse en el repositorio.** `config/app.properties` está en `.gitignore`. Se recomienda
+definirla en la variable de entorno `APP_DB_PASSWORD` (tiene prioridad sobre el archivo; también `APP_DB_URL` y
+`APP_DB_USER`):
+
+```powershell
+$env:APP_DB_PASSWORD = "tu_password_aqui"
+```
+
 Luego, inicializa la estructura ejecutando los scripts SQL en tu cliente PostgreSQL (pgAdmin, psql, DBeaver):
 ```bash
 # 1. Crear las tablas e índices
 psql -U postgres -d gestion -f db/schema.sql
 
-# 2. Cargar usuarios, roles, curso de muestra y simulaciones 3D
+# 2. Catálogo anatómico (cavidades, estructuras y modelos 3D) y sus fichas
+psql -U postgres -d gestion -f db/cavidades_schema.sql
+psql -U postgres -d gestion -f db/cavidades_fichas.sql
+
+# 3. Exploración del visor (exploracion_eventos) y enlace pregunta-estructura 3D (preguntas.objeto_id)
+psql -U postgres -d gestion -f db/validacion_schema.sql
+
+# 4. Cargar usuarios, roles, curso de muestra y simulaciones 3D
 psql -U postgres -d gestion -f db/test_users.sql
+
+# 5. (Recomendado) Rol de solo lectura para el visor 3D
+psql -U postgres -d gestion -f db/rol_visor_lectura.sql
+psql -U postgres -d gestion -c "ALTER ROLE visor_lectura PASSWORD '<clave nueva>'"
+```
+
+El visor lee las fichas con `CAVIDADES_DB_DSN` si existe; con el rol de solo lectura no puede modificar la base:
+
+```powershell
+$env:CAVIDADES_DB_DSN = "host=localhost port=5432 dbname=gestion user=visor_lectura password=<clave nueva>"
 ```
 
 ---
